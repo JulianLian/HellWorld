@@ -22,6 +22,7 @@ public class Command {
                 cmdLine = "";
                 break;
             case "FUNCTION":
+                cmdLine = "OTU:MODUle:CALFUNC:LIST? MOD1";
                 break;
             case "SWITCH":
                 break;
@@ -62,22 +63,37 @@ public class Command {
         return ServerInfo.OTUPort;
     }
 
-    void send(String cmdLine) {
+    byte[] sendAndEcho(String cmdLine) {
         int serverPort = getFunctionPort(cmdLine);
         try {
             TcpClient client = new TcpClient(ServerInfo.ServerAddress, serverPort, 5000);
             Socket clientSocket = client.getClientSocket();
             clientSocket.setSoTimeout(10000); // 10sec
+
+            byte[] delimit = { 0x0d,0x0a};
             OutputStream outputStream = clientSocket.getOutputStream();
+
+            outputStream.write( "*REM".concat(new String(delimit)).concat(cmdLine).concat(new String(delimit)).getBytes());
+//            System.out.println( "*REM".concat(new String(delimit)).concat(cmdLine).concat(new String(delimit)));
+
+
             DataInputStream inputStream = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+            int rcvBytes = inputStream.available();
+            while ( rcvBytes == 0) {
+                rcvBytes = inputStream.available();
+            }
 
-            outputStream.write(cmdLine.getBytes());
-
-            receive(inputStream);
+            byte[] rcvBuffer = new byte[rcvBytes];
+            if ( inputStream.read(rcvBuffer) == -1) {
+                System.out.println("receive from socket failed!%n");
+                return null;
+            }
 
             outputStream.close();
             inputStream.close();
             clientSocket.close();
+
+            return rcvBuffer;
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
         } catch (SocketException e) {
@@ -87,6 +103,7 @@ public class Command {
         } finally {
 
         }
+        return null;
     }
 
     byte[] receive(DataInputStream in) {
@@ -102,7 +119,7 @@ public class Command {
         return null;
     }
 
-    HashMap echo(byte[] rcvBuffer) {
+    HashMap parseReceiveBuffer(byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
         return result;
     }
