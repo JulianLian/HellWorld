@@ -2,6 +2,8 @@ package interaction;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 
 /**
@@ -55,34 +57,53 @@ public class Command {
     }
 
     int getFunctionPort(String func) {
-        ServerInfo serverInfo = new ServerInfo();
         if (func.contains("CURve"))
             return ServerInfo.FiberOpticPort;
         return ServerInfo.OTUPort;
     }
 
-    void send(String cmdLine) throws IOException {
+    void send(String cmdLine) {
         int serverPort = getFunctionPort(cmdLine);
+        try {
+            TcpClient client = new TcpClient(ServerInfo.ServerAddress, serverPort, 5000);
+            Socket clientSocket = client.getClientSocket();
+            clientSocket.setSoTimeout(10000); // 10sec
+            OutputStream outputStream = clientSocket.getOutputStream();
+            DataInputStream inputStream = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
 
-        TcpClient client = new TcpClient(ServerInfo.getServerAddress(), serverPort, 5000);
-        Socket clientSocket = client.getClientSocket();
-        clientSocket.setSoTimeout(10000); // 10sec
-        OutputStream outputStream = clientSocket.getOutputStream();
-        DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
+            outputStream.write(cmdLine.getBytes());
 
-        outputStream.write(cmdLine.getBytes());
+            receive(inputStream);
 
-        receive(inputStream);
+            outputStream.close();
+            inputStream.close();
+            clientSocket.close();
+        } catch (SocketTimeoutException e) {
+            e.printStackTrace();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
 
-        clientSocket.close();
+        }
     }
 
-    HashMap<String, Object> receive(DataInputStream in) {
+    byte[] receive(DataInputStream in) {
+        try {
+            byte[] rcvBuffer = new byte[in.available()];
+
+            in.read(rcvBuffer);
+
+            return rcvBuffer;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    HashMap echo(byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
-        byte[] rcvBuffer = new byte[1024];
-
-        in.readFully(rcvBuffer);
-
         return result;
     }
 }
