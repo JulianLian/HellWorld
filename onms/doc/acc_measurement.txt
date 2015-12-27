@@ -1,0 +1,264 @@
+﻿﻿﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <script language="javascript" type="text/javascript" src="script/remote_call.js"></script>
+  <link rel="stylesheet" type="text/css" href="style/style.css">
+  <title>JDSU : OTU Setup : Administration utilisateur</title>
+    <script language="javascript" type="text/javascript">  
+    //flag to setup type of measurement (auto/manual at the first loading of the page)
+    var initType = false;
+        
+    function hi_div(nr) {
+        if (document.layers) {
+            document.layers[nr].display = 'none';
+        } else if (document.all) {
+            document.all[nr].style.display = 'none';
+        } else if (document.getElementById) {
+            document.getElementById(nr).style.display = 'none';
+        }
+    }
+    
+    function sh_div(nr) {
+        if (document.layers) {
+            document.layers[nr].display = 'block';
+        } else if (document.all) {
+            document.all[nr].style.display = 'block';
+        } else if (document.getElementById) {
+            document.getElementById(nr).style.display = 'block';
+        }        
+    }
+
+    function update_selectedOTU(name, checkBoxElement, submit)
+    {
+      if(checkBoxElement.checked==true)
+      {
+        checkBoxElement.value = 1;
+        update_form(name, 1, submit);
+      }         
+      else
+      {
+        checkBoxElement.value = 0;
+        update_form(name, 0, submit);           
+      }        
+    }
+    
+    function update_form(name,val,submit) 
+    {
+        document.hidden_form.elements[name].value = val;
+        if (submit == 1) 
+        {
+            //Used for IE to avoid to post multiple changes
+            hi_div('lib_pulse'); 
+            hi_div('lib_range');              
+            hi_div('lib_wavelength');  
+            document.hidden_form.submit();
+        }
+    }
+  
+    function pop_up_path() {
+        window.open('pop_path.php', 'pop_up_path', 'height=100, width=200, top=100, left=100, toolbar=no, menubar=no, location=no, resizable=no, scrollbars=no, status=no');
+    }
+  
+    function verif_entier(champ) {
+        var chkZ = 1;
+        for(i=0;i<champ.value.length;++i) { 
+            if(champ.value.charAt(i) < "0" || champ.value.charAt(i) > "9") {
+                chkZ = -1;
+            }
+        }
+        if(chkZ == -1) {
+            champ.focus();
+            return false;
+        }
+        return true;
+    }
+    
+    function verif_field(champ) {
+        if(champ.value.length == 0 || champ.value == null || champ.value == "" || champ.value == "NOK") {
+            return false;
+        }
+        return true;
+    }
+
+    function valider_formulaire_on_demand(frm) {
+        if (! verif_entier(frm.elements['duration_sec'])) {
+            alert("Invalid duration ; check your entry");
+            return false;
+        }
+        if (! verif_entier(frm.elements['duration_min'])) {
+            alert("Invalid duration ; check your entry");
+            return false;
+        }
+
+        return true;
+    }
+    function change_form(val) {
+        document.hidden_form.elements["configuration"].value = val;  
+        if (val == 'AUTO') {
+            hi_div('lib_pulse'); 
+            hi_div('lib_range'); 
+            hi_div('lib_resolution');
+            hi_div('lib_duration');
+            
+      } else if (val == 'MANUAL'){
+            sh_div('lib_pulse'); 
+            sh_div('lib_range');
+            sh_div('lib_resolution'); 
+            sh_div('lib_duration'); 
+      }
+  }
+        
+  function init_form(typeMeas)
+  {
+    //if (initType == false)
+    //{
+      change_form(typeMeas);
+      initType = true;
+    //}
+  }
+  
+  </script>
+</head>
+<body onLoad="init_form('AUTO')">
+<form name="hidden_form" action="/acc_measurement.php">
+    <input type="hidden" name="configuration" value="AUTO">
+    <input type="hidden" name="function" value='SM-OTDR'>
+    <input type="hidden" name="pulse" value="3">
+    <input type="hidden" name="otau" value="">
+    <input type="hidden" name="nb_otau" value="1">
+    <input type="hidden" name="module" value="MOD1">
+    <input type="hidden" name="laser" value="1650">
+    <input type="hidden" name="range" value="2">
+    <input type="hidden" name="resolution" value="0">
+    <input type="hidden" name="duration_min" value="0">
+    <input type="hidden" name="duration_sec" value="20">
+    <input type="hidden" name="buffer_otau" value="NOK">
+	<input type="hidden" name="nb_otau" value="1">
+    <input type="hidden" name="otu_in[0]" value="01"><input type="hidden" name="otu_out[0]" value="01"><input type="hidden" name="otu_used[0]" value="1"></form>
+
+
+<table border="1" cellspacing="0" cellpadding="2" width="100%" style="height:100%">
+<tr>
+<td align="left">
+<table cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="ongletOn">Measurement</td>
+	</tr>
+</table></td>
+</tr>
+<tr> 
+<td class="displayBlack" style="height:100%" valign="top">
+
+<form onSubmit="return valider_formulaire_on_demand(this)" name="formulaire" action="remote/res_measure.php" method="get">
+    <input type="hidden" name="nb_otau" value="1">
+    <input type="hidden" name="action" value="measure_on_demand">    
+    <input type="hidden" name="module" value="MOD1">
+    <input type="hidden" name="ind_ref" value="1.465000">
+    <input type="hidden" name="buffer_otau" value="NOK">
+
+<table border="1" cellspacing="0" cellpadding="2" width="600" align="center">
+<tr class="titre">
+	<td colspan="2" align="center"> &nbsp;</td>
+</tr>
+<tr class="grey">
+	<td colspan="2">OTDR : <select name="module" onchange="update_form('module',this.value,1)">
+<option value="MOD1" selected>MOD1:8118RLR65</option>
+</select>
+ : <select name="function" onchange="update_form('function',this.value,1)"><option value="SM-OTDR" selected>SM-OTDR</option>
+</select></td>
+</tr>
+<tr class="grey">
+	<td colspan="2">
+	<table width="100%">
+    	<tr class="grey">
+            <td colspan="4" align="left">Optical Path</td>
+        </tr>
+        <tr class="grey">
+<td> OTU : 0</td>
+<td>Switch   <select name="otu_in[0]" onchange="update_form('otu_in[0]',this.value,0)">
+<option value="01" selected>01</option>
+</select>
+ => <select name="otu_out[0]" onchange="update_form('otu_out[0]',this.value,0)">
+<option value="01" selected>01</option>
+<option value="02">02</option>
+<option value="03">03</option>
+<option value="04">04</option>
+<option value="05">05</option>
+<option value="06">06</option>
+<option value="07">07</option>
+<option value="08">08</option>
+<option value="09">09</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<input type="checkbox" name="otu_used[0]" value="1" onclick="update_selectedOTU('otu_used[0]',this,0)" checked></td>
+</tr>
+ 
+	</table>
+	</td>
+</tr>
+<tr class="grey">
+	<td colspan="2">Acquisition Setting: <br/>        
+        <select name="configuration" onchange="change_form(this.value)">        
+        <option value="MANUAL" >Manual Configuration</option>
+        <option value="AUTO" selected>Auto configuration</option>
+        </select>
+    </td>
+</tr>
+<tr class="grey">
+	<td colspan="2">&nbsp;
+		<table width="100%">
+			<tr class="grey">
+				<td class="blackborder">Wavelength<br/><div id="lib_wavelength"><select name="laser" onchange="update_form('laser',this.value,0)"><option value="1650" selected>1650 nm</option>
+</select></div></td>
+				<td class="blackborder">Pulse Width<br/><div id="lib_pulse"><select name="pulse" onchange="update_form('pulse',this.value,1)"><option value="3" selected>3 ns</option>
+<option value="30">30 ns</option>
+<option value="100">100 ns</option>
+<option value="300">300 ns</option>
+<option value="1000">1 µs</option>
+<option value="3000">3 µs</option>
+<option value="10000">10 µs</option>
+<option value="20000">20 µs</option>
+</select></div></td>
+				<td class="blackborder" rowspan="2">Resolution<br/><div id="lib_resolution"><select name="resolution" onchange="update_form('resolution',this.value,0)"><option value="0" selected>AUTO</option>
+<option value="4">4 cm</option>
+<option value="8">8 cm</option>
+<option value="16">16 cm</option>
+<option value="32">32 cm</option>
+<option value="64">64 cm</option>
+</select></div></td>
+			</tr>
+			<tr class="grey">
+				<td class="blackborder">Range<br/><div id="lib_range"><select name="range" onchange="update_form('range',this.value,1)"><option value="2" selected>2 km</option>
+<option value="5">5 km</option>
+<option value="10">10 km</option>
+<option value="20">20 km</option>
+<option value="40">40 km</option>
+</select></div></td>
+				<td class="blackborder">Acquisition Time<br/>
+                <div id="lib_duration">
+				<input type="text" name="duration_min" value="0" size="3"  onchange="update_form('duration_min',this.value,0)"> min <input type="text" name="duration_sec" value="20" size="3" onChange="update_form('duration_sec',this.value,0)"> sec
+                </div>
+                </td>
+			</tr>
+		</table>
+    &nbsp;
+	</td>
+</tr>
+
+	<tr class="grey">
+		<td colspan="2" align="center">
+	    <div id="submit_button" style="float:right">
+	    <input type="submit" value="Start" >&nbsp;
+	    </div>
+	    </td>  
+		</tr>
+</table>
+</form>
+</td>
+</tr>
+</table>
+</body>
+</html>
