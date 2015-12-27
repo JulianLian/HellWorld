@@ -1,0 +1,34 @@
+测试命令：otu:mealink:webconfig? MOD1,1,#170001001,MAN,"1 us","20 km",15,1.465,"1650 nm","64cm","SM-OTDR"
+测试参数说明：
+<Module>: MOD1 or MOD2
+<Switch Number>:
+<Optical path>: buffer containing for each switch the common number and the port
+number. The port number is coded in hexadecimal <Optical path>: buffer
+containing for each switch the common number and the port number. The port
+number is coded in hexadecimal. The buffer has the following structure:
+· 1st car: The buffer always starts with #
+· 2nd car: Number of bytes to store the buffer length (In the example: 1)
+· Buffer length (In the example: 7)
+· Address of the switch (2 car. coded in hexadecimal, always set to 00)
+· Common (2 car coded in hexadecimal, always set to 01)
+· Number of the selected port (3 car, coded in hexadecimal) (In the
+example: 004)
+<Autoconfig> : [MANual,AUTO],
+<Pulsewidth> : string of characters as returned by the command
+“OTU:MODUle:CALOT:LPULSE?”
+<Range> : string of characters as returned by the command
+“OTU:MODUle:CALOT:LRANGE?”
+<Acquisition Time> : [5 : 600 ] in seconds
+<Refractive index> : [1.3 : 1.7]
+<Laser> : string of characters as returned by the command
+OTU:MODUle:CALLaser:LIST?
+<Resolution>: string of characters as returned by the command
+OTU:MODUle:CALOT:LRES?
+<Function name> : [SM-OTDR]
+
+关于取样间隔<Resolution>，设定为64cm；使用命令“CURve:XSCale?”查询设备，返回值为6.39488995E-01，可以看作是0.639488995m。也就是X坐标。
+命令手册《Programing guide MTS》中公式还要用这个值乘10^8，存疑。
+
+curvebuffer.txt是设备对查询测试结果命令“CURve:BUFFer?”响应的原始数据，dataPoints.txt为按公式转换后的各点数值（用空格隔开）。也就是Y坐标。
+
+精度的问题可以参考tools中模拟软件的做法。
