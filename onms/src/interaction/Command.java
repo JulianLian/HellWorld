@@ -4,6 +4,11 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -74,26 +79,34 @@ public class Command {
             OutputStream outputStream = clientSocket.getOutputStream();
 
             outputStream.write( "*REM".concat(new String(delimit)).concat(cmdLine).concat(new String(delimit)).getBytes());
+            clientSocket.shutdownOutput();
 //            System.out.println( "*REM".concat(new String(delimit)).concat(cmdLine).concat(new String(delimit)));
 
-
             DataInputStream inputStream = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
-            int rcvBytes = inputStream.available();
-            while ( rcvBytes == 0) {
-                rcvBytes = inputStream.available();
-            }
 
-            byte[] rcvBuffer = new byte[rcvBytes];
-            if ( inputStream.read(rcvBuffer) == -1) {
-                System.out.println("receive from socket failed!%n");
-                return null;
+            int read;
+            byte[] rcvBuffer = new byte[1024];
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            while ( (read = inputStream.read(rcvBuffer)) != -1) {
+                baos.write(rcvBuffer, 0, read);
             }
 
             outputStream.close();
             inputStream.close();
             clientSocket.close();
 
-            return rcvBuffer;
+//            FileOutputStream fileOutputStream = new FileOutputStream(
+//                    "./trace_"+new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date())+".txt");
+            FileOutputStream fileOutputStream = new FileOutputStream("./onmsTrace.txt");
+            fileOutputStream.write(baos.toByteArray());
+            fileOutputStream.close();
+//            try {
+//                Files.write(Paths.get("./curveTrace.txt"), baos.toByteArray(), StandardOpenOption.APPEND);
+//            }catch (IOException e) {
+//                //exception handling
+//            }
+
+            return baos.toByteArray();
         } catch (SocketTimeoutException e) {
             e.printStackTrace();
         } catch (SocketException e) {
