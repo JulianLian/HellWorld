@@ -1,8 +1,6 @@
 package interaction;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Julian on 2015/12/20.
@@ -15,6 +13,8 @@ public class ParseCurveBuffer {
     int sizeInByte;   // ||->size in bytes
                       // |
     int numOfChar;    // Number of characters used to set the size
+
+    public ParseCurveBuffer() {    }
 
     public ParseCurveBuffer(double curveXscale, double curveYscale, double curveYoffset) {
         this.curveXscale = curveXscale;
@@ -61,6 +61,26 @@ public class ParseCurveBuffer {
         }
 
         return points;
+    }
+
+    void parseDataPointsHead(byte[] dataPoints) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(dataPoints);
+
+            int size = 0;
+            char sharp = (char)bais.read();
+            this.numOfChar = bais.read() - '0';
+            for (int hi = 0; hi < this.numOfChar; hi++) {
+                size = size * 10 + (bais.read() - '0');
+            }
+
+            this.sizeInByte = size;
+//            System.out.println("this.sizeInByte: "+this.sizeInByte);
+
+            bais.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     void parseDataPointsFromFile(String fileName) {

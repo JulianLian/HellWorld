@@ -3,6 +3,7 @@ package interaction;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -31,10 +32,14 @@ public class CommandTest {
     @Test
     public void testSendAndEcho() throws Exception {
         Command command = new Command();
-//        assertEquals( "TMS-OTU", new String(command.sendAndEcho("OTU:NAMe?")));
-//        assertEquals( "JDSU,OTU 8000,1275,OTU(OEM),V1.64", new String(command.sendAndEcho("*idn?")));
-        System.out.println(new String(command.sendAndEcho("*idn?")));
-        System.out.println(new String(command.sendAndEcho("OTU:NAMe?")));
+        assertNotEquals(-1, new String(command.sendAndEcho("OTU:NAMe?")).indexOf("TMS-OTU"));
+        assertNotEquals(-1, new String(command.sendAndEcho("*idn?")).indexOf("JDSU,OTU 8000"));
+
+        byte[] rcvBytes = command.sendAndEcho("CURve:Buffer?");
+        ParseCurveBuffer parser = new ParseCurveBuffer();
+        assertEquals('#', rcvBytes[0]);
+        parser.parseDataPointsHead(rcvBytes);
+        assertEquals(rcvBytes.length, parser.sizeInByte + parser.numOfChar + 3); // should plus 2
     }
 
     @Test
