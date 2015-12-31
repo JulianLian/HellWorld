@@ -52,7 +52,7 @@ public class Command {
             case "START":
                 cmdLine = "otu:mealink:webconfig? MOD1,1,#170001001,MAN,\"1 us\",\"20 km\",15,1.465,\"1650 nm\",\"64cm\",\"SM-OTDR\"";
                 break;
-            case "RESULT":
+            case "BUFFER":
 //                cmdLine = "OTU:MEASure:RESULT?";
                 cmdLine = "CURve:BUFfer?";
                 break;
@@ -119,21 +119,35 @@ public class Command {
         return null;
     }
 
-    byte[] receive(DataInputStream in) {
-        try {
-            byte[] rcvBuffer = new byte[in.available()];
-
-            in.read(rcvBuffer);
-
-            return rcvBuffer;
-        } catch (IOException e) {
-            e.printStackTrace();
+    HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
+        HashMap<String, Object> result = new HashMap<>();
+        switch (cmd.get("command").toUpperCase()) {
+            case "BUFFER?":
+                double xoffset = 0.000000; //to be completed
+                double xscale = 6.39488995E-01; //to be completed
+                double yoffset = -13.700909; //to be completed
+                double yscale = 0.001470; //to be completed
+                ParseCurveBuffer parser = new ParseCurveBuffer(xscale, yscale, yoffset);
+                result.put("xoffset", xoffset);
+                result.put("xscale", xscale);
+                result.put("yoffset", yoffset);
+                result.put("yscale", yscale);
+                result.put("points", parser.parseDataPoints(rcvBuffer));
+                break;
+            case "IDN?":
+                result.put("idn", new String(rcvBuffer));
+                break;
+            default:
+                System.out.println("Command " + cmd.get("command") + "not support!");
+                break;
         }
-        return null;
+
+        return result;
     }
 
-    HashMap parseReceiveBuffer(byte[] rcvBuffer) {
-        HashMap<String, Object> result = new HashMap<>();
-        return result;
+    HashMap commonSocketInterface(HashMap<String, String> cmd) {
+        String cmdLine = convertToCmdline(cmd);
+        byte[] rcvBuff = sendAndEcho(cmdLine);
+        return parseReceiveBuffer(cmd, rcvBuff);
     }
 }
