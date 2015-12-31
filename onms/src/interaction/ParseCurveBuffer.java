@@ -7,6 +7,7 @@ import java.io.*;
  */
 public class ParseCurveBuffer {
     double curveXscale;  // t in formula Distance ~ 10^8 * t
+    double curveXoffset; // first data point offset
     double curveYscale;  // A in formula A*y + B
     double curveYoffset;  // B in formula A*y + B
                       //#6008000
@@ -61,6 +62,37 @@ public class ParseCurveBuffer {
         }
 
         return points;
+    }
+
+    double[] parseDataPoints(byte[] dataBytes) {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(dataBytes);
+
+            byte[] fourBytes = new byte[4];
+            int sizeInByte = 0;
+            short y;
+
+            bais.skip(1); // '#'
+            this.numOfChar = (byte)(bais.read()) - '0';
+//            bais.skip(this.numOfChar + 1);
+            for (int hi = 0; hi < this.numOfChar; hi++) {
+                sizeInByte  = sizeInByte * 10 + (bais.read() - '0');
+            }
+
+            double[] dataPoints = new double[sizeInByte/4];
+            int num = 0;
+            while ((bais.read(fourBytes) != -1) && num < sizeInByte>>2) {
+                y = (short) (Integer.parseInt(new String(fourBytes), 16));
+                dataPoints[num] = y * this.curveYscale + this.curveYoffset;
+                num++;
+            }
+
+            bais.close();
+            return dataPoints;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     void parseDataPointsHead(byte[] dataPoints) {

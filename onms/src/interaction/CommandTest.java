@@ -43,7 +43,12 @@ public class CommandTest {
     }
 
     @Test
-    public void testParseReceiveBuffer() {
-
+    public void testCommonSocketInterface() {
+        Command command = new Command();
+        HashMap cmd = new HashMap();
+        cmd.put("command", "idn?");
+        HashMap result = command.commonSocketInterface(cmd);
+        System.out.println(result.get("idn").toString());
+        assertNotEquals(-1, result.get("idn").toString().indexOf("JDSU"));
     }
 }
