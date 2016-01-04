@@ -50,5 +50,12 @@ public class CommandTest {
         HashMap result = command.commonSocketInterface(cmd);
         System.out.println(result.get("idn").toString());
         assertNotEquals(-1, result.get("idn").toString().indexOf("JDSU"));
+        cmd.clear();
+        result.clear();
+
+        cmd.put("command", "measdefault");
+        result = command.commonSocketInterface(cmd);
+        String[] expect = {"AUTO", "MANUAL"};
+        assertArrayEquals(expect, (String[]) result.get("configuration"));
     }
 }

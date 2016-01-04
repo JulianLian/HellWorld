@@ -26,19 +26,27 @@ public class OTDRTrace {
     int TableSize; // ken event size
     String[] Table; // key event
 
-    double xoffsetToDouble(String xoffset) {
-        return Double.parseDouble(xoffset);
+    void setXoffset(String xoffset) { this.Xoffset = xoffset; }
+
+    void setXscale(String xscale) { this.Xscale = xscale; }
+
+    void setYoffset(String yoffset) { this.Yoffset = yoffset; }
+
+    void setYscale(String yscale) { this.Yscale = yscale; }
+
+    double xoffsetToDouble( ) {
+        return Double.parseDouble(this.Xoffset);
     }
 
-    double xscaleToDouble(String xscale) {
-        return Double.parseDouble(xscale);
+    double xscaleToDouble( ) {
+        return Double.parseDouble(this.Xscale);
     }
 
-    double yoffsetToDouble(String yoffset) {
-        return Double.parseDouble(yoffset);
+    double yoffsetToDouble( ) {
+        return Double.parseDouble(this.Yoffset);
     }
 
-    double yscaleToDouble(String yscale) {
-        return Double.parseDouble(yscale);
+    double yscaleToDouble( ) {
+        return Double.parseDouble(this.Yscale);
     }
 }
