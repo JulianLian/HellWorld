@@ -15,7 +15,7 @@ public class CommandTest {
     @Test
     public void testConvertToCmdline() throws Exception {
         Command command = new Command();
-        HashMap<String, String> cmd = new HashMap<>();
+        HashMap<String, String> cmd = new HashMap<String,String>();
         cmd.put("command", "FUNCTION");
         String cmdLine = command.convertToCmdline(cmd);
         assertEquals("OTU:MODUle:CALFUNC:LIST? MOD1", cmdLine);
