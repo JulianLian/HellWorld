@@ -4,11 +4,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -25,7 +20,6 @@ public class Command {
                 cmdLine = "idn?";
                 break;
             case "MEASDEFAULT":
-
                 break;
             case "MODULE":
                 // PC : OTU:MODUle:DETect?
@@ -72,21 +66,22 @@ public class Command {
                 cmdLine = "OTU:MODUle:CALOT:Lres? "+
                         cmd.get("module")+","+cmd.get("function")+","+cmd.get("pulse")+","+cmd.get("range");
                 break;
-            case "START":
+            case "MEASMANUAL":
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
-                // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
-                cmdLine = "otu:mealink:webconfig? "+
-                        cmd.get("module")+","+ // <Module>: MOD1 or MOD2
-                        cmd.get("switch")+","+ // <Switch Number>: 0 for local
-                        "#170001"+cmd.get("port")+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
-                        cmd.get("manual")+","+ // <Autoconfig> :  [MANual,AUTO]
-                        cmd.get("pulse")+","+ // <Pulsewidth> : string of characters
-                        cmd.get("range")+","+ // <Range> : string of characters
-                        cmd.get("time")+","+ // <Acquisition Time> : [5 : 600 ] in seconds
-                        cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
-                        cmd.get("resolution")+","+ // <Laser> : string of characters
-                        cmd.get("function"); // <Function name> : ["SM-OTDR"]
-                break;
+            // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
+            cmdLine = "otu:mealink:webconfig? "+
+                    cmd.get("module")+","+ // <Module>: MOD1 or MOD2
+                    cmd.get("switch")+","+ // <Switch Number>: 0 for local
+                    "#1700010"+cmd.get("otu_out")+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
+                    cmd.get("configuration")+","+ // <Autoconfig> :  [MANual,AUTO]
+                    cmd.get("pulse")+","+ // <Pulsewidth> : string of characters
+                    cmd.get("range")+","+ // <Range> : string of characters
+                    cmd.get("time")+","+ // <Acquisition Time> : [5 : 600 ] in seconds
+                    //cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
+                    "1.46500"+","+
+                    cmd.get("resolution")+","+ // <Laser> : string of characters
+                    cmd.get("function"); // <Function name> : ["SM-OTDR"]
+            break;
             case "TCPPORT":
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
                 // RTU: 8002
@@ -168,10 +163,6 @@ public class Command {
     HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
         switch (cmd.get("command").toUpperCase()) {
-            case "MEASDEFAULT":
-                result.put("module", "MOD1");
-
-                break;
             case "BUFFER":
                 double xoffset = 0.000000; //to be completed
                 double xscale = 6.39488995E-01; //to be completed
@@ -197,15 +188,82 @@ public class Command {
         return result;
     }
 
-    HashMap commonSocketInterface(HashMap<String, String> cmd) {
+    private boolean needSend(String cmdLine) {
+        return !cmdLine.equals("NEEDNOT");
+    }
+
+    private HashMap measureTrace(HashMap<String, String> cmd) {
+        return null;
+    }
+
+    private HashMap measureOnDemand(HashMap<String, String> cmd) {
         String cmdLine = convertToCmdline(cmd);
-        byte[] rcvBuff = new byte[0];
-        if (needSend(cmdLine))
+        byte[] rcvBuff = sendAndEcho(cmdLine);
+        HashMap result = parseReceiveBuffer(cmd,rcvBuff);
+        if (result != null) {
+            HashMap newCmd = new HashMap();
+            newCmd.put("command", "status?");
+            cmdLine = convertToCmdline(newCmd);
             rcvBuff = sendAndEcho(cmdLine);
+            result = parseReceiveBuffer(newCmd, rcvBuff);
+        } else {
+            result.clear();
+            result.put("status", "error:fail to add measurement");
+        }
+
+        return result;
+    }
+
+    private HashMap measureDefault(HashMap<String, String> cmd) {
+        HashMap measureDefaultArgs = new HashMap();
+        measureDefaultArgs.put("module", "MOD1");
+        measureDefaultArgs.put("function", "\"SM-OTDR\"");
+        measureDefaultArgs.put("OTU", "0");
+//        measureDefaultArgs.put("nb_otau", "1");
+        measureDefaultArgs.put("switch", "0");
+        String[] otu_in_options = {"01"};
+        measureDefaultArgs.put("otu_in", otu_in_options);
+        String[] otu_out_options = {"01","02","03","04","05","06","07","08","09","10","11","12"};
+        measureDefaultArgs.put("otu_out", otu_out_options);
+        measureDefaultArgs.put("otu_used", "1");  // the checkbox
+        String[] configuration_options = {"AUTO", "MANUAL"};
+        measureDefaultArgs.put("configuration", configuration_options);
+        measureDefaultArgs.put("laser", "1650");
+        String[] pulse_options = {"3","30","100","300","1000","3000","10000","20000"};
+        measureDefaultArgs.put("pulse", pulse_options);
+        String[] range_options = {"2","5","10","20","40"};
+        measureDefaultArgs.put("range", range_options);
+        String[] resolution_options = {"0","4","8","16","32","64"};
+        measureDefaultArgs.put("resolution", resolution_options);
+        measureDefaultArgs.put("time", "20");
+//        measureDefaultArgs.put("duration_min", "0");
+//        measureDefaultArgs.put("duration_sec", "20");
+
+//        measureDefaultArgs.put("buffer_otau", "NOK");
+
+        return measureDefaultArgs;
+    }
+
+    private HashMap singleCommand(HashMap<String, String> cmd) {
+        String cmdLine = convertToCmdline(cmd);
+        byte[] rcvBuff = sendAndEcho(cmdLine);
         return parseReceiveBuffer(cmd, rcvBuff);
     }
 
-    private boolean needSend(String cmdLine) {
-        return !cmdLine.equals("NEEDNOT");
+    HashMap mapCommand(HashMap<String, String> cmd) {
+        switch (cmd.get("command").toUpperCase()) {
+            case "MEASDEFAULT":
+                return measureDefault(cmd);
+            case "MEASMANUAL":
+                return measureOnDemand(cmd);
+            case "MEASTRACE":
+                return measureTrace(cmd);
+            default:
+                return singleCommand(cmd);
+        }
+    }
+
+    HashMap commonSocketInterface(HashMap<String, String> cmd) {
+        return mapCommand(cmd);
     }
 }
