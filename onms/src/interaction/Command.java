@@ -14,10 +14,13 @@ public class Command {
     public Command() {    }
 
     String convertToCmdline(HashMap<String, String> cmd) {
-        String cmdLine = "NEEDNOT";
+        String cmdLine = cmd.get("command");
         switch (cmd.get("command").toUpperCase()) {
-            case "IDN?":
-                cmdLine = "idn?";
+            case "*IDN?":
+                cmdLine = "*idn?";
+                break;
+            case "*ERS?":
+                cmdLine = "*ers?";
                 break;
             case "MEASDEFAULT":
                 break;
@@ -69,7 +72,7 @@ public class Command {
             case "MEASMANUAL":
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
             // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
-            cmdLine = "otu:mealink:webconfig? "+
+            cmdLine = "otu:mealink:SI:webconfig? "+
                     cmd.get("module")+","+ // <Module>: MOD1 or MOD2
                     cmd.get("switch")+","+ // <Switch Number>: 0 for local
                     "#1700010"+cmd.get("otu_out")+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
@@ -79,12 +82,16 @@ public class Command {
                     cmd.get("time")+","+ // <Acquisition Time> : [5 : 600 ] in seconds
                     //cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
                     "1.46500"+","+
+                    cmd.get("laser")+" nm,"+
                     cmd.get("resolution")+","+ // <Laser> : string of characters
                     cmd.get("function"); // <Function name> : ["SM-OTDR"]
             break;
             case "TCPPORT":
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
                 // RTU: 8002
+                break;
+            case "STATUS?":
+                cmdLine = "OTU:MEAS:STATUS?";
                 break;
             case "BUFFER":
 //                cmdLine = "OTU:MEASure:RESULT?";
@@ -100,6 +107,7 @@ public class Command {
             default:
                 break;
         }
+        System.out.println("cmdLine: "+cmdLine);
         return cmdLine;
     }
 
@@ -163,7 +171,10 @@ public class Command {
     HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
         switch (cmd.get("command").toUpperCase()) {
-            case "BUFFER":
+            case "MEASMANUAL":
+                result.put("file",new String(rcvBuffer));
+                break;
+            case "MEASTRACE":
                 double xoffset = 0.000000; //to be completed
                 double xscale = 6.39488995E-01; //to be completed
                 double yoffset = -13.700909; //to be completed
@@ -175,8 +186,14 @@ public class Command {
                 result.put("yscale", yscale);
                 result.put("points", parser.parseDataPoints(rcvBuffer));
                 break;
-            case "IDN?":
+            case "*IDN?":
                 result.put("idn", new String(rcvBuffer));
+                break;
+            case "*ERS?":
+                result.put("ers", new String(rcvBuffer));
+                break;
+            case "STATUS?":
+                result.put("status", new String(rcvBuffer));
                 break;
             case "TABLE":
                 break;
@@ -188,10 +205,6 @@ public class Command {
         return result;
     }
 
-    private boolean needSend(String cmdLine) {
-        return !cmdLine.equals("NEEDNOT");
-    }
-
     private HashMap measureTrace(HashMap<String, String> cmd) {
         return null;
     }
@@ -199,9 +212,17 @@ public class Command {
     private HashMap measureOnDemand(HashMap<String, String> cmd) {
         String cmdLine = convertToCmdline(cmd);
         byte[] rcvBuff = sendAndEcho(cmdLine);
-        HashMap result = parseReceiveBuffer(cmd,rcvBuff);
-        if (result != null) {
+        System.out.println("ECHO: "+new String(rcvBuff));
+        HashMap result = parseReceiveBuffer(cmd, rcvBuff);
+
+        if (result.get("file").toString().indexOf(".sor") != -1) {
             HashMap newCmd = new HashMap();
+//            newCmd.put("command", "*ers?");
+//            cmdLine = convertToCmdline(newCmd);
+//            rcvBuff = sendAndEcho(cmdLine);
+//            result = parseReceiveBuffer(newCmd, rcvBuff);
+
+            newCmd.clear();
             newCmd.put("command", "status?");
             cmdLine = convertToCmdline(newCmd);
             rcvBuff = sendAndEcho(cmdLine);

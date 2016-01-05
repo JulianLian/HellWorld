@@ -17,6 +17,7 @@ public class CommandTest {
         Command command = new Command();
         HashMap<String, String> cmd = new HashMap<String,String>();
         cmd.put("command", "FUNCTION");
+        cmd.put("module", "MOD1");
         String cmdLine = command.convertToCmdline(cmd);
         assertEquals("OTU:MODUle:CALFUNC:LIST? MOD1", cmdLine);
     }
@@ -46,7 +47,8 @@ public class CommandTest {
     public void testCommonSocketInterface() {
         Command command = new Command();
         HashMap cmd = new HashMap();
-        cmd.put("command", "idn?");
+        cmd.put("command", "*idn?");
+//        HashMap result;
         HashMap result = command.commonSocketInterface(cmd);
         System.out.println(result.get("idn").toString());
         assertNotEquals(-1, result.get("idn").toString().indexOf("JDSU"));
@@ -55,7 +57,28 @@ public class CommandTest {
 
         cmd.put("command", "measdefault");
         result = command.commonSocketInterface(cmd);
-        String[] expect = {"AUTO", "MANUAL"};
-        assertArrayEquals(expect, (String[]) result.get("configuration"));
+        String[] expects = {"AUTO", "MANUAL"};
+        assertArrayEquals(expects, (String[]) result.get("configuration"));
+        cmd.clear();
+        result.clear();
+
+        cmd.put("command", "measManual");
+        cmd.put("module", "MOD1");
+        cmd.put("function", "\"SM-OTDR\"");
+        cmd.put("switch","0");
+        cmd.put("otu_out", "01");
+        cmd.put("configuration", "MANual");
+        cmd.put("pulse", "1000");
+        cmd.put("range", "20");
+        cmd.put("time", "15");
+        //cmd.put("index", "1.46500");
+        cmd.put("laser", "1650");
+        cmd.put("resolution", "64");
+        result = command.commonSocketInterface(cmd);
+        System.out.println(result.get("status"));
+        assertNotEquals(-1, result.get("status").toString().indexOf("WAITING"));
+//        assert("IN_PROGRESS".equals(result.get("status")) || "WAITING".equals(result.get("status")));
+        cmd.clear();
+        result.clear();
     }
 }
