@@ -4,27 +4,27 @@ package interaction;
  * Created by Julian on 16/1/2.
  */
 public class OTDRTrace {
-    String Module; // Type of plug-in having done the acquisition
-    String Date; // Acquisition date
-    String Function;
-    String SwitchNumber;
-    String PortNumber;
-    String AutoConfig; // Start automatic measurements and answers OK
-    String Pulsewidth; // Pulse used
-    String Range; // Range used
-    String AcqTime; // Acquisition time
-    String Nindex; // Fiber index
-    String Kcoeff; // Backscatter coefficient
-    String Laser; // Laser used
-    String Resolution; // Resolution used
+    static String Module; // Type of plug-in having done the acquisition
+    static String Date; // Acquisition date
+    static String Function;
+    static String SwitchNumber;
+    static String PortNumber;
+    static String AutoConfig; // Start automatic measurements and answers OK
+    static String Pulsewidth; // Pulse used
+    static String Range; // Range used
+    static String AcqTime; // Acquisition time
+    static String Nindex; // Fiber index
+    static String Kcoeff; // Backscatter coefficient
+    static String Laser; // Laser used
+    static String Resolution; // Resolution used
 
-    String Xoffset;
-    String Xscale;
-    String Yoffset;
-    String Yscale;
-    byte[] DataPoints; // data points
-    int TableSize; // ken event size
-    String[] Table; // key event
+    static String Xoffset;
+    static String Xscale;
+    static String Yoffset;
+    static String Yscale;
+    static byte[] DataPoints; // data points
+    static int TableSize; // ken event size
+    static String[] Table; // key event
 
     void setXoffset(String xoffset) { this.Xoffset = xoffset; }
 
@@ -49,4 +49,6 @@ public class OTDRTrace {
     double yscaleToDouble( ) {
         return Double.parseDouble(this.Yscale);
     }
+
+
 }
