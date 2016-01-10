@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -15,21 +17,21 @@ public class CommandHandle {
 
     String convertToCmdline(HashMap<String, String> cmd) {
         String cmdLine = cmd.get("command");
-        switch (cmd.get("command").toUpperCase()) {
-            case "*IDN?":
+        switch (cmd.get("command")) {
+            case Cmds.IDN:
                 cmdLine = "*idn?";
                 break;
-            case "*ERS?":
+            case Cmds.ERS:
                 cmdLine = "*ers?";
                 break;
-            case "MEASDEFAULT":
+            case Cmds.MEASDEFAULT:
                 break;
             case "MODULE":
                 // PC : OTU:MODUle:DETect?
                 // RTU : MOD1: -1, ;MOD2: 5027HD,"SM-OTDR" : L1625,NONE,NONE,NONE
                 cmdLine = "OTU:MODUle:DETect?";
                 break;
-            case "FUNCTION":
+            case Cmds.FUNCTION:
                 // PC : OTU:MODUle:CALFUnctions:LIST? MOD2
                 // RTU : "SM-OTDR"
                 cmdLine = "OTU:MODUle:CALFUNC:LIST? " + cmd.get("module");
@@ -69,7 +71,7 @@ public class CommandHandle {
                 cmdLine = "OTU:MODUle:CALOT:Lres? "+
                         cmd.get("module")+","+cmd.get("function")+","+cmd.get("pulse")+","+cmd.get("range");
                 break;
-            case "MEASMANUAL":
+            case Cmds.MEASMANUAL:
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
                 // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
             cmdLine = "otu:mealink:SI:webconfig? "+
@@ -90,7 +92,7 @@ public class CommandHandle {
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
                 // RTU: 8002
                 break;
-            case "STATUS?":
+            case Cmds.MEASSTATUS:
                 cmdLine = "OTU:MEAS:STATUS?";
                 break;
             case "BUFFER":
@@ -186,19 +188,19 @@ public class CommandHandle {
                 result.put("yscale", yscale);
                 result.put("points", parser.parseDataPoints(rcvBuffer));
                 break;
-            case "*IDN?":
+            case Cmds.IDN:
                 result.put("idn", new String(rcvBuffer));
                 break;
-            case "*ERS?":
+            case Cmds.ERS:
                 result.put("ers", new String(rcvBuffer));
                 break;
-            case "STATUS?":
+            case Cmds.MEASSTATUS:
                 result.put("status", new String(rcvBuffer));
                 break;
             case "TABLE":
                 break;
             default:
-                System.out.println("CommandHandle " + cmd.get("command") + "not support!");
+                System.out.println("Command \"" + cmd.get("command") + "\" not support!");
                 break;
         }
 
@@ -223,7 +225,7 @@ public class CommandHandle {
 //            result = parseReceiveBuffer(newCmd, rcvBuff);
 
             newCmd.clear();
-            newCmd.put("command", "status?");
+            newCmd.put("command", Cmds.MEASSTATUS);
             cmdLine = convertToCmdline(newCmd);
             rcvBuff = sendAndEcho(cmdLine);
             result = parseReceiveBuffer(newCmd, rcvBuff);
@@ -237,7 +239,9 @@ public class CommandHandle {
 
     private HashMap measureDefault(HashMap<String, String> cmd) {
         HashMap measureDefaultArgs = new HashMap();
-        measureDefaultArgs.put("module", "MOD1");
+
+        measureDefaultArgs.put("module", new ArrayList<String>(Arrays.asList("MOD1")));
+//        measureDefaultArgs.put("module", "MOD1");
         measureDefaultArgs.put("function", "\"SM-OTDR\"");
         measureDefaultArgs.put("OTU", "0");
 //        measureDefaultArgs.put("nb_otau", "1");

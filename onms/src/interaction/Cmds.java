@@ -4,6 +4,9 @@ package interaction;
  * Created by Julian on 2016/1/9.
  */
 public class Cmds {
+    public static final String IDN = "*idn?";
+    public static final String ERS = "*ers?";
+
     public static final String MODULE = "module";
     public static final String FUNCTION = "function";
     public static final String OTU = "OTU";
@@ -25,5 +28,7 @@ public class Cmds {
     public static final String MEASDEFAULT = "measDefault";
     public static final String MEASMANUAL = "measOnDemand";
     public static final String MEASTRACE = "measTrace";
+
+    public static final String MEASSTATUS = "measStatus";
 
 }

@@ -15,7 +15,7 @@ public class CommandHandleTest {
     public void testConvertToCmdline() throws Exception {
         CommandHandle commandHandle = new CommandHandle();
         HashMap<String, String> cmd = new HashMap<String,String>();
-        cmd.put("commandHandle", "FUNCTION");
+        cmd.put("command", Cmds.FUNCTION);
         cmd.put("module", "MOD1");
         String cmdLine = commandHandle.convertToCmdline(cmd);
         assertEquals("OTU:MODUle:CALFUNC:LIST? MOD1", cmdLine);
@@ -46,7 +46,7 @@ public class CommandHandleTest {
     public void testCommonSocketInterface() {
         CommandHandle commandHandle = new CommandHandle();
         HashMap cmd = new HashMap();
-        cmd.put("commandHandle", "*idn?");
+        cmd.put("command", Cmds.IDN);
 //        HashMap result;
         HashMap result = commandHandle.commonSocketInterface(cmd);
         System.out.println(result.get("idn").toString());
@@ -54,14 +54,14 @@ public class CommandHandleTest {
         cmd.clear();
         result.clear();
 
-        cmd.put("commandHandle", "measdefault");
+        cmd.put("command", Cmds.MEASDEFAULT);
         result = commandHandle.commonSocketInterface(cmd);
         String[] expects = {"AUTO", "MANUAL"};
         assertArrayEquals(expects, (String[]) result.get("configuration"));
         cmd.clear();
         result.clear();
 
-        cmd.put("commandHandle", "measManual");
+        cmd.put("command", Cmds.MEASMANUAL);
         cmd.put("module", "MOD1");
         cmd.put("function", "\"SM-OTDR\"");
         cmd.put("switch","0");
