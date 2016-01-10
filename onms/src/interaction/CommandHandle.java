@@ -9,9 +9,9 @@ import java.util.HashMap;
 /**
  * Created by Julian on 2015/12/21.
  */
-public class Command {
+public class CommandHandle {
 
-    public Command() {    }
+    public CommandHandle() {    }
 
     String convertToCmdline(HashMap<String, String> cmd) {
         String cmdLine = cmd.get("command");
@@ -71,7 +71,7 @@ public class Command {
                 break;
             case "MEASMANUAL":
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
-            // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
+                // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
             cmdLine = "otu:mealink:SI:webconfig? "+
                     cmd.get("module")+","+ // <Module>: MOD1 or MOD2
                     cmd.get("switch")+","+ // <Switch Number>: 0 for local
@@ -94,7 +94,7 @@ public class Command {
                 cmdLine = "OTU:MEAS:STATUS?";
                 break;
             case "BUFFER":
-//                cmdLine = "OTU:MEASure:RESULT?";
+                //  cmdLine = "OTU:MEASure:RESULT?";
                 cmdLine = "CURve:BUFfer?";
                 break;
             case "TABLE":
@@ -170,11 +170,11 @@ public class Command {
 
     HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
-        switch (cmd.get("command").toUpperCase()) {
-            case "MEASMANUAL":
+        switch (cmd.get("command")) {
+            case Cmds.MEASMANUAL:
                 result.put("file",new String(rcvBuffer));
                 break;
-            case "MEASTRACE":
+            case Cmds.MEASTRACE:
                 double xoffset = 0.000000; //to be completed
                 double xscale = 6.39488995E-01; //to be completed
                 double yoffset = -13.700909; //to be completed
@@ -198,7 +198,7 @@ public class Command {
             case "TABLE":
                 break;
             default:
-                System.out.println("Command " + cmd.get("command") + "not support!");
+                System.out.println("CommandHandle " + cmd.get("command") + "not support!");
                 break;
         }
 
@@ -272,12 +272,12 @@ public class Command {
     }
 
     HashMap mapCommand(HashMap<String, String> cmd) {
-        switch (cmd.get("command").toUpperCase()) {
-            case "MEASDEFAULT":
+        switch (cmd.get("command")) {
+            case Cmds.MEASDEFAULT:
                 return measureDefault(cmd);
-            case "MEASMANUAL":
+            case Cmds.MEASMANUAL:
                 return measureOnDemand(cmd);
-            case "MEASTRACE":
+            case Cmds.MEASTRACE:
                 return measureTrace(cmd);
             default:
                 return singleCommand(cmd);

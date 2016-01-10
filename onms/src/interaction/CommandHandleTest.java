@@ -3,40 +3,39 @@ package interaction;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
 /**
  * Created by Julian on 2015/12/27.
  */
-public class CommandTest {
+public class CommandHandleTest {
 
     @Test
     public void testConvertToCmdline() throws Exception {
-        Command command = new Command();
+        CommandHandle commandHandle = new CommandHandle();
         HashMap<String, String> cmd = new HashMap<String,String>();
-        cmd.put("command", "FUNCTION");
+        cmd.put("commandHandle", "FUNCTION");
         cmd.put("module", "MOD1");
-        String cmdLine = command.convertToCmdline(cmd);
+        String cmdLine = commandHandle.convertToCmdline(cmd);
         assertEquals("OTU:MODUle:CALFUNC:LIST? MOD1", cmdLine);
     }
 
     @Test
     public void testGetFunctionPort() throws Exception {
-        Command command = new Command();
-        assertEquals( 8003, command.getFunctionPort("*REM"));
-        assertEquals( 8003, command.getFunctionPort("*idn?"));
-        assertEquals( 8002, command.getFunctionPort("CURve:BUFfer?"));
+        CommandHandle commandHandle = new CommandHandle();
+        assertEquals( 8003, commandHandle.getFunctionPort("*REM"));
+        assertEquals( 8003, commandHandle.getFunctionPort("*idn?"));
+        assertEquals( 8002, commandHandle.getFunctionPort("CURve:BUFfer?"));
     }
 
     @Test
     public void testSendAndEcho() throws Exception {
-        Command command = new Command();
-        assertNotEquals(-1, new String(command.sendAndEcho("OTU:NAMe?")).indexOf("TMS-OTU"));
-        assertNotEquals(-1, new String(command.sendAndEcho("*idn?")).indexOf("JDSU,OTU 8000"));
+        CommandHandle commandHandle = new CommandHandle();
+        assertNotEquals(-1, new String(commandHandle.sendAndEcho("OTU:NAMe?")).indexOf("TMS-OTU"));
+        assertNotEquals(-1, new String(commandHandle.sendAndEcho("*idn?")).indexOf("JDSU,OTU 8000"));
 
-        byte[] rcvBytes = command.sendAndEcho("CURve:Buffer?");
+        byte[] rcvBytes = commandHandle.sendAndEcho("CURve:Buffer?");
         ParseCurveBuffer parser = new ParseCurveBuffer();
         assertEquals('#', rcvBytes[0]);
         parser.parseDataPointsHead(rcvBytes);
@@ -45,24 +44,24 @@ public class CommandTest {
 
     @Test
     public void testCommonSocketInterface() {
-        Command command = new Command();
+        CommandHandle commandHandle = new CommandHandle();
         HashMap cmd = new HashMap();
-        cmd.put("command", "*idn?");
+        cmd.put("commandHandle", "*idn?");
 //        HashMap result;
-        HashMap result = command.commonSocketInterface(cmd);
+        HashMap result = commandHandle.commonSocketInterface(cmd);
         System.out.println(result.get("idn").toString());
         assertNotEquals(-1, result.get("idn").toString().indexOf("JDSU"));
         cmd.clear();
         result.clear();
 
-        cmd.put("command", "measdefault");
-        result = command.commonSocketInterface(cmd);
+        cmd.put("commandHandle", "measdefault");
+        result = commandHandle.commonSocketInterface(cmd);
         String[] expects = {"AUTO", "MANUAL"};
         assertArrayEquals(expects, (String[]) result.get("configuration"));
         cmd.clear();
         result.clear();
 
-        cmd.put("command", "measManual");
+        cmd.put("commandHandle", "measManual");
         cmd.put("module", "MOD1");
         cmd.put("function", "\"SM-OTDR\"");
         cmd.put("switch","0");
@@ -74,7 +73,7 @@ public class CommandTest {
         //cmd.put("index", "1.46500");
         cmd.put("laser", "1650");
         cmd.put("resolution", "64");
-        result = command.commonSocketInterface(cmd);
+        result = commandHandle.commonSocketInterface(cmd);
         System.out.println(result.get("status"));
         assertNotEquals(-1, result.get("status").toString().indexOf("WAITING"));
 //        assert("IN_PROGRESS".equals(result.get("status")) || "WAITING".equals(result.get("status")));

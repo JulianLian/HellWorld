@@ -1,12 +1,13 @@
 package communation;
 
+import interaction.UIAdapter;
+
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JComboBox;
 
 public class CommuParamPanelChoiceAction implements ActionListener
 {
@@ -19,7 +20,8 @@ public class CommuParamPanelChoiceAction implements ActionListener
 	}
 	public void setPermitCommuParamDealer( ICommuParamAssiciation permitCommuParamDealer)
 	{
-		this.permitCommuParamDealer = permitCommuParamDealer;
+//		this.permitCommuParamDealer = permitCommuParamDealer;
+		this.permitCommuParamDealer = new UIAdapter();
 	}
 	@Override
 	public void actionPerformed (ActionEvent e)

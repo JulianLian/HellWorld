@@ -8,7 +8,7 @@ public class ServerInfo {
     static final int ISUPort = 8000;
     static final int OTUPort = 8003;
     static final int FiberOpticPort = 8002;
-//    Command MODule:FUNCtions:PORT?
+//    CommandHandle MODule:FUNCtions:PORT?
 
     public static void setServerAddress(String serverAddress) {
         ServerInfo.ServerAddress = serverAddress;
