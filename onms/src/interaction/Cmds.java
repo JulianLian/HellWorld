@@ -31,4 +31,8 @@ public class Cmds {
 
     public static final String MEASSTATUS = "measStatus";
 
+    public static final String CURVE_BUFFER = "CURVe:BUFF?";
+    public static final String TABLE_SIZE = "TABle:SIZe?";
+    public static final String TABLE_LINE = "TABle:LINe?";
+
 }

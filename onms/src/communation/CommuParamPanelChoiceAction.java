@@ -1,7 +1,5 @@
 package communation;
 
-import interaction.UIAdapter;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,8 +18,7 @@ public class CommuParamPanelChoiceAction implements ActionListener
 	}
 	public void setPermitCommuParamDealer( ICommuParamAssiciation permitCommuParamDealer)
 	{
-//		this.permitCommuParamDealer = permitCommuParamDealer;
-		this.permitCommuParamDealer = new UIAdapter();
+		this.permitCommuParamDealer = permitCommuParamDealer;
 	}
 	@Override
 	public void actionPerformed (ActionEvent e)
@@ -62,12 +59,14 @@ public class CommuParamPanelChoiceAction implements ActionListener
 				commuParamPanel.pulseWidthCB.setEnabled(true);
 				commuParamPanel.rangeCB.setEnabled(true);
 				commuParamPanel.resolutionCB.setEnabled(true);
+                selectedItems.put(Protocol.MANU_CONFIG, selectedVal);
 			}
 			else if(selectedVal.equals(Protocol.AUTO_CONFIG))
 			{
 				commuParamPanel.pulseWidthCB.setEnabled(false);
 				commuParamPanel.rangeCB.setEnabled(false);
 				commuParamPanel.resolutionCB.setEnabled(false);
+                selectedItems.put(Protocol.AUTO_CONFIG, selectedVal);
 			}			
 		}
 

@@ -1,5 +1,7 @@
 package interaction;
 
+import communation.Protocol;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -74,7 +76,8 @@ public class CommandHandle {
             case Cmds.MEASMANUAL:
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
                 // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
-            cmdLine = "otu:mealink:SI:webconfig? "+
+                /*
+                cmdLine = "otu:mealink:SI:webconfig? "+
                     cmd.get("module")+","+ // <Module>: MOD1 or MOD2
                     cmd.get("switch")+","+ // <Switch Number>: 0 for local
                     "#1700010"+cmd.get("otu_out")+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
@@ -87,6 +90,20 @@ public class CommandHandle {
                     cmd.get("laser")+" nm,"+
                     cmd.get("resolution")+","+ // <Laser> : string of characters
                     cmd.get("function"); // <Function name> : ["SM-OTDR"]
+                */
+                cmdLine = "otu:mealink:SI:webconfig? "+
+                    cmd.get(Protocol.MODULE)+","+ // <Module>: MOD1 or MOD2
+                    "0,"+ // <Switch Number>: 0 for local
+                    "#1700010"+cmd.get(Protocol.OTU_OUT)+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
+                    cmd.get(Protocol.MANU_CONFIG)+","+ // <Autoconfig> :  [MANual,AUTO]
+                    cmd.get(Protocol.PULSE_WIDTH)+","+ // <Pulsewidth> : string of characters
+                    cmd.get(Protocol.RANGE)+","+ // <Range> : string of characters
+                    cmd.get(Protocol.ACQUISITION_TIME)+","+ // <Acquisition Time> : [5 : 600 ] in seconds
+                    //cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
+                    "1.46500,"+
+                    cmd.get(Protocol.WAVE_LENGTH)+" nm,"+
+                    cmd.get(Protocol.RESOLUTION)+","+ // <Laser> : string of characters
+                    cmd.get(Protocol.FUNCTION); // <Function name> : ["SM-OTDR"]
             break;
             case "TCPPORT":
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
@@ -95,16 +112,18 @@ public class CommandHandle {
             case Cmds.MEASSTATUS:
                 cmdLine = "OTU:MEAS:STATUS?";
                 break;
-            case "BUFFER":
+            case Cmds.CURVE_BUFFER:
                 //  cmdLine = "OTU:MEASure:RESULT?";
                 cmdLine = "CURve:BUFfer?";
                 break;
-            case "TABLE":
+            case Cmds.TABLE_SIZE:
                 // PC : TABle:SIZe?
                 // RTU: 4
                 cmdLine = "TABle:SIZE?";
+            case Cmds.TABLE_LINE:
                 // PC : TABle:LINe? 2
                 // RTU: 2,Reflection, 40.29,,>-58.65,, 35.97,
+                cmdLine = "TABle:LINe? "+cmd.get("line_num");
                 break;
             default:
                 break;
@@ -197,7 +216,7 @@ public class CommandHandle {
             case Cmds.MEASSTATUS:
                 result.put("status", new String(rcvBuffer));
                 break;
-            case "TABLE":
+            case Cmds.TABLE_SIZE:
                 break;
             default:
                 System.out.println("Command \"" + cmd.get("command") + "\" not support!");
@@ -291,4 +310,42 @@ public class CommandHandle {
     HashMap commonSocketInterface(HashMap<String, String> cmd) {
         return mapCommand(cmd);
     }
+
+    OTDRTrace getOTDRTrace() {
+        OTDRTrace trace = new OTDRTrace();
+
+        HashMap newCmd = new HashMap();
+        newCmd.put("command", Cmds.MEASSTATUS);
+        String cmdLine = convertToCmdline(newCmd);
+        byte[] rcvBuff = sendAndEcho(cmdLine);
+        if (!(new String(rcvBuff)).equalsIgnoreCase("AVAILABLE")) {
+            System.out.println("Trace not available");
+            return null;
+        }
+
+        newCmd.clear();
+        newCmd.put("command", Cmds.CURVE_BUFFER);
+        cmdLine = convertToCmdline(newCmd);
+        rcvBuff = sendAndEcho(cmdLine);
+        trace.DataPoints = rcvBuff;
+
+        newCmd.clear();
+        newCmd.put("command", Cmds.TABLE_SIZE);
+        cmdLine = convertToCmdline(newCmd);
+        rcvBuff = sendAndEcho(cmdLine);
+        int keyEventSize = rcvBuff[0] - '0';
+        trace.KeyEventSize = keyEventSize;
+
+        for (int i = 0; i < keyEventSize; i++) {
+            newCmd.clear();
+            newCmd.put("command", Cmds.TABLE_LINE);
+            newCmd.put("line_num", Integer.toString(i));
+            cmdLine = convertToCmdline(newCmd);
+            rcvBuff = sendAndEcho(cmdLine);
+            trace.KeyEvents[i] = new String(rcvBuff);
+        }
+
+        return trace;
+    }
+
 }
