@@ -1,6 +1,5 @@
 package interaction;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
@@ -14,27 +13,27 @@ public class OTDRTraceTest {
     public void testXoffsetToDouble() throws Exception {
         OTDRTrace trace = new OTDRTrace();
         trace.setXoffset("0");
-        assertEquals(0.0, trace.xoffsetToDouble());
+        assertEquals(0.0, trace.getDoubleXoffset());
     }
 
     @Test
     public void testXscaleToDouble() throws Exception {
         OTDRTrace trace = new OTDRTrace();
         trace.setXscale("6.39488995E-01");
-        assertEquals(0.639488995, trace.xscaleToDouble());
+        assertEquals(0.639488995, trace.getDoubleXscale());
     }
 
     @Test
     public void testYoffsetToDouble() throws Exception {
         OTDRTrace trace = new OTDRTrace();
         trace.setYoffset("-13.700909");
-        assertEquals(-13.700909, trace.yoffsetToDouble());
+        assertEquals(-13.700909, trace.getDoubleYoffset());
     }
 
     @Test
     public void testYscaleToDouble() throws Exception {
         OTDRTrace trace = new OTDRTrace();
         trace.setYscale("0.001470");
-        assertEquals(0.001470, trace.yscaleToDouble());
+        assertEquals(0.001470, trace.getDoubleYscale());
     }
 }

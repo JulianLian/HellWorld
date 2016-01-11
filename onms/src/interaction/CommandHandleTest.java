@@ -1,5 +1,6 @@
 package interaction;
 
+import communation.Protocol;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -49,33 +50,33 @@ public class CommandHandleTest {
         cmd.put("command", Cmds.IDN);
 //        HashMap result;
         HashMap result = commandHandle.commonSocketInterface(cmd);
-        System.out.println(result.get("idn").toString());
-        assertNotEquals(-1, result.get("idn").toString().indexOf("JDSU"));
+        System.out.println(result.get(Cmds.IDN).toString());
+        assertNotEquals(-1, result.get(Cmds.IDN).toString().indexOf("JDSU"));
         cmd.clear();
         result.clear();
 
-        cmd.put("command", Cmds.MEASDEFAULT);
+        cmd.put("command", Cmds.MEAS_DEFAULT);
         result = commandHandle.commonSocketInterface(cmd);
         String[] expects = {"AUTO", "MANUAL"};
-        assertArrayEquals(expects, (String[]) result.get("configuration"));
+        assertArrayEquals(expects, (String[]) result.get(Protocol.MANU_CONFIG));
         cmd.clear();
         result.clear();
 
-        cmd.put("command", Cmds.MEASMANUAL);
-        cmd.put("module", "MOD1");
-        cmd.put("function", "\"SM-OTDR\"");
+        cmd.put("command", Cmds.MEAS_MANUAL);
+        cmd.put(Protocol.MODULE, "MOD1");
+        cmd.put(Protocol.FUNCTION, "\"SM-OTDR\"");
         cmd.put("switch","0");
-        cmd.put("otu_out", "01");
-        cmd.put("configuration", "MANual");
-        cmd.put("pulse", "1000");
-        cmd.put("range", "20");
-        cmd.put("time", "15");
+        cmd.put(Protocol.OTU_OUT, "01");
+        cmd.put(Protocol.MANU_CONFIG, "MANual");
+        cmd.put(Protocol.PULSE_WIDTH, "1000");
+        cmd.put(Protocol.RANGE, "20");
+        cmd.put(Protocol.ACQUISITION_TIME, "15");
         //cmd.put("index", "1.46500");
-        cmd.put("laser", "1650");
-        cmd.put("resolution", "64");
+        cmd.put(Protocol.WAVE_LENGTH, "1650");
+        cmd.put(Protocol.RESOLUTION, "64");
         result = commandHandle.commonSocketInterface(cmd);
-        System.out.println(result.get("status"));
-        assertNotEquals(-1, result.get("status").toString().indexOf("WAITING"));
+
+        assertNotEquals(-1, result.get(Cmds.MEAS_STATUS).toString().indexOf("WAITING"));
 //        assert("IN_PROGRESS".equals(result.get("status")) || "WAITING".equals(result.get("status")));
         cmd.clear();
         result.clear();

@@ -26,7 +26,7 @@ public class CommandHandle {
             case Cmds.ERS:
                 cmdLine = "*ers?";
                 break;
-            case Cmds.MEASDEFAULT:
+            case Cmds.MEAS_DEFAULT:
                 break;
             case "MODULE":
                 // PC : OTU:MODUle:DETect?
@@ -73,7 +73,7 @@ public class CommandHandle {
                 cmdLine = "OTU:MODUle:CALOT:Lres? "+
                         cmd.get("module")+","+cmd.get("function")+","+cmd.get("pulse")+","+cmd.get("range");
                 break;
-            case Cmds.MEASMANUAL:
+            case Cmds.MEAS_MANUAL:
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
                 // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
                 /*
@@ -109,23 +109,43 @@ public class CommandHandle {
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
                 // RTU: 8002
                 break;
-            case Cmds.MEASSTATUS:
+            case Cmds.MEAS_STATUS:
                 cmdLine = "OTU:MEAS:STATUS?";
                 break;
             case Cmds.CURVE_BUFFER:
                 //  cmdLine = "OTU:MEASure:RESULT?";
                 cmdLine = "CURve:BUFfer?";
                 break;
+            case Cmds.CURVE_XOFFSET:
+                cmdLine = "CURve:XOFFset?";
+                break;
+            case Cmds.CURVE_XSCALE:
+                cmdLine = "CURve:XSCale?";
+                break;
+            case Cmds.CURVE_XUNIT:
+                cmdLine = "CURve:XUNit?";
+                break;
+            case Cmds.CURVE_YOFFSET:
+                cmdLine = "CURve:YOFFset?";
+                break;
+            case Cmds.CURVE_YSCALE:
+                cmdLine = "CURve:YSCale?";
+                break;
+            case Cmds.CURVE_YUNIT:
+                cmdLine = "CURve:YUNit?";
+                break;
             case Cmds.TABLE_SIZE:
                 // PC : TABle:SIZe?
                 // RTU: 4
                 cmdLine = "TABle:SIZE?";
+                break;
             case Cmds.TABLE_LINE:
                 // PC : TABle:LINe? 2
                 // RTU: 2,Reflection, 40.29,,>-58.65,, 35.97,
                 cmdLine = "TABle:LINe? "+cmd.get("line_num");
                 break;
             default:
+                System.out.println("Command \"" + cmd.get("command") + "\" not support!");
                 break;
         }
         System.out.println("cmdLine: "+cmdLine);
@@ -192,10 +212,10 @@ public class CommandHandle {
     HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
         switch (cmd.get("command")) {
-            case Cmds.MEASMANUAL:
+            case Cmds.MEAS_MANUAL:
                 result.put("file",new String(rcvBuffer));
                 break;
-            case Cmds.MEASTRACE:
+            case Cmds.MEAS_TRACE:
                 double xoffset = 0.000000; //to be completed
                 double xscale = 6.39488995E-01; //to be completed
                 double yoffset = -13.700909; //to be completed
@@ -208,13 +228,13 @@ public class CommandHandle {
                 result.put("points", parser.parseDataPoints(rcvBuffer));
                 break;
             case Cmds.IDN:
-                result.put("idn", new String(rcvBuffer));
+                result.put(Cmds.IDN, new String(rcvBuffer));
                 break;
             case Cmds.ERS:
-                result.put("ers", new String(rcvBuffer));
+                result.put(Cmds.ERS, new String(rcvBuffer));
                 break;
-            case Cmds.MEASSTATUS:
-                result.put("status", new String(rcvBuffer));
+            case Cmds.MEAS_STATUS:
+                result.put(Cmds.MEAS_STATUS, new String(rcvBuffer));
                 break;
             case Cmds.TABLE_SIZE:
                 break;
@@ -244,13 +264,13 @@ public class CommandHandle {
 //            result = parseReceiveBuffer(newCmd, rcvBuff);
 
             newCmd.clear();
-            newCmd.put("command", Cmds.MEASSTATUS);
+            newCmd.put("command", Cmds.MEAS_STATUS);
             cmdLine = convertToCmdline(newCmd);
             rcvBuff = sendAndEcho(cmdLine);
             result = parseReceiveBuffer(newCmd, rcvBuff);
         } else {
             result.clear();
-            result.put("status", "error:fail to add measurement");
+            result.put(Cmds.MEAS_STATUS, "error:fail to add measurement");
         }
 
         return result;
@@ -296,11 +316,11 @@ public class CommandHandle {
 
     HashMap mapCommand(HashMap<String, String> cmd) {
         switch (cmd.get("command")) {
-            case Cmds.MEASDEFAULT:
+            case Cmds.MEAS_DEFAULT:
                 return measureDefault(cmd);
-            case Cmds.MEASMANUAL:
+            case Cmds.MEAS_MANUAL:
                 return measureOnDemand(cmd);
-            case Cmds.MEASTRACE:
+            case Cmds.MEAS_TRACE:
                 return measureTrace(cmd);
             default:
                 return singleCommand(cmd);
@@ -311,41 +331,8 @@ public class CommandHandle {
         return mapCommand(cmd);
     }
 
-    OTDRTrace getOTDRTrace() {
-        OTDRTrace trace = new OTDRTrace();
-
-        HashMap newCmd = new HashMap();
-        newCmd.put("command", Cmds.MEASSTATUS);
-        String cmdLine = convertToCmdline(newCmd);
-        byte[] rcvBuff = sendAndEcho(cmdLine);
-        if (!(new String(rcvBuff)).equalsIgnoreCase("AVAILABLE")) {
-            System.out.println("Trace not available");
-            return null;
-        }
-
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_BUFFER);
-        cmdLine = convertToCmdline(newCmd);
-        rcvBuff = sendAndEcho(cmdLine);
-        trace.DataPoints = rcvBuff;
-
-        newCmd.clear();
-        newCmd.put("command", Cmds.TABLE_SIZE);
-        cmdLine = convertToCmdline(newCmd);
-        rcvBuff = sendAndEcho(cmdLine);
-        int keyEventSize = rcvBuff[0] - '0';
-        trace.KeyEventSize = keyEventSize;
-
-        for (int i = 0; i < keyEventSize; i++) {
-            newCmd.clear();
-            newCmd.put("command", Cmds.TABLE_LINE);
-            newCmd.put("line_num", Integer.toString(i));
-            cmdLine = convertToCmdline(newCmd);
-            rcvBuff = sendAndEcho(cmdLine);
-            trace.KeyEvents[i] = new String(rcvBuff);
-        }
-
-        return trace;
+    byte[] builtInCommand(HashMap<String, String> cmd) {
+        String cmdLine = convertToCmdline(cmd);
+        return sendAndEcho(cmdLine);
     }
-
 }
