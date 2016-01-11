@@ -4,6 +4,9 @@ package interaction;
  * Created by Julian on 2016/1/9.
  */
 public class Cmds {
+    public static final String IDN = "*idn?";
+    public static final String ERS = "*ers?";
+
     public static final String MODULE = "module";
     public static final String FUNCTION = "function";
     public static final String OTU = "OTU";
@@ -22,8 +25,20 @@ public class Cmds {
     public static final String MANU_CONFIG = "manual";
     public static final String AUTO_CONFIG = "auto";
 
-    public static final String MEASDEFAULT = "measDefault";
-    public static final String MEASMANUAL = "measOnDemand";
-    public static final String MEASTRACE = "measTrace";
+    public static final String MEAS_DEFAULT = "measDefault";
+    public static final String MEAS_MANUAL = "measOnDemand";
+    public static final String MEAS_TRACE = "measTrace";
+
+    public static final String MEAS_STATUS = "measStatus";
+
+    public static final String CURVE_XOFFSET = "CURVe:XOFFset?";
+    public static final String CURVE_XSCALE = "CURVe:XSCale?";
+    public static final String CURVE_XUNIT = "CURVe:XUNit?";
+    public static final String CURVE_YUNIT = "CURVe:YUNit?";
+    public static final String CURVE_YSCALE = "CURVe:YSCale?";
+    public static final String CURVE_YOFFSET = "CURVe:YOFFset?";
+    public static final String CURVE_BUFFER = "CURVe:BUFF?";
+    public static final String TABLE_SIZE = "TABle:SIZe?";
+    public static final String TABLE_LINE = "TABle:LINe?";
 
 }

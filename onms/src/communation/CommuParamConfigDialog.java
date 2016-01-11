@@ -1,6 +1,7 @@
 package communation;
 
 import dataview.CurveSelectionPanel;
+import interaction.UIAdapter;
 import main.Md711MainFrame;
 
 import javax.swing.*;
@@ -40,8 +41,8 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		this.mainFrame = mainFrame;
 		this.setResizable(false);
 		layoutPanel();
-		setAction();
 		loadInitParam();
+		setAction();
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setSize(new Dimension(700, 300));
 		setLocationRelativeTo(mainFrame);
@@ -50,6 +51,8 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	private void setAction ()
 	{
 		choiceAction = new CommuParamPanelChoiceAction(this);
+		choiceAction.setPermitCommuParamDealer(new UIAdapter());
+
 		moduleCB.addActionListener(choiceAction);
 		functionCB.addActionListener(choiceAction);
 		otuInPortCB.addActionListener(choiceAction);

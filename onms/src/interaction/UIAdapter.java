@@ -11,6 +11,10 @@ import java.util.*;
 public class UIAdapter implements ICommuParamAssiciation {
     @Override
     public Map<String, List<String>> getPermitItemWhenSelect(Map<String, String> selectedItems) {
+        System.out.println("selected Items: " + selectedItems.size());
+        for (String key : selectedItems.keySet())
+            System.out.println(key + ": " + selectedItems.get(key));
+
         if (selectedItems != null) {
             Map<String, List<String>> paramAvailable = new HashMap<>();
 
@@ -48,4 +52,5 @@ public class UIAdapter implements ICommuParamAssiciation {
 
         return null;
     }
+
 }

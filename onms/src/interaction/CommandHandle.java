@@ -1,9 +1,13 @@
 package interaction;
 
+import communation.Protocol;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -15,21 +19,21 @@ public class CommandHandle {
 
     String convertToCmdline(HashMap<String, String> cmd) {
         String cmdLine = cmd.get("command");
-        switch (cmd.get("command").toUpperCase()) {
-            case "*IDN?":
+        switch (cmd.get("command")) {
+            case Cmds.IDN:
                 cmdLine = "*idn?";
                 break;
-            case "*ERS?":
+            case Cmds.ERS:
                 cmdLine = "*ers?";
                 break;
-            case "MEASDEFAULT":
+            case Cmds.MEAS_DEFAULT:
                 break;
             case "MODULE":
                 // PC : OTU:MODUle:DETect?
                 // RTU : MOD1: -1, ;MOD2: 5027HD,"SM-OTDR" : L1625,NONE,NONE,NONE
                 cmdLine = "OTU:MODUle:DETect?";
                 break;
-            case "FUNCTION":
+            case Cmds.FUNCTION:
                 // PC : OTU:MODUle:CALFUnctions:LIST? MOD2
                 // RTU : "SM-OTDR"
                 cmdLine = "OTU:MODUle:CALFUNC:LIST? " + cmd.get("module");
@@ -69,10 +73,11 @@ public class CommandHandle {
                 cmdLine = "OTU:MODUle:CALOT:Lres? "+
                         cmd.get("module")+","+cmd.get("function")+","+cmd.get("pulse")+","+cmd.get("range");
                 break;
-            case "MEASMANUAL":
+            case Cmds.MEAS_MANUAL:
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
                 // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
-            cmdLine = "otu:mealink:SI:webconfig? "+
+                /*
+                cmdLine = "otu:mealink:SI:webconfig? "+
                     cmd.get("module")+","+ // <Module>: MOD1 or MOD2
                     cmd.get("switch")+","+ // <Switch Number>: 0 for local
                     "#1700010"+cmd.get("otu_out")+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
@@ -85,26 +90,62 @@ public class CommandHandle {
                     cmd.get("laser")+" nm,"+
                     cmd.get("resolution")+","+ // <Laser> : string of characters
                     cmd.get("function"); // <Function name> : ["SM-OTDR"]
+                */
+                cmdLine = "otu:mealink:SI:webconfig? "+
+                    cmd.get(Protocol.MODULE)+","+ // <Module>: MOD1 or MOD2
+                    "0,"+ // <Switch Number>: 0 for local
+                    "#1700010"+cmd.get(Protocol.OTU_OUT)+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
+                    cmd.get(Protocol.MANU_CONFIG)+","+ // <Autoconfig> :  [MANual,AUTO]
+                    cmd.get(Protocol.PULSE_WIDTH)+","+ // <Pulsewidth> : string of characters
+                    cmd.get(Protocol.RANGE)+","+ // <Range> : string of characters
+                    cmd.get(Protocol.ACQUISITION_TIME)+","+ // <Acquisition Time> : [5 : 600 ] in seconds
+                    //cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
+                    "1.46500,"+
+                    cmd.get(Protocol.WAVE_LENGTH)+" nm,"+
+                    cmd.get(Protocol.RESOLUTION)+","+ // <Laser> : string of characters
+                    cmd.get(Protocol.FUNCTION); // <Function name> : ["SM-OTDR"]
             break;
             case "TCPPORT":
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
                 // RTU: 8002
                 break;
-            case "STATUS?":
+            case Cmds.MEAS_STATUS:
                 cmdLine = "OTU:MEAS:STATUS?";
                 break;
-            case "BUFFER":
+            case Cmds.CURVE_BUFFER:
                 //  cmdLine = "OTU:MEASure:RESULT?";
                 cmdLine = "CURve:BUFfer?";
                 break;
-            case "TABLE":
+            case Cmds.CURVE_XOFFSET:
+                cmdLine = "CURve:XOFFset?";
+                break;
+            case Cmds.CURVE_XSCALE:
+                cmdLine = "CURve:XSCale?";
+                break;
+            case Cmds.CURVE_XUNIT:
+                cmdLine = "CURve:XUNit?";
+                break;
+            case Cmds.CURVE_YOFFSET:
+                cmdLine = "CURve:YOFFset?";
+                break;
+            case Cmds.CURVE_YSCALE:
+                cmdLine = "CURve:YSCale?";
+                break;
+            case Cmds.CURVE_YUNIT:
+                cmdLine = "CURve:YUNit?";
+                break;
+            case Cmds.TABLE_SIZE:
                 // PC : TABle:SIZe?
                 // RTU: 4
                 cmdLine = "TABle:SIZE?";
+                break;
+            case Cmds.TABLE_LINE:
                 // PC : TABle:LINe? 2
                 // RTU: 2,Reflection, 40.29,,>-58.65,, 35.97,
+                cmdLine = "TABle:LINe? "+cmd.get("line_num");
                 break;
             default:
+                System.out.println("Command \"" + cmd.get("command") + "\" not support!");
                 break;
         }
         System.out.println("cmdLine: "+cmdLine);
@@ -171,10 +212,10 @@ public class CommandHandle {
     HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
         switch (cmd.get("command")) {
-            case Cmds.MEASMANUAL:
+            case Cmds.MEAS_MANUAL:
                 result.put("file",new String(rcvBuffer));
                 break;
-            case Cmds.MEASTRACE:
+            case Cmds.MEAS_TRACE:
                 double xoffset = 0.000000; //to be completed
                 double xscale = 6.39488995E-01; //to be completed
                 double yoffset = -13.700909; //to be completed
@@ -186,19 +227,19 @@ public class CommandHandle {
                 result.put("yscale", yscale);
                 result.put("points", parser.parseDataPoints(rcvBuffer));
                 break;
-            case "*IDN?":
-                result.put("idn", new String(rcvBuffer));
+            case Cmds.IDN:
+                result.put(Cmds.IDN, new String(rcvBuffer));
                 break;
-            case "*ERS?":
-                result.put("ers", new String(rcvBuffer));
+            case Cmds.ERS:
+                result.put(Cmds.ERS, new String(rcvBuffer));
                 break;
-            case "STATUS?":
-                result.put("status", new String(rcvBuffer));
+            case Cmds.MEAS_STATUS:
+                result.put(Cmds.MEAS_STATUS, new String(rcvBuffer));
                 break;
-            case "TABLE":
+            case Cmds.TABLE_SIZE:
                 break;
             default:
-                System.out.println("CommandHandle " + cmd.get("command") + "not support!");
+                System.out.println("Command \"" + cmd.get("command") + "\" not support!");
                 break;
         }
 
@@ -223,13 +264,13 @@ public class CommandHandle {
 //            result = parseReceiveBuffer(newCmd, rcvBuff);
 
             newCmd.clear();
-            newCmd.put("command", "status?");
+            newCmd.put("command", Cmds.MEAS_STATUS);
             cmdLine = convertToCmdline(newCmd);
             rcvBuff = sendAndEcho(cmdLine);
             result = parseReceiveBuffer(newCmd, rcvBuff);
         } else {
             result.clear();
-            result.put("status", "error:fail to add measurement");
+            result.put(Cmds.MEAS_STATUS, "error:fail to add measurement");
         }
 
         return result;
@@ -237,7 +278,9 @@ public class CommandHandle {
 
     private HashMap measureDefault(HashMap<String, String> cmd) {
         HashMap measureDefaultArgs = new HashMap();
-        measureDefaultArgs.put("module", "MOD1");
+
+        measureDefaultArgs.put("module", new ArrayList<String>(Arrays.asList("MOD1")));
+//        measureDefaultArgs.put("module", "MOD1");
         measureDefaultArgs.put("function", "\"SM-OTDR\"");
         measureDefaultArgs.put("OTU", "0");
 //        measureDefaultArgs.put("nb_otau", "1");
@@ -273,11 +316,11 @@ public class CommandHandle {
 
     HashMap mapCommand(HashMap<String, String> cmd) {
         switch (cmd.get("command")) {
-            case Cmds.MEASDEFAULT:
+            case Cmds.MEAS_DEFAULT:
                 return measureDefault(cmd);
-            case Cmds.MEASMANUAL:
+            case Cmds.MEAS_MANUAL:
                 return measureOnDemand(cmd);
-            case Cmds.MEASTRACE:
+            case Cmds.MEAS_TRACE:
                 return measureTrace(cmd);
             default:
                 return singleCommand(cmd);
@@ -286,5 +329,10 @@ public class CommandHandle {
 
     HashMap commonSocketInterface(HashMap<String, String> cmd) {
         return mapCommand(cmd);
+    }
+
+    byte[] builtInCommand(HashMap<String, String> cmd) {
+        String cmdLine = convertToCmdline(cmd);
+        return sendAndEcho(cmdLine);
     }
 }
