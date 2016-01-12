@@ -343,4 +343,15 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			md.showGraph();
 		}
 
+	public void showDataPoint(double[] data)
+	{
+		for (double tempData : data)
+		{
+			InventoryData.getCanTransformedDataFromPort().add(tempData);
+			InventoryData.getDataFromPortImmutable().add(tempData);
+		}
+		WindowControlEnv.setRepaintForPortInfoCome(true);
+		md.showGraph();
+	}
+
 }

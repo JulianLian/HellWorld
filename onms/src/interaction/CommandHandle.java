@@ -18,8 +18,8 @@ public class CommandHandle {
     public CommandHandle() {    }
 
     String convertToCmdline(HashMap<String, String> cmd) {
-        String cmdLine = cmd.get("command");
-        switch (cmd.get("command")) {
+        String cmdLine = cmd.get(Cmds.CMD);
+        switch (cmd.get(Cmds.CMD)) {
             case Cmds.IDN:
                 cmdLine = "*idn?";
                 break;
@@ -28,7 +28,7 @@ public class CommandHandle {
                 break;
             case Cmds.MEAS_DEFAULT:
                 break;
-            case "MODULE":
+            case Protocol.MODULE:
                 // PC : OTU:MODUle:DETect?
                 // RTU : MOD1: -1, ;MOD2: 5027HD,"SM-OTDR" : L1625,NONE,NONE,NONE
                 cmdLine = "OTU:MODUle:DETect?";
@@ -36,42 +36,42 @@ public class CommandHandle {
             case Cmds.FUNCTION:
                 // PC : OTU:MODUle:CALFUnctions:LIST? MOD2
                 // RTU : "SM-OTDR"
-                cmdLine = "OTU:MODUle:CALFUNC:LIST? " + cmd.get("module");
+                cmdLine = "OTU:MODUle:CALFUNC:LIST? " + cmd.get(Protocol.MODULE);
                 break;
-            case "SWITCH":
+            case Cmds.SWITCH:
                 // PC : otu:switch:detect:list?
                 // RTU : 0
                 cmdLine = "OTU:SWITCH:DETECT:LIST?";
                 // PC : otu:switch:detect:desc? 0,INT
                 // RTU : OTU, "SA201004","10.33.16.63:1400"
                 break;
-            case "PORT":
+            case Protocol.OTU_OUT:
                 break;
-            case "MANUAL":
+            case Protocol.AUTO_CONFIG:
                 break;
-            case "LASER":
+            case Protocol.WAVE_LENGTH:
                 // PC : OTU:MODUle:CALLaser:LIST? MOD2, "SM-OTDR"
                 // RTU : "1625 nm"5
-                cmdLine = "OTU:MODUle:CALLaser:LIST? "+cmd.get("module")+","+cmd.get("function");
+                cmdLine = "OTU:MODUle:CALLaser:LIST? "+cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION);
                 break;
-            case "PULSE":
+            case Protocol.PULSE_WIDTH:
                 // PC : otu:module:calot:lpulse? mod2,"SM-OTDR"
                 // RTU : "3 ns","30 ns","100 ns","300 ns","1 us","3 us","10 us","20 us"
-                cmdLine = "OTU:MODUle:CALOT:LPULSE? "+cmd.get("module")+","+cmd.get("function");
+                cmdLine = "OTU:MODUle:CALOT:LPULSE? "+cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION);
                 break;
-            case "RANGE":
+            case Protocol.RANGE:
                 // PC : otu:module:calot:lrange? mod2,"SM-OTDR","3 ns"
                 // RTU : "5 km","10 km","20 km","40 km","80 km"
                 cmdLine = "OTU:MODUle:CALOT:Lrange? "+
-                        cmd.get("module")+","+cmd.get("function")+ ","+cmd.get("pulse");
+                        cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION)+ ","+cmd.get(Protocol.PULSE_WIDTH);
                 break;
-            case "TIME":
+            case Protocol.ACQUISITION_TIME:
                 break;
-            case "RESOLUTION":
+            case Protocol.RESOLUTION:
                 // PC : otu:module:calot:lres? mod2,"SM-OTDR","3 ns","5 km"
                 // RTU : "Auto","4 cm","8 cm","16 cm","32 cm","64 cm"
                 cmdLine = "OTU:MODUle:CALOT:Lres? "+
-                        cmd.get("module")+","+cmd.get("function")+","+cmd.get("pulse")+","+cmd.get("range");
+                        cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION)+","+cmd.get(Protocol.PULSE_WIDTH)+","+cmd.get(Protocol.RANGE);
                 break;
             case Cmds.MEAS_MANUAL:
                 // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
@@ -105,7 +105,7 @@ public class CommandHandle {
                     cmd.get(Protocol.RESOLUTION)+","+ // <Laser> : string of characters
                     cmd.get(Protocol.FUNCTION); // <Function name> : ["SM-OTDR"]
             break;
-            case "TCPPORT":
+            case Cmds.TCPPORT:
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
                 // RTU: 8002
                 break;
@@ -140,15 +140,15 @@ public class CommandHandle {
                 cmdLine = "TABle:SIZE?";
                 break;
             case Cmds.TABLE_LINE:
-                // PC : TABle:LINe? 2
-                // RTU: 2,Reflection, 40.29,,>-58.65,, 35.97,
-                cmdLine = "TABle:LINe? "+cmd.get("line_num");
+                // PC : TABle:LINe? 1
+                // RTU:   1,,     0.00,~ 25.614,~>-25.75,,     0.00,
+                cmdLine = "TABle:LINe? "+cmd.get(Cmds.TABLE_LINE_NUM);
                 break;
             default:
-                System.out.println("Command \"" + cmd.get("command") + "\" not support!");
+                System.out.println("Command \"" + cmd.get(Cmds.CMD) + "\" not support!");
                 break;
         }
-        System.out.println("cmdLine: "+cmdLine);
+//        System.out.println("cmdLine: "+cmdLine);
         return cmdLine;
     }
 
@@ -168,7 +168,7 @@ public class CommandHandle {
             byte[] delimit = { 0x0d,0x0a};
             OutputStream outputStream = clientSocket.getOutputStream();
 
-            outputStream.write( "*REM".concat(new String(delimit)).concat(cmdLine).concat(new String(delimit)).getBytes());
+            outputStream.write( "*REM".concat(";").concat(cmdLine).concat(new String(delimit)).getBytes());
             clientSocket.shutdownOutput();
 //            System.out.println( "*REM".concat(new String(delimit)).concat(cmdLine).concat(new String(delimit)));
 
@@ -211,21 +211,11 @@ public class CommandHandle {
 
     HashMap parseReceiveBuffer(HashMap<String, String> cmd, byte[] rcvBuffer) {
         HashMap<String, Object> result = new HashMap<>();
-        switch (cmd.get("command")) {
+        switch (cmd.get(Cmds.CMD)) {
             case Cmds.MEAS_MANUAL:
                 result.put("file",new String(rcvBuffer));
                 break;
             case Cmds.MEAS_TRACE:
-                double xoffset = 0.000000; //to be completed
-                double xscale = 6.39488995E-01; //to be completed
-                double yoffset = -13.700909; //to be completed
-                double yscale = 0.001470; //to be completed
-                ParseCurveBuffer parser = new ParseCurveBuffer(xscale, yscale, yoffset);
-                result.put("xoffset", xoffset);
-                result.put("xscale", xscale);
-                result.put("yoffset", yoffset);
-                result.put("yscale", yscale);
-                result.put("points", parser.parseDataPoints(rcvBuffer));
                 break;
             case Cmds.IDN:
                 result.put(Cmds.IDN, new String(rcvBuffer));
@@ -262,9 +252,9 @@ public class CommandHandle {
 //            cmdLine = convertToCmdline(newCmd);
 //            rcvBuff = sendAndEcho(cmdLine);
 //            result = parseReceiveBuffer(newCmd, rcvBuff);
+//            newCmd.clear();
 
-            newCmd.clear();
-            newCmd.put("command", Cmds.MEAS_STATUS);
+            newCmd.put(Cmds.CMD, Cmds.MEAS_STATUS);
             cmdLine = convertToCmdline(newCmd);
             rcvBuff = sendAndEcho(cmdLine);
             result = parseReceiveBuffer(newCmd, rcvBuff);
@@ -315,7 +305,7 @@ public class CommandHandle {
     }
 
     HashMap mapCommand(HashMap<String, String> cmd) {
-        switch (cmd.get("command")) {
+        switch (cmd.get(Cmds.CMD)) {
             case Cmds.MEAS_DEFAULT:
                 return measureDefault(cmd);
             case Cmds.MEAS_MANUAL:
@@ -331,7 +321,14 @@ public class CommandHandle {
         return mapCommand(cmd);
     }
 
-    byte[] builtInCommand(HashMap<String, String> cmd) {
+    byte[] builtInCommandWithoutParam(String cmd) {
+        HashMap newCmd = new HashMap();
+        newCmd.put(Cmds.CMD, cmd);
+        String cmdLine = convertToCmdline(newCmd);
+        return sendAndEcho(cmdLine);
+    }
+
+    byte[] builtInCommandWithParam(HashMap<String, String> cmd) {
         String cmdLine = convertToCmdline(cmd);
         return sendAndEcho(cmdLine);
     }

@@ -4,10 +4,15 @@ package interaction;
  * Created by Julian on 2016/1/9.
  */
 public class Cmds {
+    public static final String CMD = "command";
+
+
     public static final String IDN = "*idn?";
     public static final String ERS = "*ers?";
+    public static final String TCPPORT = "MODule:FUNCtion:PORT?";
 
     public static final String MODULE = "module";
+    public static final String SWITCH = "switch";
     public static final String FUNCTION = "function";
     public static final String OTU = "OTU";
 
@@ -40,5 +45,6 @@ public class Cmds {
     public static final String CURVE_BUFFER = "CURVe:BUFF?";
     public static final String TABLE_SIZE = "TABle:SIZe?";
     public static final String TABLE_LINE = "TABle:LINe?";
+    public static final String TABLE_LINE_NUM = "line_num";
 
 }

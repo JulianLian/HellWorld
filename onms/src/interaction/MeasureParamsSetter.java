@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Created by Julian on 2016/1/9.
  */
-public class UIAdapter implements ICommuParamAssiciation {
+public class MeasureParamsSetter implements ICommuParamAssiciation {
     @Override
     public Map<String, List<String>> getPermitItemWhenSelect(Map<String, String> selectedItems) {
         System.out.println("selected Items: " + selectedItems.size());

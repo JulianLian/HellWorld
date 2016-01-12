@@ -2,6 +2,7 @@ package interaction;
 
 import communation.IDataGetter;
 import communation.Protocol;
+import main.Md711MainFrame;
 
 import java.util.HashMap;
 
@@ -9,6 +10,14 @@ import java.util.HashMap;
  * Created by Julian on 2016/1/11.
  */
 public class OTDRTraceGetter implements IDataGetter {
+    private Md711MainFrame mainFrame;
+
+    public OTDRTraceGetter(Md711MainFrame mainFrame)
+    {
+        super();
+        this.mainFrame = mainFrame;
+    }
+
     @Override
     public boolean startFetchData() {
         HashMap cmdMocker = new HashMap<>();
@@ -28,6 +37,20 @@ public class OTDRTraceGetter implements IDataGetter {
         HashMap result = cmdHandler.commonSocketInterface(cmdMocker);
 
         System.out.println(result.get(Cmds.MEAS_STATUS));
+        try {
+            Thread.currentThread().sleep(30000);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
+        OTDRTrace trace = getOTDRTrace();
+        mainFrame.getGraph().showDataPoint(trace.getDoubleDataPoints());
+
+        System.out.println("Key events:");
+        for (String s : trace.KeyEvents) {
+            System.out.println(s);
+        }
 
         return true;
     }
@@ -41,62 +64,44 @@ public class OTDRTraceGetter implements IDataGetter {
         CommandHandle commandHandle = new CommandHandle();
         OTDRTrace trace = new OTDRTrace();
 
-        HashMap newCmd = new HashMap();
-        newCmd.put("command", Cmds.MEAS_STATUS);
-        byte[] rcvBuff = commandHandle.builtInCommand(newCmd);
+        byte[] rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
         if (!(new String(rcvBuff)).contains("AVAILABLE")) {
             System.out.println("STATUS: "+new String(rcvBuff));
-            System.out.println("Trace not available");
+            System.out.println("Trace not available. Please try later.");
             return null;
         }
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_XOFFSET);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XOFFSET);
         trace.setXoffset(new String(rcvBuff));
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_XSCALE);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XSCALE);
         trace.setXscale( new String(rcvBuff));
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_XUNIT);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XUNIT);
         trace.setXunit(new String(rcvBuff));
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_YOFFSET);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YOFFSET);
         trace.setYoffset( new String(rcvBuff));
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_YSCALE);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YSCALE);
         trace.setYscale( new String(rcvBuff));
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_YUNIT);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YUNIT);
         trace.setYunit( new String(rcvBuff));
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.CURVE_BUFFER);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_BUFFER);
         trace.DataPoints = rcvBuff;
 
-        newCmd.clear();
-        newCmd.put("command", Cmds.TABLE_SIZE);
-        rcvBuff = commandHandle.builtInCommand(newCmd);
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.TABLE_SIZE);
         int keyEventSize = rcvBuff[0] - '0';
         String[] keyEvents = new String[keyEventSize];
         trace.KeyEventSize = keyEventSize;
 
         for (int i = 1; i <= keyEventSize; i++) {
-            newCmd.clear();
-            newCmd.put("command", Cmds.TABLE_LINE);
-            newCmd.put("line_num", Integer.toString(i));
-            rcvBuff = commandHandle.builtInCommand(newCmd);
+            HashMap newCmd = new HashMap();
+            newCmd.put(Cmds.CMD, Cmds.TABLE_LINE);
+            newCmd.put(Cmds.TABLE_LINE_NUM, Integer.toString(i));
+            rcvBuff = commandHandle.builtInCommandWithParam(newCmd);
             keyEvents[i-1] = new String(rcvBuff);
         }
         trace.KeyEvents = keyEvents;

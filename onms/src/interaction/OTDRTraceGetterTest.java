@@ -6,7 +6,7 @@ import org.junit.Test;
  * Created by Julian on 2016/1/11.
  */
 public class OTDRTraceGetterTest {
-    static OTDRTraceGetter TestGetter = new OTDRTraceGetter();
+    static OTDRTraceGetter TestGetter = new OTDRTraceGetter(null);
     @Test
     public void testStartFetchData() throws Exception {
         TestGetter.startFetchData();
@@ -33,5 +33,6 @@ public class OTDRTraceGetterTest {
         for (String s : trace.KeyEvents) {
             System.out.println(s);
         }
+        System.out.println(trace.getDoubleDataPoints().length);
     }
 }
