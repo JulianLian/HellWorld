@@ -1,7 +1,8 @@
 package communation;
 
 import dataview.CurveSelectionPanel;
-import interaction.UIAdapter;
+import interaction.OTDRTraceGetter;
+import interaction.MeasureParamsSetter;
 import main.Md711MainFrame;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	private void setAction ()
 	{
 		choiceAction = new CommuParamPanelChoiceAction(this);
-		choiceAction.setPermitCommuParamDealer(new UIAdapter());
+		choiceAction.setPermitCommuParamDealer(new MeasureParamsSetter());
 
 		moduleCB.addActionListener(choiceAction);
 		functionCB.addActionListener(choiceAction);
@@ -295,7 +296,9 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 
 	private void createDataGetter()
 	{
-		dataGetter = new PortSinfferMocker( mainFrame);
+//		dataGetter = new PortSinfferMocker( mainFrame);
+		dataGetter = new OTDRTraceGetter(mainFrame);
+
 	}
 
 	public void setDevicePermittedItems (Map<String, List<String>> permittedVal)

@@ -7,86 +7,109 @@ import java.io.IOException;
  * Created by Julian on 16/1/2.
  */
 public class OTDRTrace {
-    static String Module; // Type of plug-in having done the acquisition
-    static String Date; // Acquisition date
-    static String Function;
-    static String SwitchNumber;
-    static String PortNumber;
-    static String AutoConfig; // Start automatic measurements and answers OK
-    static String Pulsewidth; // Pulse used
-    static String Range; // Range used
-    static String AcqTime; // Acquisition time
-    static String Nindex; // Fiber index
-    static String Kcoeff; // Backscatter coefficient
-    static String Laser; // Laser used
-    static String Resolution; // Resolution used
+    String Module; // Type of plug-in having done the acquisition
+    String Date; // Acquisition date
+    String Function;
+    String SwitchNumber;
+    String PortNumber;
+    String AutoConfig; // Start automatic measurements and answers OK
+    String Pulsewidth; // Pulse used
+    String Range; // Range used
+    String AcqTime; // Acquisition time
+    String Nindex; // Fiber index
+    String Kcoeff; // Backscatter coefficient
+    String Laser; // Laser used
+    String Resolution; // Resolution used
 
-    static String Xoffset;
-    static String Xscale;
-    public String Xunit;
-    static String Yoffset;
-    static Double DoubleYoffset;
-    static String Yscale;
-    static Double DoubleYscale;
-    public String Yunit;
-    static byte[] DataPoints; // data points
-    static int KeyEventSize; // ken event size
-    static String[] KeyEvents; // key event
+    String Xoffset;
+    String Xscale;
+    String Xunit;
+    String Yoffset;
+    Double DoubleYoffset;
+    String Yscale;
+    Double DoubleYscale;
+    String Yunit;
+    byte[] DataPoints; // data points
+    int KeyEventSize; // ken event size
+    String[] KeyEvents; // key event
 
-    void setModule(String module) { this.Module = module; }
-    String getModule() { return this.Module; }
+    public void setModule(String module) { this.Module = module; }
+    public String getModule() { return this.Module; }
 
-    void setFunction(String function) { this.Function = function; }
-    String getFunction() { return this.Function; }
+    public void setFunction(String function) { this.Function = function; }
+    public String getFunction() { return this.Function; }
 
-    void setKcoeff(String kcoeff) { this.Kcoeff = kcoeff; }
-    String getKcoeff() { return this.Kcoeff; }
+    public String getDate() { return Date;}
+    public void setDate(String date) { Date = date; }
 
-    void setLaser(String laser) { this.Laser = laser; }
-    String getLaser() { return this.Laser; }
+    public String getSwitchNumber() { return SwitchNumber; }
+    public void setSwitchNumber(String switchNumber) { SwitchNumber = switchNumber; }
 
-    void setResolution(String resolution) { this.Resolution = resolution; }
-    String getResolution() { return this.Resolution; }
+    public String getPortNumber() { return PortNumber; }
+    public void setPortNumber(String portNumber) { PortNumber = portNumber; }
 
-    void setXoffset(String xoffset) { this.Xoffset = xoffset; }
+    public String getAutoConfig() { return AutoConfig; }
+    public void setAutoConfig(String autoConfig) { AutoConfig = autoConfig; }
 
-    void setXscale(String xscale) { this.Xscale = xscale; }
+    public String getPulsewidth() { return Pulsewidth; }
+    public void setPulsewidth(String pulsewidth) { Pulsewidth = pulsewidth; }
 
+    public String getRange() { return Range; }
+    public void setRange(String range) { Range = range; }
+
+    public String getAcqTime() { return AcqTime; }
+    public void setAcqTime(String acqTime) { AcqTime = acqTime; }
+
+    public String getNindex() { return Nindex; }
+    public void setNindex(String nindex) { Nindex = nindex; }
+
+    public void setKcoeff(String kcoeff) { this.Kcoeff = kcoeff; }
+    public String getKcoeff() { return this.Kcoeff; }
+
+    public void setLaser(String laser) { this.Laser = laser; }
+    public String getLaser() { return this.Laser; }
+
+    public void setResolution(String resolution) { this.Resolution = resolution; }
+    public String getResolution() { return this.Resolution; }
+
+    public void setXoffset(String xoffset) { this.Xoffset = xoffset; }
+
+    public void setXscale(String xscale) { this.Xscale = xscale; }
+
+    public String getXunit() { return this.Yunit; }
     public void setXunit(String s) { this.Xunit = s; }
 
-    void setYoffset(String yoffset) {
+    public void setYoffset(String yoffset) {
         this.Yoffset = yoffset;
         this.DoubleYoffset = getDoubleYoffset();
     }
 
-    void setYscale(String yscale) {
+    public void setYscale(String yscale) {
         this.Yscale = yscale;
         this.DoubleYscale = getDoubleYscale();
     }
 
+    public String getYunit() { return this.Yunit; }
     public void setYunit(String s) { this.Yunit = s; }
 
-    double getDoubleXoffset() {
+    public double getDoubleXoffset() {
         return Double.parseDouble(this.Xoffset);
     }
 
-    double getDoubleXscale() {
+    public double getDoubleXscale() {
         return Double.parseDouble(this.Xscale);
     }
 
-    String getXunit() { return this.Yunit; }
-
-    double getDoubleYoffset() {
+    public double getDoubleYoffset() {
         return Double.parseDouble(this.Yoffset);
     }
 
-    double getDoubleYscale() { return Double.parseDouble(this.Yscale); }
+    public double getDoubleYscale() { return Double.parseDouble(this.Yscale); }
 
-    String getYunit() { return this.Yunit; }
 
-    String[] getKeyEvents() { return this.KeyEvents; }
+    public String[] getKeyEvents() { return this.KeyEvents; }
 
-    double[] getDoubleDataPoints() {
+    public double[] getDoubleDataPoints() {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(this.DataPoints);
 
