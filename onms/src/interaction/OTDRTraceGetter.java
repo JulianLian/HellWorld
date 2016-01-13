@@ -45,11 +45,13 @@ public class OTDRTraceGetter implements IDataGetter {
         }
 
         OTDRTrace trace = getOTDRTrace();
-        mainFrame.getGraph().showDataPoint(trace.getDoubleDataPoints());
+        if (trace != null && mainFrame != null) {
+            mainFrame.getGraph().showDataPoint(trace.getDoubleDataPoints());
 
-        System.out.println("Key events:");
-        for (String s : trace.KeyEvents) {
-            System.out.println(s);
+            System.out.println("Key events:");
+            for (String s : trace.KeyEvents) {
+                System.out.println(s);
+            }
         }
 
         return true;
@@ -70,6 +72,12 @@ public class OTDRTraceGetter implements IDataGetter {
             System.out.println("Trace not available. Please try later.");
             return null;
         }
+
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.SYSTEM_DATE);
+        trace.setDate(new String(rcvBuff));
+
+        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.SYSTEM_TIME);
+        trace.setTime(new String(rcvBuff));
 
         rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XOFFSET);
         trace.setXoffset(new String(rcvBuff));

@@ -9,6 +9,7 @@ import java.io.IOException;
 public class OTDRTrace {
     String Module; // Type of plug-in having done the acquisition
     String Date; // Acquisition date
+    String Time; // Acquisition time
     String Function;
     String SwitchNumber;
     String PortNumber;
@@ -18,7 +19,7 @@ public class OTDRTrace {
     String AcqTime; // Acquisition time
     String Nindex; // Fiber index
     String Kcoeff; // Backscatter coefficient
-    String Laser; // Laser used
+    String Laser; // Laser(wave length) used
     String Resolution; // Resolution used
 
     String Xoffset;
@@ -41,6 +42,9 @@ public class OTDRTrace {
 
     public String getDate() { return Date;}
     public void setDate(String date) { Date = date; }
+
+    public String getTime() { return Time;}
+    public void setTime(String time) { Time = time; }
 
     public String getSwitchNumber() { return SwitchNumber; }
     public void setSwitchNumber(String switchNumber) { SwitchNumber = switchNumber; }

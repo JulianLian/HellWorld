@@ -11,6 +11,10 @@ public class Cmds {
     public static final String ERS = "*ers?";
     public static final String TCPPORT = "MODule:FUNCtion:PORT?";
 
+    public static final String SYSTEM_DATE = "OTU:SYSTem:DATe?";
+    public static final String SYSTEM_TIME = "OTU:SYSTem:DATe?";
+
+
     public static final String MODULE = "module";
     public static final String SWITCH = "switch";
     public static final String FUNCTION = "function";
