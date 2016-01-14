@@ -1,6 +1,7 @@
 package interaction;
 
 import communation.Protocol;
+import env.Environment;
 
 import java.io.*;
 import java.net.Socket;
@@ -112,6 +113,12 @@ public class CommandHandle {
             case Cmds.MEAS_STATUS:
                 cmdLine = "OTU:MEAS:STATUS?";
                 break;
+            case Cmds.SYSTEM_DATE:
+                cmdLine = "OTU:SYSTem:DATe?";
+                break;
+            case Cmds.SYSTEM_TIME:
+                cmdLine = "OTU:SYSTem:TIMe?";
+                break;
             case Cmds.CURVE_BUFFER:
                 //  cmdLine = "OTU:MEASure:RESULT?";
                 cmdLine = "CURve:BUFfer?";
@@ -161,7 +168,8 @@ public class CommandHandle {
     byte[] sendAndEcho(String cmdLine) {
         int serverPort = getFunctionPort(cmdLine);
         try {
-            TcpClient client = new TcpClient(ServerInfo.ServerAddress, serverPort, 5000);
+//            TcpClient client = new TcpClient(ServerInfo.ServerAddress, serverPort, 5000);
+            TcpClient client = new TcpClient(Environment.peerIP, serverPort, Integer.parseInt(Environment.timeOut)*1000);
             Socket clientSocket = client.getClientSocket();
             clientSocket.setSoTimeout(10000); // 10sec
 

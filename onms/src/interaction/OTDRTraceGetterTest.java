@@ -6,16 +6,16 @@ import org.junit.Test;
  * Created by Julian on 2016/1/11.
  */
 public class OTDRTraceGetterTest {
-    static OTDRTraceGetter TestGetter = new OTDRTraceGetter(null);
-    @Test
-    public void testStartFetchData() throws Exception {
-        TestGetter.startFetchData();
-    }
+    static OTDRTraceGetter TestGetter = new OTDRTraceGetter();
+//    @Test
+//    public void testStartFetchData() throws Exception {
+////        TestGetter.startFetchData();
+//    }
 
-    @Test
-    public void testStopFetchData() throws Exception {
-        TestGetter.stopFetchData();
-    }
+//    @Test
+//    public void testStopFetchData() throws Exception {
+//        TestGetter.stopFetchData();
+//    }
 
     // Run testStartFetchData() first.
     @Test

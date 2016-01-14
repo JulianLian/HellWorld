@@ -35,187 +35,182 @@ import java.awt.*;
 
 public class Md711MainFrame extends JFrame
 {
-		private String			whichCommPort	= HardWare.COM1;// 默认为com1端口
-		// ****************************************
-		private GraphShowPanel	graph;							// 显示图形的面板类
-		private AboutMessage	am;								// 用户点击后会显示文件数据的信息
-		private PoPDialog		saveDialog;						// 用户在这里填入保存的文件的信息
+	private String whichCommPort = HardWare.COM1;// 默认为com1端口
+	// ****************************************
+	private GraphShowPanel graph; // 显示图形的面板类
+	private AboutMessage am; // 用户点击后会显示文件数据的信息
+	private PoPDialog saveDialog; // 用户在这里填入保存的文件的信息
 
-		// **********************************************菜单选项定义
-		private MainMenuBar checkerMenuBar;
+	// **********************************************菜单选项定义
+	private MainMenuBar checkerMenuBar;
 
-		private ControlAreaJTabbedPanel controlJtabbedPanel;
+	private ControlAreaJTabbedPanel controlJtabbedPanel;
 
-		public Md711MainFrame()
-		{
-			action.Action.closingAction(this);
+	public Md711MainFrame()
+	{
+		action.Action.closingAction(this);
 
-			initMenuBar();
-			initGraphicControllerPanel();
+		initMenuBar();
+		initGraphicControllerPanel();
 
-			layoutPanel();
-		}
+		layoutPanel();
+	}
 
+	private void layoutPanel ()
+	{
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+		JTabbedPane graphScrollPane = initDataShowPanel();
+		splitPane.setLeftComponent(graphScrollPane);
+		// JScrollPane graphScrollPane = new
+		// JScrollPane(initDataShowPanel());
+		// splitPane.setLeftComponent(graphScrollPane);
+		JScrollPane controlPanel = new JScrollPane(controlJtabbedPanel);
+		controlPanel.setMaximumSize(new Dimension(controlPanel.getPreferredSize().width, 100));
+		splitPane.setRightComponent(controlPanel);
+		graphScrollPane.setMinimumSize(new Dimension(800, 600));
+		splitPane.setOneTouchExpandable(true);
+		splitPane.setContinuousLayout(true);
+		splitPane.setEnabled(false);
+		splitPane.setDividerLocation(0.80);
+		splitPane.setResizeWeight(1);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
+		Action.setJSplitPaneAction(splitPane);
+		this.setContentPane(splitPane);
+	}
 
+	private void initGraphicControllerPanel ()
+	{
+		controlJtabbedPanel = new ControlAreaJTabbedPanel(this);
+		graph = new GraphShowPanel(this);
+	}
 
-		private void layoutPanel ()
-		{
-			JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-			JTabbedPane graphScrollPane = initDataShowPanel();
-			splitPane.setLeftComponent(graphScrollPane);
-//			JScrollPane graphScrollPane = new JScrollPane(initDataShowPanel());
-//			splitPane.setLeftComponent(graphScrollPane);
-			JScrollPane controlPanel = new JScrollPane(controlJtabbedPanel);
-			controlPanel.setMaximumSize(new Dimension(
-					controlPanel.getPreferredSize().width, 100));
-			splitPane.setRightComponent(controlPanel);
-			graphScrollPane.setMinimumSize(new Dimension(800, 600));
-			splitPane.setOneTouchExpandable(true);
-			splitPane.setContinuousLayout(true);
-			splitPane.setEnabled(false);
-			splitPane.setDividerLocation(0.80);
-			splitPane.setResizeWeight(1);//将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
-			Action.setJSplitPaneAction(splitPane);
-			this.setContentPane(splitPane);
-		}
+	private JTabbedPane initDataShowPanel ()
+	{
+		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.add(graph, "测试曲线显示");
+		tabbedPane.add(new JPanel(), "光缆地图显示");
+		tabbedPane.add(new JPanel(), "告警统计分析");
+		tabbedPane.add(new JPanel(), "设置告警定制");
+		tabbedPane.add(new JPanel(), "设置告警提示");
+		tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
+		return tabbedPane;
+	}
 
+	private void initMenuBar ()
+	{
+		checkerMenuBar = new MainMenuBar(this);
+		setJMenuBar(checkerMenuBar);
+	}
 
-		private void initGraphicControllerPanel()
-		{
-			controlJtabbedPanel = new ControlAreaJTabbedPanel(this);
-			graph = new GraphShowPanel(this);
-		}
+	public void curAttrAction ()
+	{
+		am = new AboutMessage(this);
+		am.showMessage();
+	}
 
-		private JTabbedPane initDataShowPanel()
-		{
-			JTabbedPane tabbedPane = new JTabbedPane();
-			tabbedPane.add(graph, "测试曲线显示");
-			tabbedPane.add(new JPanel(), "光缆地图显示");
-			tabbedPane.add(new JPanel(), "告警统计分析");
-			tabbedPane.add(new JPanel(), "设置告警定制");
-			tabbedPane.add(new JPanel(), "设置告警提示");
-			tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
-			tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	public void saveAction ()
+	{
+		// saveDialog = new PoPDialog(this);
+		SaveWithoughtConfirmPoPDialog.save(this);
+		WindowControlEnv.setPortDataHaveSaved(true);
+	}
 
-			return tabbedPane;
-		}
+	public MainMenuBar geCheckMenuBar ()
+	{
+		return checkerMenuBar;
+	}
 
-		private void initMenuBar()
-		{
-			checkerMenuBar = new MainMenuBar(this);
-			setJMenuBar(checkerMenuBar);
-		}
+	public GraphShowPanel getGraph ()
+	{
+		return graph;
+	}
 
-		public void curAttrAction()
-		{
-			am = new AboutMessage(this);
-			am.showMessage();
-		}
+	public PoPDialog getSaveDialog ()
+	{
+		return saveDialog;
+	}
+	// ******************************************* **********************
 
-		public void saveAction()
-		{
-//			saveDialog = new PoPDialog(this);
-			SaveWithoughtConfirmPoPDialog.save(this);
-			WindowControlEnv.setPortDataHaveSaved(true);
-		}
+	public AboutMessage getAm ()
+	{
+		return am;
+	}
 
-		public MainMenuBar geCheckMenuBar()
-		{
-			return checkerMenuBar;
-		}
+	// ********************************设置通讯端口
+	public void setPort (String port)
+	{
+		whichCommPort = port;
+	}
 
-		public GraphShowPanel getGraph()
-		{
-			return graph;
-		}
+	// 获取通讯端口
+	public String getPort ()
+	{
+		return whichCommPort;
+	}
 
-		public PoPDialog getSaveDialog()
-		{
-			return saveDialog;
-		}
-		// ******************************************* **********************
+	// ************************ 下面完成数据波形显示功能 ******************************
+	// *************************** *******************************
 
-		public AboutMessage getAm()
-		{
-			return am;
-		}
+	public void showGraph ()
+	{
+		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
+		CurveSelectionPanel.selectPortDataLine();
+		controlPanel.setStateWhenRecvedData();
+		geCheckMenuBar().setSaveItemState(true);
+		graph.repaint();
+	}
 
-		// ********************************设置通讯端口
-		public void setPort(String port)
-		{
-			whichCommPort = port;
-		}
+	public void showFileGraph ()
+	{
+		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
+		// controlPanel.getCurSelectionPanel().selectFileDataLine();
+		CurveSelectionPanel.selectFileDataLine();
+		controlPanel.setStateWhenRecvedData();
+		geCheckMenuBar().setSaveItemState(true);
+		graph.repaint();
+	}
 
-		// 获取通讯端口
-		public String getPort()
-		{
-			return whichCommPort;
-		}
+	public void setCommunationPort (String port)
+	{
+		whichCommPort = port;
+	}
 
+	// ******************************** *********************
+	// ******************************** 整个系统的入口 **********************
+	// ******************************* ***********************
 
+	public static void main (String[] args)
+	{
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run ()
+			{
+				createAndShowGUI();
+			}
+		});
 
-		// ************************ 下面完成数据波形显示功能 ******************************
-		// *************************** *******************************
+	}
 
-		public void showGraph()
-		{
-			GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
-			CurveSelectionPanel.selectPortDataLine();
-			controlPanel.setStateWhenRecvedData();
-			geCheckMenuBar().setSaveItemState(true);
-			graph.repaint();
-		}
+	private static void createAndShowGUI ()
+	{
+		Md711MainFrame window = new Md711MainFrame();
 
-		public void showFileGraph()
-		{
-			GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
-//			controlPanel.getCurSelectionPanel().selectFileDataLine();
-			CurveSelectionPanel.selectFileDataLine();
-			controlPanel.setStateWhenRecvedData();
-			geCheckMenuBar().setSaveItemState(true);
-			graph.repaint();
-		}
+		window.setTitle(ProductInfo.getProductName());
 
-		public void setCommunationPort(String port)
-		{
-			whichCommPort = port;
-		}
+		// 让屏幕最大化
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = kit.getScreenSize();
+		GraphicsConfiguration config = window.getGraphicsConfiguration();
+		Insets insets = kit.getScreenInsets(config);
+		screenSize.width -= (insets.left + insets.right);
+		screenSize.height -= (insets.top + insets.bottom);
+		window.setSize(screenSize);
+		window.setLocation(insets.left, insets.top);
+		window.setVisible(true);
+	}
 
-		// ******************************** *********************
-		// ******************************** 整个系统的入口 **********************
-		// ******************************* ***********************
-
-		public static void main(String[] args)
-		{
-			  javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		            public void run() {
-		          	  createAndShowGUI();
-		            }
-		        });
-
-		}
-
-		private static void createAndShowGUI()
-		{
-			Md711MainFrame window = new Md711MainFrame();
-
-			window.setTitle(ProductInfo.getProductName());
-
-			// 让屏幕最大化
-			Toolkit kit = Toolkit.getDefaultToolkit();
-			Dimension screenSize = kit.getScreenSize();
-			GraphicsConfiguration config = window.getGraphicsConfiguration();
-			Insets insets = kit.getScreenInsets(config);
-			screenSize.width -= (insets.left + insets.right);
-			screenSize.height -= (insets.top + insets.bottom);
-			window.setSize(screenSize);
-			window.setLocation(insets.left, insets.top);
-			window.setVisible(true);
-		}
-
-		public GraphControllerPanel getGraphControllerpanel()
-		{
-			return controlJtabbedPanel.getGraphControllerpanel();
-		}
+	public GraphControllerPanel getGraphControllerpanel ()
+	{
+		return controlJtabbedPanel.getGraphControllerpanel();
+	}
 }

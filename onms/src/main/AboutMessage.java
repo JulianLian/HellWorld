@@ -1,195 +1,185 @@
 /*
- *@author Ñî°²Ó¡
+ *@author æ¨å®‰å°
  *
- *ÓÃ»§µã»÷"ÊôĞÔ"°´Å¥Ê±£¬µ¯³öµÄ¶Ô»°¿òÖĞµÄÊı¾İ
+ *ç”¨æˆ·ç‚¹å‡»"å±æ€§"æŒ‰é’®æ—¶ï¼Œå¼¹å‡ºçš„å¯¹è¯æ¡†ä¸­çš„æ•°æ®
  *
  *
  */
 package main;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GridLayout;
+import domain.SaveInfo;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
-import domain.SaveInfo;
-
 public class AboutMessage extends JDialog implements ActionListener
 {
-		// µçÀÂĞÍºÅ
-		private JLabel		jlCableType	= new JLabel("µçÀÂĞÍºÅ");
-		private JTextField	jtfCableType;
+	// ç”µç¼†å‹å·
+	private JLabel jlCableType = new JLabel("ç”µç¼†å‹å·");
+	private JTextField jtfCableType;
 
-		// µçÀÂ³¤¶È
-		private JLabel		jlCableLength	= new JLabel("µçÀÂ³¤¶È(Ã×)");
-		private JTextField	jtfCableLength;
+	// ç”µç¼†é•¿åº¦
+	private JLabel jlCableLength = new JLabel("ç”µç¼†é•¿åº¦(ç±³)");
+	private JTextField jtfCableLength;
 
-		// ·óÉèÉî¶È
-		private JLabel		jlDsDepth	= new JLabel("·óÉèÉî¶È");
-		private JTextField	jtfDsDepth;
+	// æ•·è®¾æ·±åº¦
+	private JLabel jlDsDepth = new JLabel("æ•·è®¾æ·±åº¦");
+	private JTextField jtfDsDepth;
 
-		// ·óÉèÈÕÆÚ
-		private JLabel		jlFsDate	= new JLabel("·óÉèÈÕÆÚ");
-		private JTextField	jtfFsDate;
+	// æ•·è®¾æ—¥æœŸ
+	private JLabel jlFsDate = new JLabel("æ•·è®¾æ—¥æœŸ");
+	private JTextField jtfFsDate;
 
-		// ¹ÊÕÏĞÔÖÊ
-		private JLabel		jlWrongType	= new JLabel("¹ÊÕÏĞÔÖÊ");
-		private JTextField	jtfWrongType;
+	// æ•…éšœæ€§è´¨
+	private JLabel jlWrongType = new JLabel("æ•…éšœæ€§è´¨");
+	private JTextField jtfWrongType;
 
-		// ¹ÊÕÏ¾àÀë
-		private JLabel		jlWrongDistance	= new JLabel("¹ÊÕÏ¾àÀë");
-		private JTextField	jtfWrongDistance;
+	// æ•…éšœè·ç¦»
+	private JLabel jlWrongDistance = new JLabel("æ•…éšœè·ç¦»");
+	private JTextField jtfWrongDistance;
 
-		// ²âÊÔÈËÔ±
-		private JLabel		jlTestClerk	= new JLabel("²âÊÔÈËÔ±");
-		private JTextField	jtfTestClerk;
+	// æµ‹è¯•äººå‘˜
+	private JLabel jlTestClerk = new JLabel("æµ‹è¯•äººå‘˜");
+	private JTextField jtfTestClerk;
 
-		// ²âÊÔÈÕÆÚ
-		private JLabel		jlTestDate	= new JLabel("²âÊÔÈÕÆÚ");
-		private JTextField	jtfTestDate;
+	// æµ‹è¯•æ—¥æœŸ
+	private JLabel jlTestDate = new JLabel("æµ‹è¯•æ—¥æœŸ");
+	private JTextField jtfTestDate;
 
-		// ±¸×¢
-		private JLabel		jlNote	= new JLabel("±¸×¢");
-		private JTextField	jtfNote;
+	// å¤‡æ³¨
+	private JLabel jlNote = new JLabel("å¤‡æ³¨");
+	private JTextField jtfNote;
 
-		JButton confirmButton;
+	JButton confirmButton;
 
-		public AboutMessage(Frame fatherFrame)
-		{
-			super(fatherFrame);
-		}
+	public AboutMessage(Frame fatherFrame)
+	{
+		super(fatherFrame);
+	}
 
-		// *****************************************************************************
-		public void showMessage()
-		{
-			jtfCableType = new JTextField(SaveInfo.getCableType());
-			jtfCableType.setEditable(false);
+	// *****************************************************************************
+	public void showMessage ()
+	{
+		jtfCableType = new JTextField(SaveInfo.getCableType());
+		jtfCableType.setEditable(false);
 
-			jtfCableLength = new JTextField(SaveInfo.getCableLength());
-			jtfCableLength.setEditable(false);
+		jtfCableLength = new JTextField(SaveInfo.getCableLength());
+		jtfCableLength.setEditable(false);
 
-			jtfDsDepth = new JTextField(SaveInfo.getDsDepth());
-			jtfDsDepth.setEditable(false);
+		jtfDsDepth = new JTextField(SaveInfo.getDsDepth());
+		jtfDsDepth.setEditable(false);
 
-			jtfFsDate = new JTextField(SaveInfo.getFsDate());
-			jtfFsDate.setEditable(false);
+		jtfFsDate = new JTextField(SaveInfo.getFsDate());
+		jtfFsDate.setEditable(false);
 
-			jtfWrongType = new JTextField(SaveInfo.getWrongType());
-			jtfWrongType.setEditable(false);
+		jtfWrongType = new JTextField(SaveInfo.getWrongType());
+		jtfWrongType.setEditable(false);
 
-			jtfWrongDistance = new JTextField(SaveInfo.getWrongDistance());
-			jtfWrongDistance.setEditable(false);
+		jtfWrongDistance = new JTextField(SaveInfo.getWrongDistance());
+		jtfWrongDistance.setEditable(false);
 
-			jtfTestClerk = new JTextField(SaveInfo.getTestClerk());
-			jtfTestClerk.setEditable(false);
+		jtfTestClerk = new JTextField(SaveInfo.getTestClerk());
+		jtfTestClerk.setEditable(false);
 
-			jtfTestDate = new JTextField(SaveInfo.getTestDate());
-			jtfTestDate.setEditable(false);
+		jtfTestDate = new JTextField(SaveInfo.getTestDate());
+		jtfTestDate.setEditable(false);
 
-			jtfNote = new JTextField(SaveInfo.getNote());
-			jtfNote.setEditable(false);
+		jtfNote = new JTextField(SaveInfo.getNote());
+		jtfNote.setEditable(false);
 
-			JPanel topPane = new JPanel();
-			topPane.setLayout(new BorderLayout());
-			topPane.setBounds(40, 10, 10, 10);
-			topPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "²¨ĞÎĞÅÏ¢",
-					TitledBorder.CENTER, TitledBorder.TOP));
-			this.setContentPane(topPane);
+		JPanel topPane = new JPanel();
+		topPane.setLayout(new BorderLayout());
+		topPane.setBounds(40, 10, 10, 10);
+		topPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "æ³¢å½¢ä¿¡æ¯",
+				TitledBorder.CENTER, TitledBorder.TOP));
+		this.setContentPane(topPane);
 
-			JPanel jp1 = new JPanel();
-			jp1.setLayout(new GridLayout(0, 2));
+		JPanel jp1 = new JPanel();
+		jp1.setLayout(new GridLayout(0, 2));
 
-			jp1.add(jlCableType);
-			jp1.add(jtfCableType);
+		jp1.add(jlCableType);
+		jp1.add(jtfCableType);
 
-			jp1.add(jlCableLength);
-			jp1.add(jtfCableLength);
+		jp1.add(jlCableLength);
+		jp1.add(jtfCableLength);
 
-			jp1.add(jlDsDepth);
-			jp1.add(jtfDsDepth);
+		jp1.add(jlDsDepth);
+		jp1.add(jtfDsDepth);
 
-			jp1.add(jlFsDate);
-			jp1.add(jtfFsDate);
+		jp1.add(jlFsDate);
+		jp1.add(jtfFsDate);
 
-			jp1.add(jlWrongType);
-			jp1.add(jtfWrongType);
+		jp1.add(jlWrongType);
+		jp1.add(jtfWrongType);
 
-			jp1.add(jlWrongDistance);
-			jp1.add(jtfWrongDistance);
+		jp1.add(jlWrongDistance);
+		jp1.add(jtfWrongDistance);
 
-			jp1.add(jlTestClerk);
-			jp1.add(jtfTestClerk);
+		jp1.add(jlTestClerk);
+		jp1.add(jtfTestClerk);
 
-			jp1.add(jlTestDate);
-			jp1.add(jtfTestDate);
+		jp1.add(jlTestDate);
+		jp1.add(jtfTestDate);
 
-			jp1.add(jlNote);
-			jp1.add(jtfNote);
+		jp1.add(jlNote);
+		jp1.add(jtfNote);
 
-			JPanel jp2 = new JPanel();
-			jp2.setLayout(new FlowLayout());
+		JPanel jp2 = new JPanel();
+		jp2.setLayout(new FlowLayout());
 
-			confirmButton = new JButton("¹Ø±Õ");
-			confirmButton.addActionListener(this);
-			jp2.add(confirmButton);
+		confirmButton = new JButton("å…³é—­");
+		confirmButton.addActionListener(this);
+		jp2.add(confirmButton);
 
-			jp1.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
-			topPane.add(jp1, BorderLayout.CENTER);
-			topPane.add(jp2, BorderLayout.SOUTH);
+		jp1.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
+		topPane.add(jp1, BorderLayout.CENTER);
+		topPane.add(jp2, BorderLayout.SOUTH);
 
-			this.setSize(600, 400);
-			// Ê¹¾ÓÓÚÆÁÄ»ÖĞ¼ä
-			Dimension SS = this.getToolkit().getScreenSize();
-			Dimension CS = this.getSize();
-			this.setLocation((SS.width - CS.width) / 2, (SS.height - CS.height) / 2);
+		this.setSize(600, 400);
+		// ä½¿å±…äºå±å¹•ä¸­é—´
+		Dimension SS = this.getToolkit().getScreenSize();
+		Dimension CS = this.getSize();
+		this.setLocation((SS.width - CS.width) / 2, (SS.height - CS.height) / 2);
 
-			this.setVisible(true);
+		this.setVisible(true);
 
-		}
+	}
 
-		// *************************************************ÊÂ¼ş´¦Àí
-		public void actionPerformed(ActionEvent e)
-		{
+	// *************************************************äº‹ä»¶å¤„ç†
+	public void actionPerformed (ActionEvent e)
+	{
 
-			if (e.getSource().equals(confirmButton))
-			{
-
-				this.setVisible(false);
-				this.dispose();
-			}
-		}
-
-		public void clearAll()
+		if (e.getSource().equals(confirmButton))
 		{
 
-			jtfCableType.setText(" ");
-
-			jtfCableLength.setText(" ");
-
-			jtfDsDepth.setText(" ");
-
-			jtfFsDate.setText(" ");
-
-			jtfWrongType.setText(" ");
-
-			jtfWrongDistance.setText(" ");
-
-			jtfTestClerk.setText(" ");
-
-			jtfTestDate.setText(" ");
-
-			jtfNote.setText(" ");
+			this.setVisible(false);
+			this.dispose();
 		}
+	}
+
+	public void clearAll ()
+	{
+
+		jtfCableType.setText(" ");
+
+		jtfCableLength.setText(" ");
+
+		jtfDsDepth.setText(" ");
+
+		jtfFsDate.setText(" ");
+
+		jtfWrongType.setText(" ");
+
+		jtfWrongDistance.setText(" ");
+
+		jtfTestClerk.setText(" ");
+
+		jtfTestDate.setText(" ");
+
+		jtfNote.setText(" ");
+	}
 
 }

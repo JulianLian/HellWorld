@@ -1,11 +1,15 @@
-package communation;
+package communation.dialog;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JComboBox;
+
+import communation.ICommuParamAssiciation;
+import communation.Protocol;
 
 public class CommuParamPanelChoiceAction implements ActionListener
 {
@@ -14,7 +18,7 @@ public class CommuParamPanelChoiceAction implements ActionListener
 	public CommuParamPanelChoiceAction(CommuParamConfigDialog commuParamPanel)
 	{
 		this.commuParamPanel = commuParamPanel;
-		this.permitCommuParamDealer = permitCommuParamDealer;
+		permitCommuParamDealer = null;
 	}
 	public void setPermitCommuParamDealer( ICommuParamAssiciation permitCommuParamDealer)
 	{
@@ -56,17 +60,13 @@ public class CommuParamPanelChoiceAction implements ActionListener
 		{
 			if(selectedVal.equals(Protocol.MANU_CONFIG))
 			{
-				commuParamPanel.pulseWidthCB.setEnabled(true);
-				commuParamPanel.rangeCB.setEnabled(true);
-				commuParamPanel.resolutionCB.setEnabled(true);
-                selectedItems.put(Protocol.MANU_CONFIG, selectedVal);
+				selectManuAction();
+				selectedItems.put(Protocol.MANU_CONFIG, selectedVal);
 			}
 			else if(selectedVal.equals(Protocol.AUTO_CONFIG))
 			{
-				commuParamPanel.pulseWidthCB.setEnabled(false);
-				commuParamPanel.rangeCB.setEnabled(false);
-				commuParamPanel.resolutionCB.setEnabled(false);
-                selectedItems.put(Protocol.AUTO_CONFIG, selectedVal);
+				selectAutoAction();
+				selectedItems.put(Protocol.AUTO_CONFIG, selectedVal);
 			}			
 		}
 
@@ -76,5 +76,22 @@ public class CommuParamPanelChoiceAction implements ActionListener
 					permitCommuParamDealer.getPermitItemWhenSelect(selectedItems);
 			commuParamPanel.setDevicePermittedItems(permittedVal);
 		}
+	}
+	
+	private void selectManuAction()
+	{
+		setUsingManuAcquisitionSetting(true);
+	}
+	
+	private void setUsingManuAcquisitionSetting(boolean isUsingManu)
+	{
+		commuParamPanel.waveLengthCB.setEnabled(isUsingManu);
+		commuParamPanel.pulseWidthCB.setEnabled(isUsingManu);
+		commuParamPanel.rangeCB.setEnabled(isUsingManu);
+		commuParamPanel.resolutionCB.setEnabled(isUsingManu);
+	}
+	private void selectAutoAction()
+	{
+		setUsingManuAcquisitionSetting(false);
 	}
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ListUtils
 {
-	public static double getMaxNumber(List<Double> v)
+	public static double getMaxNumber (List<Double> v)
 	{
 		double max = Double.MIN_VALUE;
 		try
@@ -22,7 +22,7 @@ public class ListUtils
 		return max;
 	}
 
-	public static double getMaxAbsNumber(List<Double> v)
+	public static double getMaxAbsNumber (List<Double> v)
 	{
 		double max = Double.MIN_VALUE;
 		try
