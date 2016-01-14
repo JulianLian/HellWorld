@@ -1,8 +1,10 @@
-package communation;
+package communation.dialog;
 
+import communation.IDataGetter;
+import communation.Protocol;
 import dataview.CurveSelectionPanel;
-import interaction.OTDRTraceGetter;
 import interaction.MeasureParamsSetter;
+import interaction.OTDRTraceGetter;
 import main.Md711MainFrame;
 
 import javax.swing.*;
@@ -10,11 +12,13 @@ import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CommuParamConfigDialog extends JDialog implements ActionListener
 {
+	private static final long serialVersionUID = 1L;
 	JComboBox<String> moduleCB = new JComboBox<String>();
 	JComboBox<String> functionCB = new JComboBox<String>();
 
@@ -35,10 +39,9 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	private JButton confirmButton;
 	private JButton cancelButton;
 	private Md711MainFrame	mainFrame;
-	private IDataGetter dataGetter;// 用来读取端口数据的类,  有利于用测试接口替换
 	private CommuParamConfigDialog(Md711MainFrame	mainFrame)
 	{
-		super(mainFrame, "TCP通信参数", true);
+		super(mainFrame, "查询参数", true);
 		this.mainFrame = mainFrame;
 		this.setResizable(false);
 		layoutPanel();
@@ -78,10 +81,12 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 
 		this.waveLengthCB.addItem("1650 nm");
 		this.pulseWidthCB.addItem("3 ns");
-
 		this.rangeCB.addItem("2 km");
-
 		this.resolutionCB.addItem("自动");
+		waveLengthCB.setEnabled(false);
+		pulseWidthCB.setEnabled(false);
+		rangeCB.setEnabled(false);
+		resolutionCB.setEnabled(false);
 	}
 
 	private void layoutPanel ()
@@ -127,11 +132,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	{
 		//坐标，几行，几列
 
-		// Weights are used to determine how to distribute space among
-		//columns (weightx) and among rows (weighty); this is important for
+		// Weights are used to determine how to distribute space among 
+		//columns (weightx) and among rows (weighty); this is important for 
 		//specifying resizing behavior
 
-		//anchor- when the component is smaller than its display area
+		//anchor- when the component is smaller than its display area		
 		//fill-when the component's display area is larger than the component's requested size
 		//ipad-The width of the component will be at least its minimum width plus ipadx*2 pixels
 
@@ -279,26 +284,61 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		{
 			INS.setVisible(false);
 			// 由这个类去完成数据采集任务
-			createDataGetter();
-			if(dataGetter.startFetchData())
+			IDataGetter devDataGetter = devDataGetter();
+			Map<String, String> getSelectedDevParam = formSelectedDevQueryParam();
+//			if(devDataGetter.startFetchData())
 			{
+				List <Double> waveData = devDataGetter.getWaveData(getSelectedDevParam);
+				List <String> eventData = devDataGetter.getEventData(getSelectedDevParam);
+				mainFrame.getGraph().showPortData(waveData);
+//				mainFrame.getGraph().showEventData(eventData);
 				mainFrame.getGraphControllerpanel().getCurSelectionPanel()
 						.setStateEnable(CurveSelectionPanel.PORT_CUR_SELECTION, true);
 			}
 		}
 	}
 
+	private Map<String, String> formSelectedDevQueryParam ()
+	{
+		Map<String, String> selectedDevQueryParamMap = new HashMap<String, String>();
+
+		selectedDevQueryParamMap.put(Protocol.MODULE, (String)moduleCB.getSelectedItem());
+		selectedDevQueryParamMap.put(Protocol.FUNCTION, (String)functionCB.getSelectedItem());
+
+		selectedDevQueryParamMap.put(Protocol.OTU_IN, (String)otuInPortCB.getSelectedItem());
+		selectedDevQueryParamMap.put(Protocol.OTU_OUT, (String)otuOutPortCB.getSelectedItem());
+
+		selectedDevQueryParamMap.put(Protocol.ACQUISITION_SETTINT, (String)acquisitionSettingCB.getSelectedItem());
+
+		selectedDevQueryParamMap.put(Protocol.WAVE_LENGTH, (String)waveLengthCB.getSelectedItem());
+		selectedDevQueryParamMap.put(Protocol.PULSE_WIDTH, (String)pulseWidthCB.getSelectedItem());
+
+		selectedDevQueryParamMap.put(Protocol.RANGE, (String)rangeCB.getSelectedItem());
+
+		String minOrSecond = acquisitionMinField.getText();
+		if(minOrSecond != null && !minOrSecond.trim().equals(""))
+		{
+			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_MINUTES, minOrSecond);
+		}
+		minOrSecond = acquisitionSecField.getText();
+		if(minOrSecond != null && !minOrSecond.trim().equals(""))
+		{
+			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_SECONDS, minOrSecond);
+		}
+		selectedDevQueryParamMap.put(Protocol.RESOLUTION, (String)resolutionCB.getSelectedItem());
+		return selectedDevQueryParamMap;
+	}
+
+	public IDataGetter devDataGetter()
+	{
+//		return new PortSinfferMocker( );
+		return new OTDRTraceGetter();
+	}
+
 	public static void showDialog (Md711MainFrame mainFrame)
 	{
 		INS = new CommuParamConfigDialog(mainFrame);
 		INS.setVisible(true);
-	}
-
-	private void createDataGetter()
-	{
-//		dataGetter = new PortSinfferMocker( mainFrame);
-		dataGetter = new OTDRTraceGetter(mainFrame);
-
 	}
 
 	public void setDevicePermittedItems (Map<String, List<String>> permittedVal)

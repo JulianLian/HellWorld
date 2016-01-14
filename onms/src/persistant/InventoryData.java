@@ -2,10 +2,10 @@
 package persistant;
 /*
  * 
- * ÕâÀïÃæ£¬ÎÒÃÇ×¼±¸°Ñ´Ó¶Ë¿Ú»ñÈ¡µ½µÄÊı¾İ
- * ¼° ´ÓÎÄ¼şÖĞµ÷³öÀ´µÄÊı¾İÈ«²¿ÓÃÕâ¸öÀàÀ´´æ´¢£¬
- * Ô­Ê¼Êı¾İÁ½¸ö£¬¿ÉÒÔÓÃÀ´±ä»¯µÄÁ½×é£¬»¹ÓĞÁ½¸ö·Ö±ğ±íÊ¾x,y
- * ×ø±êµÄÎ»ÖÃ£¬ÕâÔÚÍ¼ĞÎÏÔÊ¾Ê±ºòĞèÒª
+ * è¿™é‡Œé¢ï¼Œæˆ‘ä»¬å‡†å¤‡æŠŠä»ç«¯å£è·å–åˆ°çš„æ•°æ®
+ * åŠ ä»æ–‡ä»¶ä¸­è°ƒå‡ºæ¥çš„æ•°æ®å…¨éƒ¨ç”¨è¿™ä¸ªç±»æ¥å­˜å‚¨ï¼Œ
+ * åŸå§‹æ•°æ®ä¸¤ä¸ªï¼Œå¯ä»¥ç”¨æ¥å˜åŒ–çš„ä¸¤ç»„ï¼Œè¿˜æœ‰ä¸¤ä¸ªåˆ†åˆ«è¡¨ç¤ºx,y
+ * åæ ‡çš„ä½ç½®ï¼Œè¿™åœ¨å›¾å½¢æ˜¾ç¤ºæ—¶å€™éœ€è¦
  * 
  */
 
@@ -14,141 +14,136 @@ import java.util.List;
 
 public class InventoryData
 {
-		// ËµÃ÷tempDataFromPortÊÇ´æ·Å´Ó¶Ë¿Ú»ñÈ¡µÄÊı¾İ
-		// dataFromFileÊÇ´ÓÎÄ¼ş¼ÓÔØ½øÀ´µÄÊı¾İ
-		private static List<Double>	dataFromPortCanTransformed	= new ArrayList<Double>();	// ¿ÉÒÔ¸ü¸ÄµÄ
-		private static List<Double>	dataFromPortImmutable		= new ArrayList<Double>();	// Òª´æ·Åµ½ÎÄ¼şÖĞµÄ,¶Á½øÀ´¾Í²»¸Ä
-		private static List<Double>	dataFromFileCanTransformed	= new ArrayList<Double>();
-		private static List<Double>	dataFromFileImmutable		= new ArrayList<Double>();
+	// è¯´æ˜tempDataFromPortæ˜¯å­˜æ”¾ä»ç«¯å£è·å–çš„æ•°æ®
+	// dataFromFileæ˜¯ä»æ–‡ä»¶åŠ è½½è¿›æ¥çš„æ•°æ®
+	private static List<Double> dataFromPortCanTransformed = new ArrayList<Double>(); // å¯ä»¥æ›´æ”¹çš„
+	private static List<Double> dataFromPortImmutable = new ArrayList<Double>(); // è¦å­˜æ”¾åˆ°æ–‡ä»¶ä¸­çš„,è¯»è¿›æ¥å°±ä¸æ”¹
+	private static List<Double> dataFromFileCanTransformed = new ArrayList<Double>();
+	private static List<Double> dataFromFileImmutable = new ArrayList<Double>();
 
-		// ÕâÀïÃæ´æ·ÅxÖáÉÏµÄÎ»ÖÃ
-		private static List<Double>	xDataFromPort	= new ArrayList<Double>();
-		private static List<Double>	xDataFromFile	= new ArrayList<Double>();	
+	// è¿™é‡Œé¢å­˜æ”¾xè½´ä¸Šçš„ä½ç½®
+	private static List<Double> xDataFromPort = new ArrayList<Double>();
+	private static List<Double> xDataFromFile = new ArrayList<Double>();
 
-		// *****************************************
-		// **********************************
-		// ***************************************** ¶Ë¿Ú²¿·ÖÊı¾İ´¦Àí
-		// *********************************
-		// *****************************************
-		// **********************************
+	// *****************************************
+	// **********************************
+	// ***************************************** ç«¯å£éƒ¨åˆ†æ•°æ®å¤„ç†
+	// *********************************
+	// *****************************************
+	// **********************************
 
-		// *********************¶Ë¿ÚÊı¾İ£¬Ëü¿ÉÒÔ¸Ä±ä
-		public static List<Double> getCanTransformedDataFromPort()
-		{
-			return dataFromPortCanTransformed;
-		}
+	// *********************ç«¯å£æ•°æ®ï¼Œå®ƒå¯ä»¥æ”¹å˜
+	public static List<Double> getCanTransformedDataFromPort ()
+	{
+		return dataFromPortCanTransformed;
+	}
 
-		public static void setCanTransformedDataFromPort(List<Double> c)
-		{
-			dataFromPortCanTransformed = c;
-		}
+	public static void setCanTransformedDataFromPort (List<Double> c)
+	{
+		dataFromPortCanTransformed = c;
+	}
 
-		public static boolean hasDataToShow()
-		{
-			return getCanTransformedDataFromPort().size() != 0
-					|| InventoryData.getCanTransformedDataFromFile().size() != 0;
-		}
+	public static boolean hasDataToShow ()
+	{
+		return getCanTransformedDataFromPort().size() != 0
+				|| InventoryData.getCanTransformedDataFromFile().size() != 0;
+	}
 
-		// ************************¶Ë¿ÚÊı¾İ£¬Ëü²»¿ÉÒÔ¸Ä±ä
+	// ************************ç«¯å£æ•°æ®ï¼Œå®ƒä¸å¯ä»¥æ”¹å˜
 
-		public static List<Double> getDataFromPortImmutable()
-		{
-			return dataFromPortImmutable;
-		}
+	public static List<Double> getDataFromPortImmutable ()
+	{
+		return dataFromPortImmutable;
+	}
 
-		public static void setDataFromPortImmutable(List<Double> c)
-		{
-			dataFromPortImmutable = c;
-		}
+	public static void setDataFromPortImmutable (List<Double> c)
+	{
+		dataFromPortImmutable = c;
+	}
 
-		public static int getDataFromPortImmutableLength()
-		{
-			return getDataFromPortImmutable().size();
-		}
+	public static int getDataFromPortImmutableLength ()
+	{
+		return getDataFromPortImmutable().size();
+	}
 
-		// ************************¶Ë¿ÚÊı¾İ¶ÔÓ¦µÄx×ø±ê
-		public static List<Double> getXDataFromPort()
-		{
-			return xDataFromPort;
-		}
+	// ************************ç«¯å£æ•°æ®å¯¹åº”çš„xåæ ‡
+	public static List<Double> getXDataFromPort ()
+	{
+		return xDataFromPort;
+	}
 
-		public static void setXDataFromPort(List<Double> c)
-		{
-			xDataFromPort = c;
-		}
+	public static void setXDataFromPort (List<Double> c)
+	{
+		xDataFromPort = c;
+	}
 
-		public static int getXDataFromPortLength()
-		{
-			return getXDataFromPort().size();
-		}
+	public static int getXDataFromPortLength ()
+	{
+		return getXDataFromPort().size();
+	}
 
-		// *****************************************
-		// **********************************
-		// ***************************************** ÎÄ¼ş²¿·ÖÊı¾İ´¦Àí
-		// *********************************
-		// *****************************************
-		// **********************************
+	// *****************************************
+	// **********************************
+	// ***************************************** æ–‡ä»¶éƒ¨åˆ†æ•°æ®å¤„ç†
+	// *********************************
+	// *****************************************
+	// **********************************
 
-		public static List<Double> getCanTransformedDataFromFile()
-		{
-			return dataFromFileCanTransformed;
-		}
+	public static List<Double> getCanTransformedDataFromFile ()
+	{
+		return dataFromFileCanTransformed;
+	}
 
-		public static void setCanTransformedDataFromFile(List<Double> c)
-		{
-			dataFromFileCanTransformed = c;
-		}
+	public static void setCanTransformedDataFromFile (List<Double> c)
+	{
+		dataFromFileCanTransformed = c;
+	}
 
-		// public static int getCanTransformedDataFromFileLength()
-		// {
-		// return getCanTransformedDataFromFile().size();
-		// }
+	public static void setDataFromFileNeedPrint (List<Double> c)
+	{
+		dataFromFileImmutable = c;
+	}
 
-		public static void setDataFromFileNeedPrint(List<Double> c)
-		{
-			dataFromFileImmutable = c;
-		}
+	public static int getDataFromFileImmutableLength ()
+	{
+		return dataFromFileImmutable.size();
+	}
 
-		public static int getDataFromFileImmutableLength()
-		{
-			return dataFromFileImmutable.size();
-		}
+	public static List<Double> getDataFromFileImmutable ()
+	{
+		return dataFromFileImmutable;
+	}
 
-		public static List<Double> getDataFromFileImmutable()
-		{
-			return dataFromFileImmutable;
-		}
+	// ************************æ–‡ä»¶æ•°æ®å¯¹åº”çš„xåæ ‡
+	public static List<Double> getXDataFromFile ()
+	{
+		return xDataFromFile;
+	}
 
-		// ************************ÎÄ¼şÊı¾İ¶ÔÓ¦µÄx×ø±ê
-		public static List<Double> getXDataFromFile()
-		{
-			return xDataFromFile;
-		}
+	public static int getXDataFromFileLength ()
+	{
+		return getXDataFromFile().size();
+	}
 
-		public static int getXDataFromFileLength()
-		{
-			return getXDataFromFile().size();
-		}		
-
-		// *************************************************
-		// ***********************
-		// ************************************************* ÈÃËùÓĞÊı¾İ¸´Î»
-		// ***********************
-		// *************************************************
-		// ***********************
-		public static void clearPersistData()
-		{
-			if (dataFromPortCanTransformed.size() != 0)
-				dataFromPortCanTransformed.clear();
-			if (dataFromPortImmutable.size() != 0)
-				dataFromPortImmutable.clear();
-			if (dataFromFileCanTransformed.size() != 0)
-				dataFromFileCanTransformed.clear();
-			if (dataFromFileImmutable.size() != 0)
-				dataFromFileImmutable.clear();
-			if (xDataFromPort.size() != 0)
-				xDataFromPort.clear();
-			if (xDataFromFile.size() != 0)
-				xDataFromFile.clear();							
-		}
+	// *************************************************
+	// ***********************
+	// ************************************************* è®©æ‰€æœ‰æ•°æ®å¤ä½
+	// ***********************
+	// *************************************************
+	// ***********************
+	public static void clearPersistData ()
+	{
+		if (dataFromPortCanTransformed.size() != 0)
+			dataFromPortCanTransformed.clear();
+		if (dataFromPortImmutable.size() != 0)
+			dataFromPortImmutable.clear();
+		if (dataFromFileCanTransformed.size() != 0)
+			dataFromFileCanTransformed.clear();
+		if (dataFromFileImmutable.size() != 0)
+			dataFromFileImmutable.clear();
+		if (xDataFromPort.size() != 0)
+			xDataFromPort.clear();
+		if (xDataFromFile.size() != 0)
+			xDataFromFile.clear();
+	}
 }

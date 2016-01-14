@@ -5,52 +5,55 @@ import java.util.List;
 
 public class FileDataPersister implements IDataPersister
 {
-		private static FileDataPersister INS ;
-		public static FileDataPersister getInstance()
-		{
-			if(INS == null)
-			{
-				INS = new FileDataPersister();
-			}
-			return INS;
-		}
-		private FileDataPersister()
-		{
-			
-		}
-		@Override
-		public List<Double> getYData()
-		{
-			return InventoryData.getDataFromFileImmutable();
-		}
+	private static FileDataPersister INS;
 
-		@Override
-		public void setRepaintForNewDataComing(boolean isNewDataComing)
+	public static FileDataPersister getInstance ()
+	{
+		if (INS == null)
 		{
-			WindowControlEnv.setRepaintForFileInfoCome(false);
+			INS = new FileDataPersister();
 		}
+		return INS;
+	}
 
-		@Override
-		public Color getPresentColor()
-		{
-			return Color.GREEN;
-		}
+	private FileDataPersister()
+	{
 
-		@Override
-		public int getStep()
-		{
-			return WindowControlEnv.getStepValForFileData();
-		}
+	}
 
-		@Override
-		public List<Double> getCashedXData()
-		{
-			return InventoryData.getXDataFromFile();
-		}
+	@Override
+	public List<Double> getYData ()
+	{
+		return InventoryData.getDataFromFileImmutable();
+	}
 
-		@Override
-		public List<Double> getCashedYData()
-		{
-			return InventoryData.getCanTransformedDataFromFile();
-		}
+	@Override
+	public void setRepaintForNewDataComing (boolean isNewDataComing)
+	{
+		WindowControlEnv.setRepaintForFileInfoCome(false);
+	}
+
+	@Override
+	public Color getPresentColor ()
+	{
+		return Color.GREEN;
+	}
+
+	@Override
+	public int getStep ()
+	{
+		return WindowControlEnv.getStepValForFileData();
+	}
+
+	@Override
+	public List<Double> getCashedXData ()
+	{
+		return InventoryData.getXDataFromFile();
+	}
+
+	@Override
+	public List<Double> getCashedYData ()
+	{
+		return InventoryData.getCanTransformedDataFromFile();
+	}
 }

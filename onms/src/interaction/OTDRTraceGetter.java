@@ -2,27 +2,29 @@ package interaction;
 
 import communation.IDataGetter;
 import communation.Protocol;
-import main.Md711MainFrame;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Julian on 2016/1/11.
  */
 public class OTDRTraceGetter implements IDataGetter {
-    private Md711MainFrame mainFrame;
 
-    public OTDRTraceGetter(Md711MainFrame mainFrame)
+    OTDRTrace trace;
+
+    public OTDRTraceGetter()
     {
         super();
-        this.mainFrame = mainFrame;
     }
 
-    @Override
-    public boolean startFetchData() {
+//    @Override
+//    public boolean startFetchData() {
+    public OTDRTrace measureOnDemand(Map<String, String> measureParams) {
         HashMap cmdMocker = new HashMap<>();
 
-        cmdMocker.put("command", Cmds.MEAS_MANUAL);
+        cmdMocker.put(Cmds.CMD, Cmds.MEAS_MANUAL);
         cmdMocker.put(Protocol.MODULE, "MOD1");
         cmdMocker.put(Protocol.OTU_OUT, "01");
         cmdMocker.put(Protocol.MANU_CONFIG, "MANual");
@@ -44,23 +46,13 @@ public class OTDRTraceGetter implements IDataGetter {
             e.printStackTrace();
         }
 
-        OTDRTrace trace = getOTDRTrace();
-        if (trace != null && mainFrame != null) {
-            mainFrame.getGraph().showDataPoint(trace.getDoubleDataPoints());
-
-            System.out.println("Key events:");
-            for (String s : trace.KeyEvents) {
-                System.out.println(s);
-            }
-        }
-
-        return true;
+        return getOTDRTrace();
     }
 
-    @Override
-    public boolean stopFetchData() {
-        return true;
-    }
+//    @Override
+//    public boolean stopFetchData() {
+//        return true;
+//    }
 
     OTDRTrace getOTDRTrace() {
         CommandHandle commandHandle = new CommandHandle();
@@ -115,5 +107,21 @@ public class OTDRTraceGetter implements IDataGetter {
         trace.KeyEvents = keyEvents;
 
         return trace;
+    }
+
+    @Override
+    public List<Double> getWaveData(Map<String, String> permittedVal) {
+        this.trace = measureOnDemand(permittedVal);
+        if ( this.trace == null) {
+            return null;
+        }
+
+//        return Arrays.asList(ArrayUtils.toObject(trace.getDoubleDataPoints()));
+        return null;
+    }
+
+    @Override
+    public List<String> getEventData(Map<String, String> permittedVal) {
+        return null;
     }
 }

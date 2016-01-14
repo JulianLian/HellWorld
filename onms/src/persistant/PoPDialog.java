@@ -1,9 +1,9 @@
 /*
  *
- *@author Ñî°²Ó¡
+ *@author æ¨å®‰å°
  *
- *Õâ¸ö¶Ô»°¿òÒªÌîÈëµÄÊı¾İÊÇÓÃ»§¶ÔÒª±£´æÍ¼ĞÎ
- *µÄĞÅÏ¢µÄÈÏ¶¨
+ *è¿™ä¸ªå¯¹è¯æ¡†è¦å¡«å…¥çš„æ•°æ®æ˜¯ç”¨æˆ·å¯¹è¦ä¿å­˜å›¾å½¢
+ *çš„ä¿¡æ¯çš„è®¤å®š
  *
  *
  *
@@ -11,31 +11,20 @@
  */
 package persistant;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import datastruct.SerialDataFromToFile;
+import domain.BusinessConst;
+import main.Md711MainFrame;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.border.TitledBorder;
-
-import domain.BusinessConst;
-import domain.SerialDataFromToFile;
-import main.Md711MainFrame;
-
 /*
- *  ´´½¨±êÌâ±ß¿ò
+ *  åˆ›å»ºæ ‡é¢˜è¾¹æ¡†
     JPanel panel = new JPanel();
 	Border e = BorderFactory.createEtchedBorder();
 	Border t = BorderFactory.createTitledBorder(e,"the title goes here");
@@ -52,311 +41,311 @@ import main.Md711MainFrame;
  *if (returnVal == JFileChooser.APPROVE_OPTION)
  *File file = fc.getSelectedFile();
  *
- *ÎÒÃÇÕâÀïÈ¥µôÔ­ÓĞÈí¼şµÄ±£´æĞòºÅÎÊÌâ£¬¶øÊÇ¸ÄÓÃÈÃÓÃ»§Ñ¡ÔñÎÄ¼şÃûºÍ±£´æÎ»ÖÃ
+ *æˆ‘ä»¬è¿™é‡Œå»æ‰åŸæœ‰è½¯ä»¶çš„ä¿å­˜åºå·é—®é¢˜ï¼Œè€Œæ˜¯æ”¹ç”¨è®©ç”¨æˆ·é€‰æ‹©æ–‡ä»¶åå’Œä¿å­˜ä½ç½®
  *
  *
  *
  */
 public class PoPDialog extends JDialog implements ActionListener
 {
-	
-	// µçÀÂĞÍºÅ
-	private JLabel jlCableType = new JLabel("µçÀÂĞÍºÅ");
+
+	// ç”µç¼†å‹å·
+	private JLabel jlCableType = new JLabel("ç”µç¼†å‹å·");
 	private JTextField jtfCableType;
-	
-	// µçÀÂ³¤¶È
-	private JLabel jlCableLength = new JLabel("µçÀÂ³¤¶È(Ã×)");
+
+	// ç”µç¼†é•¿åº¦
+	private JLabel jlCableLength = new JLabel("ç”µç¼†é•¿åº¦(ç±³)");
 	private JTextField jtfCableLength;
-	
-	// ·óÉèÉî¶È
-	private JLabel jlDsDepth = new JLabel("·óÉèÉî¶È(Ã×)");
+
+	// æ•·è®¾æ·±åº¦
+	private JLabel jlDsDepth = new JLabel("æ•·è®¾æ·±åº¦(ç±³)");
 	private JTextField jtfDsDepth;
-	
-	// ·óÉèÈÕÆÚ
-	private JLabel jlFsDate = new JLabel("·óÉèÈÕÆÚ");
+
+	// æ•·è®¾æ—¥æœŸ
+	private JLabel jlFsDate = new JLabel("æ•·è®¾æ—¥æœŸ");
 	private JTextField jtfFsDate;
-	
-	// ¹ÊÕÏĞÔÖÊ
-	private JLabel jlWrongType = new JLabel("¹ÊÕÏĞÔÖÊ");
+
+	// æ•…éšœæ€§è´¨
+	private JLabel jlWrongType = new JLabel("æ•…éšœæ€§è´¨");
 	private JTextField jtfWrongType;
-	
-	// ¹ÊÕÏ¾àÀë
-	private JLabel jlWrongDistance = new JLabel("¹ÊÕÏ¾àÀë");
+
+	// æ•…éšœè·ç¦»
+	private JLabel jlWrongDistance = new JLabel("æ•…éšœè·ç¦»");
 	private JTextField jtfWrongDistance;
-	
-	// ²âÊÔÈËÔ±
-	private JLabel jlTestClerk = new JLabel("²âÊÔÈËÔ±");
+
+	// æµ‹è¯•äººå‘˜
+	private JLabel jlTestClerk = new JLabel("æµ‹è¯•äººå‘˜");
 	private JTextField jtfTestClerk;
-	
-	// ²âÊÔÈÕÆÚ
-	private JLabel jlTestDate = new JLabel("²âÊÔÈÕÆÚ");
+
+	// æµ‹è¯•æ—¥æœŸ
+	private JLabel jlTestDate = new JLabel("æµ‹è¯•æ—¥æœŸ");
 	private JTextField jtfTestDate;
-	
-	// ±¸×¢
-	private JLabel jlNote = new JLabel("±¸×¢");
+
+	// å¤‡æ³¨
+	private JLabel jlNote = new JLabel("å¤‡æ³¨");
 	private JTextField jtfNote;
-	
-	// ´æ´¢°´Å¥ºÍÈ¡Ïû°´Å¥
+
+	// å­˜å‚¨æŒ‰é’®å’Œå–æ¶ˆæŒ‰é’®
 	private JButton confirmButton;
 	private JButton cencelButton;
-	
+
 	private static String cableType = "";
-	
+
 	private static String cableLength = "";
-	
+
 	private static String dsDepth = "";
-	
+
 	private static String fsDate = "";
-	
+
 	private static String wrongType = "";
-	
+
 	private static String wrongDistance = "";
-	
+
 	private static String testClerk = "";
-	
+
 	private static String testDate = "";
-	
+
 	private static String note = "";
-	
+
 	private Md711MainFrame mf;
-	
+
 	// *****************************************************************************
 	public PoPDialog(Md711MainFrame mf)
 	{
-		
-		super(mf, "´æ´¢ĞÅÏ¢", true);
+
+		super(mf, "å­˜å‚¨ä¿¡æ¯", true);
 		this.mf = mf;
-		
+
 		jtfCableType = new JTextField();
-		
+
 		jtfCableLength = new JTextField();
-		
+
 		jtfDsDepth = new JTextField();
-		
+
 		jtfFsDate = new JTextField();
-		
+
 		jtfWrongType = new JTextField();
-		
+
 		jtfWrongDistance = new JTextField();
-		
+
 		jtfTestClerk = new JTextField();
-		
+
 		jtfTestDate = new JTextField();
-		
+
 		jtfNote = new JTextField();
-		
+
 		JPanel topPane = new JPanel();
 		topPane.setLayout(new BorderLayout());
 		topPane.setBounds(40, 10, 10, 10);
-		topPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "±£´æĞÅÏ¢",
+		topPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "ä¿å­˜ä¿¡æ¯",
 				TitledBorder.CENTER, TitledBorder.TOP));
 		this.setContentPane(topPane);
-		
+
 		JPanel jp1 = new JPanel();
 		jp1.setLayout(new GridLayout(0, 2));
-		
+
 		jp1.add(jlCableType);
 		jp1.add(jtfCableType);
-		
+
 		jp1.add(jlCableLength);
 		jp1.add(jtfCableLength);
-		
+
 		jp1.add(jlDsDepth);
 		jp1.add(jtfDsDepth);
-		
+
 		jp1.add(jlFsDate);
 		jp1.add(jtfFsDate);
-		
+
 		jp1.add(jlWrongType);
 		jp1.add(jtfWrongType);
-		
+
 		jp1.add(jlWrongDistance);
 		jp1.add(jtfWrongDistance);
-		
+
 		jp1.add(jlTestClerk);
 		jp1.add(jtfTestClerk);
-		
+
 		jp1.add(jlTestDate);
 		jp1.add(jtfTestDate);
-		
+
 		jp1.add(jlNote);
 		jp1.add(jtfNote);
-		
+
 		JPanel jp2 = new JPanel();
 		jp2.setLayout(new FlowLayout());
-		
-		confirmButton = new JButton("È·¶¨");
-		cencelButton = new JButton("È¡Ïû");
+
+		confirmButton = new JButton("ç¡®å®š");
+		cencelButton = new JButton("å–æ¶ˆ");
 		confirmButton.addActionListener(this);
 		cencelButton.addActionListener(this);
 		jp2.add(confirmButton);
 		jp2.add(cencelButton);
-		
+
 		jp1.setBorder(BorderFactory.createEmptyBorder(30, 20, 30, 20));
 		topPane.add(jp1, BorderLayout.CENTER);
 		topPane.add(jp2, BorderLayout.SOUTH);
-		
+
 		this.setSize(600, 400);
-		// Ê¹¾ÓÓÚÆÁÄ»ÖĞ¼ä
+		// ä½¿å±…äºå±å¹•ä¸­é—´
 		Dimension SS = this.getToolkit().getScreenSize();
 		Dimension CS = this.getSize();
 		this.setLocation((SS.width - CS.width) / 2, (SS.height - CS.height) / 2);
 		this.setVisible(true);
 	}
-	
+
 	// *****************************************************************
-	
+
 	public static String getCableType ()
 	{
 		return cableType;
-		
+
 	}
-	
+
 	public static void setCableType (String a)
 	{
 		cableType = a;
 	}
-	
+
 	// *****************************
 	public static String getCableLength ()
 	{
 		return cableLength;
-		
+
 	}
-	
+
 	public static void setCableLength (String a)
 	{
 		cableLength = a;
 	}
-	
+
 	// ***************************
 	public static String getDsDepth ()
 	{
 		return dsDepth;
-		
+
 	}
-	
+
 	public static void setDsDepth (String a)
 	{
 		dsDepth = a;
 	}
-	
+
 	// ***************************
 	public static String getFsDate ()
 	{
 		return fsDate;
-		
+
 	}
-	
+
 	public static void setFsDate (String a)
 	{
 		fsDate = a;
 	}
-	
+
 	// ***************************
 	public static String getWrongType ()
 	{
 		return wrongType;
-		
+
 	}
-	
+
 	public static void setWrongType (String a)
 	{
 		wrongType = a;
 	}
-	
+
 	// ****************************
 	public static String getWrongDistance ()
 	{
 		return wrongDistance;
-		
+
 	}
-	
+
 	public static void setWrongDistance (String a)
 	{
 		wrongDistance = a;
 	}
-	
+
 	// ***************************
 	public static String getTestClerk ()
 	{
 		return testClerk;
-		
+
 	}
-	
+
 	public static void setTestClerk (String a)
 	{
 		testClerk = a;
 	}
-	
+
 	// ******************
 	public static String getTestDate ()
 	{
 		return testDate;
-		
+
 	}
-	
+
 	public static void setTestDate (String a)
 	{
 		testDate = a;
 	}
-	
+
 	// ******************
 	public static String getNote ()
 	{
 		return note;
-		
+
 	}
-	
+
 	public static void setNote (String a)
 	{
 		note = a;
 	}
-	
+
 	public void clearAll ()
 	{
 		jtfCableType.setText(" ");
-		
+
 		jtfCableLength.setText(" ");
-		
+
 		jtfDsDepth.setText(" ");
-		
+
 		jtfFsDate.setText(" ");
-		
+
 		jtfWrongType.setText(" ");
-		
+
 		jtfWrongDistance.setText(" ");
-		
+
 		jtfTestClerk.setText(" ");
-		
+
 		jtfTestDate.setText(" ");
-		
+
 		jtfNote.setText(" ");
-		
+
 		cableType = " ";
-		
+
 		cableLength = " ";
-		
+
 		dsDepth = " ";
-		
+
 		fsDate = " ";
-		
+
 		wrongType = " ";
-		
+
 		wrongDistance = " ";
-		
+
 		testClerk = " ";
-		
+
 		testDate = " ";
-		
+
 		note = " ";
-		
+
 	}
-	
-	// *************************************************ÊÂ¼ş´¦Àí
+
+	// *************************************************äº‹ä»¶å¤„ç†
 	public void actionPerformed (ActionEvent e)
 	{
-		
+
 		if (e.getSource().equals(confirmButton))
 		{
 			this.setVisible(false);
@@ -370,9 +359,9 @@ public class PoPDialog extends JDialog implements ActionListener
 			{
 				tempCapleType = jtfCableType.getText();
 				PoPDialog.setCableType(jtfCableType.getText());
-				
+
 			}
-			
+
 			String tempCableLength = new String();
 			if (jtfCableLength.getText().equals(null) || jtfCableLength.getText().equals(""))
 			{
@@ -384,7 +373,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempCableLength = jtfCableLength.getText();
 				PoPDialog.setCableLength(jtfCableLength.getText());
 			}
-			
+
 			String tempDsDepth = new String();
 			if (jtfDsDepth.getText().equals(null) || jtfDsDepth.getText().equals(""))
 			{
@@ -396,7 +385,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempDsDepth = jtfDsDepth.getText();
 				PoPDialog.setDsDepth(jtfDsDepth.getText());
 			}
-			
+
 			String tempFsDate = new String();
 			if (jtfFsDate.getText().equals(null) || jtfFsDate.getText().equals(""))
 			{
@@ -408,7 +397,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempFsDate = jtfFsDate.getText();
 				PoPDialog.setFsDate(jtfFsDate.getText());
 			}
-			
+
 			String tempWrongType = new String();
 			if (jtfWrongType.getText().equals(null) || jtfWrongType.getText().equals(""))
 			{
@@ -420,7 +409,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempWrongType = jtfWrongType.getText();
 				PoPDialog.setWrongType(jtfWrongType.getText());
 			}
-			
+
 			String tempWrongDistance = new String();
 			if (jtfWrongDistance.getText().equals(null) || jtfWrongDistance.getText().equals(""))
 			{
@@ -432,7 +421,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempWrongDistance = jtfWrongDistance.getText();
 				PoPDialog.setWrongDistance(jtfWrongDistance.getText());
 			}
-			
+
 			String tempTestClerk = new String();
 			if (jtfTestClerk.getText().equals(null) || jtfTestClerk.getText().equals(""))
 			{
@@ -444,7 +433,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempTestClerk = jtfTestClerk.getText();
 				PoPDialog.setTestClerk(jtfTestClerk.getText());
 			}
-			
+
 			String tempTestDate = new String();
 			if (jtfTestDate.getText().equals(null) || jtfTestDate.getText().equals(""))
 			{
@@ -456,7 +445,7 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempTestDate = jtfTestDate.getText();
 				PoPDialog.setTestDate(jtfTestDate.getText());
 			}
-			
+
 			String tempNote = new String();
 			if (jtfNote.getText().equals(null) || jtfNote.getText().equals(""))
 			{
@@ -468,14 +457,14 @@ public class PoPDialog extends JDialog implements ActionListener
 				tempNote = jtfNote.getText();
 				PoPDialog.setNote(jtfNote.getText());
 			}
-			
-			// ÏÂÃæ¾ÍÊÇ´ò¿ª°´Å¥
+
+			// ä¸‹é¢å°±æ˜¯æ‰“å¼€æŒ‰é’®
 			JFileChooser jf = new JFileChooser();
 			jf.setCurrentDirectory(new File("data"));
 			int returnVal = jf.showSaveDialog(PoPDialog.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
-				
+
 				SerialDataFromToFile one = null;
 				if (mf.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
 				{
@@ -493,21 +482,21 @@ public class PoPDialog extends JDialog implements ActionListener
 				}
 				try
 				{
-					
+
 					File file = jf.getSelectedFile();
 					FileOutputStream f = new FileOutputStream(file);
 					one.writeToFile(f);
-					JOptionPane.showMessageDialog(this, "±£´æ³É¹¦", "±£´æ½á¹û",
+					JOptionPane.showMessageDialog(this, "ä¿å­˜æˆåŠŸ", "ä¿å­˜ç»“æœ",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 				catch (Exception ddd)
 				{
-					javax.swing.JOptionPane.showMessageDialog(null, "ÎÄ¼ş±£´æ·¢Éú´íÎó");
-					System.err.println("ÎÄ¼ş±£´æ·¢Éú´íÎó");
-					
+					javax.swing.JOptionPane.showMessageDialog(null, "æ–‡ä»¶ä¿å­˜å‘ç”Ÿé”™è¯¯");
+					System.err.println("æ–‡ä»¶ä¿å­˜å‘ç”Ÿé”™è¯¯");
+
 				}
 			}
-			
+
 		}
 		if (e.getSource().equals(cencelButton))
 		{

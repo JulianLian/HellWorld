@@ -8,31 +8,31 @@ import java.util.List;
 
 public class PersistRawDataReader
 {
-	public static List<Double>  getWaveDoubleData(String filePath)
+	public static List<Double> getWaveDoubleData (String filePath)
 	{
-		List<Double> dataPoints = new ArrayList<Double>();		
+		List<Double> dataPoints = new ArrayList<Double>();
 		BufferedReader br = null;
 		try
 		{
-			FileReader fr  = new FileReader(filePath);
+			FileReader fr = new FileReader(filePath);
 			br = new BufferedReader(fr);
 			String sb;
 			while ((sb = br.readLine()) != null)
 			{
 				String[] oneLineData = sb.split(" ");
-				for(String oneData : oneLineData)
+				for (String oneData : oneLineData)
 				{
 					dataPoints.add((Double.valueOf(oneData)));
 				}
 			}
-		}		
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		finally
 		{
-			if(br != null)
+			if (br != null)
 			{
 				try
 				{

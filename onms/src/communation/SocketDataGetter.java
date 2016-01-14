@@ -1,80 +1,89 @@
 package communation;
 
+import main.Md711MainFrame;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-
-import main.Md711MainFrame;
+import java.util.List;
+import java.util.Map;
 
 public class SocketDataGetter implements IDataGetter
 {
-		private Md711MainFrame	mainFrame;
-		private int				port	= 123;
-		private String			svrAddr	= "localhost";
+	private Md711MainFrame mainFrame;
+	private int port = 123;
+	private String svrAddr = "localhost";
 
-		public SocketDataGetter(Md711MainFrame mainFrame)
+	public SocketDataGetter(Md711MainFrame mainFrame)
+	{
+		super();
+		this.mainFrame = mainFrame;
+	}
+
+	public void setSvrEnv (String svrAddr , int svrPort)
+	{
+		this.svrAddr = svrAddr;
+		this.port = svrPort;
+	}
+
+//	@Override
+//	public boolean startFetchData ()
+//	{
+//		return communication("å‘ç»™svrçš„ä¿¡æ¯");
+//	}
+
+	private boolean communication (String sendMess)
+	{
+		Socket socket = null;
+		try
 		{
-			super();
-			this.mainFrame = mainFrame;
+			socket = new Socket(svrAddr, port);
+
+			DataInputStream input = new DataInputStream(socket.getInputStream());
+			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+
+			out.writeUTF(sendMess);
+
+			String responseMess = input.readUTF();
+			System.err.println("æœåŠ¡å™¨ç«¯è¿”å›è¿‡æ¥çš„æ˜¯: " + responseMess);
+
+			out.close();
+			input.close();
 		}
-
-		public void setSvrEnv(String svrAddr, int svrPort)
+		catch (Exception e)
 		{
-			this.svrAddr = svrAddr;
-			this.port = svrPort;
-		}
-
-		@Override
-		public boolean startFetchData()
-		{
-			return communication("·¢¸øsvrµÄĞÅÏ¢");
-		}
-
-		@Override
-		public boolean stopFetchData()
-		{
-			// TODO Auto-generated method stub
+			System.err.println("å¼‚å¸¸:" + e.getMessage());
 			return false;
 		}
-
-		private boolean communication(String sendMess)
+		finally
 		{
-			Socket socket = null;
-			try
-			{				
-				socket = new Socket(svrAddr, port);
-				
-				DataInputStream input = new DataInputStream(socket.getInputStream());				
-				DataOutputStream out = new DataOutputStream(socket.getOutputStream());	
-				
-				out.writeUTF(sendMess);
-
-				String responseMess = input.readUTF();
-				System.err.println("·şÎñÆ÷¶Ë·µ»Ø¹ıÀ´µÄÊÇ: " + responseMess);
-				
-				out.close();
-				input.close();
-			}
-			catch (Exception e)
+			if (socket != null)
 			{
-				System.err.println("Òì³£:" + e.getMessage());
-				return false;
-			}
-			finally
-			{
-				if (socket != null)
+				try
 				{
-					try
-					{
-							socket.close();
-					}
-					catch (IOException e)
-					{
-							socket = null;
-					}
+					socket.close();
+				}
+				catch (IOException e)
+				{
+					socket = null;
 				}
 			}
-			return true;
 		}
+		return true;
+	}
+
+	@Override
+	public List<Double> getWaveData (Map<String, String> permittedVal)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getEventData (Map<String, String> permittedVal)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

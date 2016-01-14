@@ -1,9 +1,9 @@
 /*
  *
- *@author Ñî°²Ó¡
+ *@author æ¨å®‰å°
  *
- *Õâ¸ö¶Ô»°¿òÒªÌîÈëµÄÊı¾İÊÇÓÃ»§¶ÔÒª±£´æÍ¼ĞÎ
- *µÄĞÅÏ¢µÄÈÏ¶¨
+ *è¿™ä¸ªå¯¹è¯æ¡†è¦å¡«å…¥çš„æ•°æ®æ˜¯ç”¨æˆ·å¯¹è¦ä¿å­˜å›¾å½¢
+ *çš„ä¿¡æ¯çš„è®¤å®š
  *
  *
  *
@@ -11,131 +11,17 @@
  */
 package persistant;
 
+import datastruct.SerialDataFromToFile;
+import domain.BusinessConst;
+import main.Md711MainFrame;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
-import domain.BusinessConst;
-import domain.SerialDataFromToFile;
-import main.Md711MainFrame;
-
 public class SaveWithoughtConfirmPoPDialog
 {
-	public static String getCableType ()
-	{
-		return "";
-		
-	}
-	
-	public static void setCableType (String a)
-	{
-	
-	}
-	
-	// *****************************
-	public static String getCableLength ()
-	{
-		return "";
-		
-	}
-	
-	public static void setCableLength (String a)
-	{
-	
-	}
-	
-	// ***************************
-	public static String getDsDepth ()
-	{
-		return "";
-		
-	}
-	
-	public static void setDsDepth (String a)
-	{
-	
-	}
-	
-	// ***************************
-	public static String getFsDate ()
-	{
-		return "";
-		
-	}
-	
-	public static void setFsDate (String a)
-	{
-	
-	}
-	
-	// ***************************
-	public static String getWrongType ()
-	{
-		return "";
-		
-	}
-	
-	public static void setWrongType (String a)
-	{
-	
-	}
-	
-	// ****************************
-	public static String getWrongDistance ()
-	{
-		return "";
-		
-	}
-	
-	public static void setWrongDistance (String a)
-	{
-	
-	}
-	
-	// ***************************
-	public static String getTestClerk ()
-	{
-		return "";
-		
-	}
-	
-	public static void setTestClerk (String a)
-	{
-	
-	}
-	
-	// ******************
-	public static String getTestDate ()
-	{
-		return "";
-		
-	}
-	
-	public static void setTestDate (String a)
-	{
-	
-	}
-	
-	// ******************
-	public static String getNote ()
-	{
-		return "";
-		
-	}
-	
-	public static void setNote (String a)
-	{
-	
-	}
-	
-	public void clearAll ()
-	{
-	
-	}
-	
-	// *************************************************ÊÂ¼ş´¦Àí
+	// *************************************************äº‹ä»¶å¤„ç†
 	public static void save (Md711MainFrame mf)
 	{
 		String tempCapleType = new String();
@@ -147,14 +33,14 @@ public class SaveWithoughtConfirmPoPDialog
 		String tempTestClerk = new String();
 		String tempTestDate = new String();
 		String tempNote = new String();
-		
-		// ÏÂÃæ¾ÍÊÇ´ò¿ª°´Å¥
+
+		// ä¸‹é¢å°±æ˜¯æ‰“å¼€æŒ‰é’®
 		JFileChooser jf = new JFileChooser();
 		jf.setCurrentDirectory(new File("data"));
 		int returnVal = jf.showSaveDialog(mf);
 		if (returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			
+
 			SerialDataFromToFile one = null;
 			if (mf.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
@@ -172,19 +58,19 @@ public class SaveWithoughtConfirmPoPDialog
 			}
 			try
 			{
-				
+
 				File file = jf.getSelectedFile();
 				FileOutputStream f = new FileOutputStream(file);
 				one.writeToFile(f);
-				JOptionPane.showMessageDialog(mf, "±£´æ³É¹¦", "±£´æ½á¹û",
+				JOptionPane.showMessageDialog(mf, "ä¿å­˜æˆåŠŸ", "ä¿å­˜ç»“æœ",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			catch (Exception ddd)
 			{
-				javax.swing.JOptionPane.showMessageDialog(null, "ÎÄ¼ş±£´æ·¢Éú´íÎó");
-				System.err.println("ÎÄ¼ş±£´æ·¢Éú´íÎó");
-				
-			}			
+				javax.swing.JOptionPane.showMessageDialog(null, "æ–‡ä»¶ä¿å­˜å‘ç”Ÿé”™è¯¯");
+				System.err.println("æ–‡ä»¶ä¿å­˜å‘ç”Ÿé”™è¯¯");
+
+			}
 		}
 	}
 }

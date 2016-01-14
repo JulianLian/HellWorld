@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PointHelper
 {
-	public static List<Double> adjustYDataList(List<Double> yDataList, int step)
+	public static List<Double> adjustYDataList (List<Double> yDataList , int step)
 	{
 		int pointCountAfterConsiderStep = getDataPointCountsUsingStep(step, yDataList.size());
 		List<Double> adjustedYDataList = new ArrayList<Double>();
@@ -16,7 +16,7 @@ public class PointHelper
 		return adjustedYDataList;
 	}
 
-	public static int getDataPointCountsUsingStep(int step, int totalPoints)
+	public static int getDataPointCountsUsingStep (int step , int totalPoints)
 	{
 		try
 		{

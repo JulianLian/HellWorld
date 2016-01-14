@@ -1,71 +1,71 @@
 package communation;
 
-import domain.SerialDataFromToFile;
-import main.Md711MainFrame;
-import persistant.WindowControlEnv;
-
-import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
+import datastruct.SerializableData;
+import main.Md711MainFrame;
+import persistant.WindowControlEnv;
 
 public class FileDataGetter implements IDataGetter
 {
-		private Md711MainFrame mainFrame;
+	private Md711MainFrame mainFrame;
+	
+	public FileDataGetter(Md711MainFrame mainFrame)
+	{
+		super();
+		this.mainFrame = mainFrame;
+	}	
 
-		public FileDataGetter(Md711MainFrame mainFrame)
+	@Override
+	public List<Double> getWaveData (Map<String, String> permittedVal)
+	{
+		List<Double> waveData = null;
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showOpenDialog(mainFrame);
+		if (returnVal == JFileChooser.APPROVE_OPTION)
 		{
-			super();
-			this.mainFrame = mainFrame;
-		}
-
-		@Override
-		public boolean startFetchData()
-		{
-			JFileChooser fc = new JFileChooser();
-			int returnVal = fc.showOpenDialog(mainFrame);
-			if (returnVal == JFileChooser.APPROVE_OPTION)
+			File file = fc.getSelectedFile();
+			if (file != null)
 			{
-				File file = fc.getSelectedFile();
-				if (file != null)
+				FileInputStream f = null;
+				try
 				{
-					FileInputStream f = null;
+					f = new FileInputStream(file);
+					waveData = SerializableData.readFromFile(f);
+				}
+				catch (Exception ee)
+				{					
+					JOptionPane.showMessageDialog(mainFrame, "ÎÄ¼ş¶ÁÈëÊ±·¢Éú´íÎó...", "´íÎó",
+							JOptionPane.ERROR_MESSAGE);					
+				}
+				finally
+				{
 					try
 					{
-							f = new FileInputStream(file);
-							SerialDataFromToFile.readFromFile(f);
-							mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
-							WindowControlEnv.setRepaintForFileInfoCome(true);
-							mainFrame.getGraphControllerpanel().setStateWhenOpenFile();
-							mainFrame.showFileGraph();
-							return true;
+						f.close();
 					}
-					catch (Exception ee)
+					catch (IOException e)
 					{
-							mainFrame.getGraphControllerpanel().getMoveAndAmplyPanel().setStepEnable(false);
-							JOptionPane.showMessageDialog(mainFrame, "æ–‡ä»¶è¯»å…¥æ—¶å‘ç”Ÿé”™è¯¯...", "é”™è¯¯", JOptionPane.ERROR_MESSAGE);
-							return false;
-					}
-					finally
-					{
-							try
-							{
-								f.close();
-							}
-							catch (IOException e)
-							{
-								JOptionPane.showMessageDialog(mainFrame, "æ–‡ä»¶è¯»å…¥æ—¶å‘ç”Ÿé”™è¯¯...", "é”™è¯¯",
-										JOptionPane.ERROR_MESSAGE);
-							}
+						JOptionPane.showMessageDialog(mainFrame, "ÎÄ¼ş¶ÁÈëÊ±·¢Éú´íÎó...", "´íÎó",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
-			return false;
 		}
+		return waveData;
+	}
 
-		@Override
-		public boolean stopFetchData()
-		{
-			return true;
-		}
+	@Override
+	public List<String> getEventData (Map<String, String> permittedVal)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
