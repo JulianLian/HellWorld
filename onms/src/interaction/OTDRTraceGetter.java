@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class OTDRTraceGetter implements IDataGetter {
 
-    OTDRTrace trace;
+    static OTDRTrace trace;
 
     public OTDRTraceGetter()
     {
@@ -94,7 +94,6 @@ public class OTDRTraceGetter implements IDataGetter {
 
         rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.TABLE_SIZE);
         int keyEventSize = rcvBuff[0] - '0';
-        String[] keyEvents = new String[keyEventSize];
         trace.KeyEventSize = keyEventSize;
 
         for (int i = 1; i <= keyEventSize; i++) {
@@ -102,9 +101,9 @@ public class OTDRTraceGetter implements IDataGetter {
             newCmd.put(Cmds.CMD, Cmds.TABLE_LINE);
             newCmd.put(Cmds.TABLE_LINE_NUM, Integer.toString(i));
             rcvBuff = commandHandle.builtInCommandWithParam(newCmd);
-            keyEvents[i-1] = new String(rcvBuff);
+
+            trace.KeyEvents.add(new String(rcvBuff));
         }
-        trace.KeyEvents = keyEvents;
 
         return trace;
     }
@@ -116,12 +115,15 @@ public class OTDRTraceGetter implements IDataGetter {
             return null;
         }
 
-//        return Arrays.asList(ArrayUtils.toObject(trace.getDoubleDataPoints()));
-        return null;
+        return trace.getDataPoints();
     }
 
     @Override
     public List<String> getEventData(Map<String, String> permittedVal) {
-        return null;
+        List<String> eventsList = trace.getKeyEvents();
+        for (String s : eventsList) {
+            System.out.println(s);
+        }
+        return trace.getKeyEvents();
     }
 }
