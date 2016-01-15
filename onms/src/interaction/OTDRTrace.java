@@ -2,6 +2,8 @@ package interaction;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Julian on 16/1/2.
@@ -32,7 +34,11 @@ public class OTDRTrace {
     String Yunit;
     byte[] DataPoints; // data points
     int KeyEventSize; // ken event size
-    String[] KeyEvents; // key event
+    List<String> KeyEvents; // key event
+
+    public OTDRTrace() {
+        this.KeyEvents = new ArrayList<>();
+    }
 
     public void setModule(String module) { this.Module = module; }
     public String getModule() { return this.Module; }
@@ -111,7 +117,7 @@ public class OTDRTrace {
     public double getDoubleYscale() { return Double.parseDouble(this.Yscale); }
 
 
-    public String[] getKeyEvents() { return this.KeyEvents; }
+    public List<String> getKeyEvents() { return this.KeyEvents; }
 
     public double[] getDoubleDataPoints() {
         try {
@@ -133,6 +139,37 @@ public class OTDRTrace {
             while ((bais.read(fourBytes) != -1) && num < sizeInByte>>2) {
                 y = (short) (Integer.parseInt(new String(fourBytes), 16));
                 dataPoints[num] = y * this.DoubleYscale + this.DoubleYoffset;
+                num++;
+            }
+
+            bais.close();
+            return dataPoints;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Double> getDataPoints() {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(this.DataPoints);
+
+            byte[] fourBytes = new byte[4];
+            int sizeInByte = 0;
+            short y;
+
+            bais.skip(1); // '#'
+            int numOfChar = (byte)(bais.read()) - '0';
+//            bais.skip(this.numOfChar + 1);
+            for (int hi = 0; hi < numOfChar; hi++) {
+                sizeInByte  = sizeInByte * 10 + (bais.read() - '0');
+            }
+
+            List<Double> dataPoints = new ArrayList<>();
+            int num = 0;
+            while ((bais.read(fourBytes) != -1) && num < sizeInByte>>2) {
+                y = (short) (Integer.parseInt(new String(fourBytes), 16));
+                dataPoints.add( y * this.DoubleYscale + this.DoubleYoffset);
                 num++;
             }
 
