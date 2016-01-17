@@ -7,8 +7,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -37,7 +35,7 @@ public class CommandHandle {
             case Cmds.FUNCTION:
                 // PC : OTU:MODUle:CALFUnctions:LIST? MOD2
                 // RTU : "SM-OTDR"
-                cmdLine = "OTU:MODUle:CALFUNC:LIST? " + cmd.get(Protocol.MODULE);
+                cmdLine = "OTU:MODUle:CALFUNC:LIST? " + cmd.get(Cmds.MODULE);
                 break;
             case Cmds.SWITCH:
                 // PC : otu:switch:detect:list?
@@ -46,65 +44,50 @@ public class CommandHandle {
                 // PC : otu:switch:detect:desc? 0,INT
                 // RTU : OTU, "SA201004","10.33.16.63:1400"
                 break;
-            case Protocol.OTU_OUT:
+            case Cmds.OTU_OUT:
                 break;
-            case Protocol.AUTO_CONFIG:
+            case Cmds.AUTO_CONFIG:
                 break;
-            case Protocol.WAVE_LENGTH:
+            case Cmds.LASER:
                 // PC : OTU:MODUle:CALLaser:LIST? MOD2, "SM-OTDR"
                 // RTU : "1625 nm"5
-                cmdLine = "OTU:MODUle:CALLaser:LIST? "+cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION);
+                cmdLine = "OTU:MODUle:CALLaser:LIST? "+cmd.get(Cmds.MODULE)+","+cmd.get(Cmds.FUNCTION);
                 break;
-            case Protocol.PULSE_WIDTH:
+            case Cmds.PULSE:
                 // PC : otu:module:calot:lpulse? mod2,"SM-OTDR"
                 // RTU : "3 ns","30 ns","100 ns","300 ns","1 us","3 us","10 us","20 us"
-                cmdLine = "OTU:MODUle:CALOT:LPULSE? "+cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION);
+                cmdLine = "OTU:MODUle:CALOT:LPULSE? "+cmd.get(Cmds.MODULE)+","+cmd.get(Cmds.FUNCTION);
                 break;
-            case Protocol.RANGE:
+            case Cmds.RANGE:
                 // PC : otu:module:calot:lrange? mod2,"SM-OTDR","3 ns"
                 // RTU : "5 km","10 km","20 km","40 km","80 km"
                 cmdLine = "OTU:MODUle:CALOT:Lrange? "+
-                        cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION)+ ","+cmd.get(Protocol.PULSE_WIDTH);
+                        cmd.get(Cmds.MODULE)+","+cmd.get(Cmds.FUNCTION)+ ","+cmd.get(Cmds.PULSE);
                 break;
-            case Protocol.ACQUISITION_TIME:
+            case Cmds.ACQ_TIME:
                 break;
-            case Protocol.RESOLUTION:
+            case Cmds.RESOLUTION:
                 // PC : otu:module:calot:lres? mod2,"SM-OTDR","3 ns","5 km"
                 // RTU : "Auto","4 cm","8 cm","16 cm","32 cm","64 cm"
                 cmdLine = "OTU:MODUle:CALOT:Lres? "+
-                        cmd.get(Protocol.MODULE)+","+cmd.get(Protocol.FUNCTION)+","+cmd.get(Protocol.PULSE_WIDTH)+","+cmd.get(Protocol.RANGE);
+                        cmd.get(Cmds.MODULE)+","+cmd.get(Cmds.FUNCTION)+","+cmd.get(Cmds.PULSE)+","+cmd.get(Cmds.RANGE);
                 break;
             case Cmds.MEAS_MANUAL:
-                // PC : otu:mealink:webconfig? MOD2,1,#170001004,MAN,"1 us","80 km",15,1.465,"1625 nm","Auto","SM- OTDR"
+                // PC : otu:mealink:SI:webconfig? MOD2,1,#170001004,MAN,1000,80,15,1.465,1650,64,"SM-OTDR"
                 // RTU : "/acterna/user/harddisk/otu/result/measure_on_demand";"measure.sor"
-                /*
                 cmdLine = "otu:mealink:SI:webconfig? "+
-                    cmd.get("module")+","+ // <Module>: MOD1 or MOD2
-                    cmd.get("switch")+","+ // <Switch Number>: 0 for local
-                    "#1700010"+cmd.get("otu_out")+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
-                    cmd.get("configuration")+","+ // <Autoconfig> :  [MANual,AUTO]
-                    cmd.get("pulse")+","+ // <Pulsewidth> : string of characters
-                    cmd.get("range")+","+ // <Range> : string of characters
-                    cmd.get("time")+","+ // <Acquisition Time> : [5 : 600 ] in seconds
-                    //cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
-                    "1.46500"+","+
-                    cmd.get("laser")+" nm,"+
-                    cmd.get("resolution")+","+ // <Laser> : string of characters
-                    cmd.get("function"); // <Function name> : ["SM-OTDR"]
-                */
-                cmdLine = "otu:mealink:SI:webconfig? "+
-                    cmd.get(Protocol.MODULE)+","+ // <Module>: MOD1 or MOD2
+                    cmd.get(Cmds.MODULE)+","+ // <Module>: MOD1 or MOD2
                     "0,"+ // <Switch Number>: 0 for local
-                    "#1700010"+cmd.get(Protocol.OTU_OUT)+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
-                    cmd.get(Protocol.MANU_CONFIG)+","+ // <Autoconfig> :  [MANual,AUTO]
-                    cmd.get(Protocol.PULSE_WIDTH)+","+ // <Pulsewidth> : string of characters
-                    cmd.get(Protocol.RANGE)+","+ // <Range> : string of characters
-                    cmd.get(Protocol.ACQUISITION_TIME)+","+ // <Acquisition Time> : [5 : 600 ] in seconds
+                    "#1700010"+cmd.get(Cmds.OTU_OUT)+","+ // <Optical path>: buffer containing for each switch the common number and the port number.
+                    cmd.get(Cmds.MANU_CONFIG)+","+ // <Autoconfig> :  [MANual,AUTO]
+                    cmd.get(Cmds.PULSE)+","+ // <Pulsewidth> : string of characters
+                    cmd.get(Cmds.RANGE)+","+ // <Range> : string of characters
+                    cmd.get(Cmds.ACQ_TIME)+","+ // <Acquisition Time> : [5 : 600 ] in seconds
                     //cmd.get("index")+","+ // <Refractive index> : [1.3 : 1.7]
-                    "1.46500,"+
-                    cmd.get(Protocol.WAVE_LENGTH)+" nm,"+
-                    cmd.get(Protocol.RESOLUTION)+","+ // <Laser> : string of characters
-                    cmd.get(Protocol.FUNCTION); // <Function name> : ["SM-OTDR"]
+                    "1.465,"+
+                    cmd.get(Cmds.LASER)+","+
+                    cmd.get(Cmds.RESOLUTION)+","+ // <Laser> : string of characters
+                    cmd.get(Cmds.FUNCTION); // <Function name> : ["SM-OTDR"]
             break;
             case Cmds.TCPPORT:
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
@@ -226,13 +209,14 @@ public class CommandHandle {
             case Cmds.MEAS_TRACE:
                 break;
             case Cmds.IDN:
-                result.put(Cmds.IDN, new String(rcvBuffer));
-                break;
             case Cmds.ERS:
-                result.put(Cmds.ERS, new String(rcvBuffer));
-                break;
             case Cmds.MEAS_STATUS:
-                result.put(Cmds.MEAS_STATUS, new String(rcvBuffer));
+            case Cmds.PULSE:
+            case Cmds.RANGE:
+            case Cmds.RESOLUTION:
+                String s = new String(rcvBuffer);
+                s = s.replaceAll("\\r|\\n", "");
+                result.put(cmd.get(Cmds.CMD), s);
                 break;
             case Cmds.TABLE_SIZE:
                 break;
@@ -274,38 +258,6 @@ public class CommandHandle {
         return result;
     }
 
-    private HashMap measureDefault(HashMap<String, String> cmd) {
-        HashMap measureDefaultArgs = new HashMap();
-
-        measureDefaultArgs.put("module", new ArrayList<String>(Arrays.asList("MOD1")));
-//        measureDefaultArgs.put("module", "MOD1");
-        measureDefaultArgs.put("function", "\"SM-OTDR\"");
-        measureDefaultArgs.put("OTU", "0");
-//        measureDefaultArgs.put("nb_otau", "1");
-        measureDefaultArgs.put("switch", "0");
-        String[] otu_in_options = {"01"};
-        measureDefaultArgs.put("otu_in", otu_in_options);
-        String[] otu_out_options = {"01","02","03","04","05","06","07","08","09","10","11","12"};
-        measureDefaultArgs.put("otu_out", otu_out_options);
-        measureDefaultArgs.put("otu_used", "1");  // the checkbox
-        String[] configuration_options = {"AUTO", "MANUAL"};
-        measureDefaultArgs.put("configuration", configuration_options);
-        measureDefaultArgs.put("laser", "1650");
-        String[] pulse_options = {"3","30","100","300","1000","3000","10000","20000"};
-        measureDefaultArgs.put("pulse", pulse_options);
-        String[] range_options = {"2","5","10","20","40"};
-        measureDefaultArgs.put("range", range_options);
-        String[] resolution_options = {"0","4","8","16","32","64"};
-        measureDefaultArgs.put("resolution", resolution_options);
-        measureDefaultArgs.put("time", "20");
-//        measureDefaultArgs.put("duration_min", "0");
-//        measureDefaultArgs.put("duration_sec", "20");
-
-//        measureDefaultArgs.put("buffer_otau", "NOK");
-
-        return measureDefaultArgs;
-    }
-
     private HashMap singleCommand(HashMap<String, String> cmd) {
         String cmdLine = convertToCmdline(cmd);
         byte[] rcvBuff = sendAndEcho(cmdLine);
@@ -314,8 +266,8 @@ public class CommandHandle {
 
     HashMap mapCommand(HashMap<String, String> cmd) {
         switch (cmd.get(Cmds.CMD)) {
-            case Cmds.MEAS_DEFAULT:
-                return measureDefault(cmd);
+//            case Cmds.MEAS_DEFAULT:
+//                return measureDefault(cmd);
             case Cmds.MEAS_MANUAL:
                 return measureOnDemand(cmd);
             case Cmds.MEAS_TRACE:

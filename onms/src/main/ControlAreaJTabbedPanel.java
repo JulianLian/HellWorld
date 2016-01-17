@@ -3,6 +3,7 @@ package main;
 import dataview.GraphControllerPanel;
 
 import javax.swing.*;
+import java.util.List;
 
 public class ControlAreaJTabbedPanel extends JTabbedPane
 {
@@ -22,9 +23,14 @@ public class ControlAreaJTabbedPanel extends JTabbedPane
 
 	private void intKeyPointPanel ()
 	{
-		keyPointPanel = new KeyPointPanel();
+		keyPointPanel = new KeyPointPanel(mainFrame);
 	}
-
+	
+	public void showKeyPoints(List<String> data)
+	{
+		keyPointPanel.showKeyPointsWithOneEventOneString(data);
+	}
+	
 	private void initGraphicControllerPanel ()
 	{
 		graphControllerpanel = new GraphControllerPanel(mainFrame);
@@ -33,5 +39,10 @@ public class ControlAreaJTabbedPanel extends JTabbedPane
 	public GraphControllerPanel getGraphControllerpanel ()
 	{
 		return graphControllerpanel;
+	}
+	
+	public void clearKeyPointData()
+	{
+		keyPointPanel.clearTableData();
 	}
 }

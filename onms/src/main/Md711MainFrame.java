@@ -213,4 +213,9 @@ public class Md711MainFrame extends JFrame
 	{
 		return controlJtabbedPanel.getGraphControllerpanel();
 	}
+
+	public ControlAreaJTabbedPanel getEventPanel ()
+	{		
+		return controlJtabbedPanel;
+	}
 }

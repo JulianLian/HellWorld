@@ -74,15 +74,49 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		this.functionCB.addItem("SM-OTDR");
 		this.otuInPortCB.addItem("01");
 		this.otuOutPortCB.addItem("01");
+		this.otuOutPortCB.addItem("02");
+		this.otuOutPortCB.addItem("03");
+		this.otuOutPortCB.addItem("04");
+		this.otuOutPortCB.addItem("05");
+		this.otuOutPortCB.addItem("06");
+		this.otuOutPortCB.addItem("07");
+		this.otuOutPortCB.addItem("08");
+		this.otuOutPortCB.addItem("09");
+		this.otuOutPortCB.addItem("10");
+		this.otuOutPortCB.addItem("11");
+		this.otuOutPortCB.addItem("12");
+		this.otuOutPortCB.setSelectedIndex(0);
 
 		this.acquisitionSettingCB.addItem(Protocol.MANU_CONFIG);
 		this.acquisitionSettingCB.addItem(Protocol.AUTO_CONFIG);
 		this.acquisitionSettingCB.setSelectedIndex(1);
 
 		this.waveLengthCB.addItem("1650 nm");
+
 		this.pulseWidthCB.addItem("3 ns");
+		this.pulseWidthCB.addItem("30 ns");
+		this.pulseWidthCB.addItem("100 ns");
+		this.pulseWidthCB.addItem("300 ns");
+		this.pulseWidthCB.addItem("1 us");
+		this.pulseWidthCB.addItem("3 us");
+		this.pulseWidthCB.addItem("10 us");
+		this.pulseWidthCB.addItem("20 us");
+		this.pulseWidthCB.setSelectedIndex(0);
+
 		this.rangeCB.addItem("2 km");
-		this.resolutionCB.addItem("自动");
+		this.rangeCB.addItem("5 km");
+		this.rangeCB.addItem("10 km");
+		this.rangeCB.addItem("20 km");
+		this.rangeCB.addItem("40 km");
+
+		this.resolutionCB.addItem("Auto");
+		this.resolutionCB.addItem("4 cm");
+		this.resolutionCB.addItem("8 cm");
+		this.resolutionCB.addItem("16 cm");
+		this.resolutionCB.addItem("32 cm");
+		this.resolutionCB.addItem("64 cm");
+		this.resolutionCB.setSelectedIndex(0);
+
 		waveLengthCB.setEnabled(false);
 		pulseWidthCB.setEnabled(false);
 		rangeCB.setEnabled(false);
@@ -291,7 +325,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 				List <Double> waveData = devDataGetter.getWaveData(getSelectedDevParam);
 				List <String> eventData = devDataGetter.getEventData(getSelectedDevParam);
 				mainFrame.getGraph().showPortData(waveData);
-//				mainFrame.getGraph().showEventData(eventData);
+				mainFrame.getEventPanel().showKeyPoints(eventData);
 				mainFrame.getGraphControllerpanel().getCurSelectionPanel()
 						.setStateEnable(CurveSelectionPanel.PORT_CUR_SELECTION, true);
 			}
@@ -320,10 +354,18 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		{
 			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_MINUTES, minOrSecond);
 		}
+		else
+		{
+			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_MINUTES, "0");
+		}
 		minOrSecond = acquisitionSecField.getText();
 		if(minOrSecond != null && !minOrSecond.trim().equals(""))
 		{
 			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_SECONDS, minOrSecond);
+		}
+		else
+		{
+			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_SECONDS, "20");
 		}
 		selectedDevQueryParamMap.put(Protocol.RESOLUTION, (String)resolutionCB.getSelectedItem());
 		return selectedDevQueryParamMap;
@@ -350,7 +392,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 			refillPermittedOTUIn(permittedVal);
 			refillPermittedOTUOut(permittedVal);
 			refillPermittedWaveLength(permittedVal);
-			refillPermittedPulseWidth(permittedVal);
+//			refillPermittedPulseWidth(permittedVal);
 			refillPermittedRange(permittedVal);
 			refillPermittedResolution(permittedVal);
 		}
@@ -362,11 +404,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.RESOLUTION);
 		if(vals!= null && vals.size() > 0)
 		{
+			resolutionCB.removeActionListener(choiceAction);
 			resolutionCB.removeAllItems();
 			for(String item : vals)
 			{
 				resolutionCB.addItem(item);
 			}
+			resolutionCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -376,11 +420,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.RANGE);
 		if(vals!= null && vals.size() > 0)
 		{
+			rangeCB.removeActionListener(choiceAction);
 			rangeCB.removeAllItems();
 			for(String item : vals)
 			{
 				rangeCB.addItem(item);
 			}
+			rangeCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -390,11 +436,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.PULSE_WIDTH);
 		if(vals!= null && vals.size() > 0)
 		{
+			pulseWidthCB.removeActionListener(choiceAction);
 			pulseWidthCB.removeAllItems();
 			for(String item : vals)
 			{
 				pulseWidthCB.addItem(item);
 			}
+			pulseWidthCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -404,11 +452,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.WAVE_LENGTH);
 		if(vals!= null && vals.size() > 0)
 		{
+			waveLengthCB.removeActionListener(choiceAction);
 			waveLengthCB.removeAllItems();
 			for(String item : vals)
 			{
 				waveLengthCB.addItem(item);
 			}
+			waveLengthCB.removeActionListener(choiceAction);
 		}
 	}
 
@@ -418,11 +468,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.OTU_OUT);
 		if(vals!= null && vals.size() > 0)
 		{
+			otuOutPortCB.removeActionListener(choiceAction);
 			otuOutPortCB.removeAllItems();
 			for(String item : vals)
 			{
 				otuOutPortCB.addItem(item);
 			}
+			otuOutPortCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -432,11 +484,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.OTU_IN);
 		if(vals!= null && vals.size() > 0)
 		{
+			otuInPortCB.removeActionListener(choiceAction);
 			otuInPortCB.removeAllItems();
 			for(String item : vals)
 			{
 				otuInPortCB.addItem(item);
 			}
+			otuInPortCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -446,11 +500,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.FUNCTION);
 		if(vals!= null && vals.size() > 0)
 		{
+			functionCB.removeActionListener(choiceAction);
 			functionCB.removeAllItems();
 			for(String item : vals)
 			{
 				functionCB.addItem(item);
 			}
+			functionCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -459,11 +515,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		List<String> vals = permittedVal.get(Protocol.MODULE);
 		if(vals!= null && vals.size() > 0)
 		{
+			moduleCB.removeActionListener(choiceAction);
 			moduleCB.removeAllItems();
 			for(String item : vals)
 			{
 				moduleCB.addItem(item);
 			}
+			moduleCB.addActionListener(choiceAction);
 		}
 	}
 }

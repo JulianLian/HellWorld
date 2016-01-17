@@ -1,9 +1,5 @@
 package action;
 
-import main.Md711MainFrame;
-import main.PrintGraph;
-
-import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.print.PageFormat;
@@ -11,6 +7,13 @@ import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
+
+import main.Md711MainFrame;
+import main.PrintGraph;
 
 public class Action
 {

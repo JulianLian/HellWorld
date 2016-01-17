@@ -13,7 +13,7 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 	
 	// ----------------------------------------------------------------------
 	private MoveAndAmplifyControllerPanel moveAndAmplyPanel;
-	// �����ǽ���ѡ��ť
+	// 下面是介质选择按钮
 	// private MediaSelectionPanel mediaSelectionPanel;
 	private CurveSelectionPanel curSelectionPanel;
 	private FaultDistancePanel faultDistancePanel;
@@ -27,16 +27,16 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 	private void layoutPanel ()
 	{
 		moveAndAmplyPanel = new MoveAndAmplifyControllerPanel(this);
-		// **************************************************************************************�йؽ���ѡ��ѡ��·�����еĵ�3�����
+		// **************************************************************************************有关介质选择选项，下方面板中的第3个面板
 		// mediaSelectionPanel = new MediaSelectionPanel(this);
 		// mediaSelectionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-		// "����ѡ��",
+		// "介质选择",
 		// TitledBorder.CENTER, TitledBorder.TOP));
 		
-		// ***************************************************************************************�·�����еĵ�4�����
-		// ************************�йع��Ͼ������
+		// ***************************************************************************************下方面板中的第4个面板
+		// ************************有关故障距离面板
 		faultDistancePanel = new FaultDistancePanel();
-		// ****************************�й�ѡ�������߶�ѡ��
+		// ****************************有关选择哪条线段选项
 		curSelectionPanel = new CurveSelectionPanel(this);
 		
 		JPanel faultAndCurSelectionPanel = new JPanel(new GridLayout(2, 1, 0, 0));

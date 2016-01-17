@@ -24,7 +24,7 @@ public class DrawUtils
 				else
 					path.lineTo(xDataList.get(i), yDataList.get(i));
 			}
-			// �ú�ɫ����ͼ��
+			// 用红色来画图形
 			d.setColor(color);
 			d.draw(path);
 		}
@@ -63,7 +63,7 @@ public class DrawUtils
 			for (int index = 0; index < pointCounts; index++)
 			{
 				xData[index] = baseX + intervalDistance * index;
-				// �����������Ϊ�������������1,���ֵ/�ź�ֵ��(height/2-11)/����������������ֵ
+				// 我们让最大数为最上面可视区域－1,最大值/信号值＝(height/2-11)/我们这里的相对坐标值
 				// yData[index] = (-1)* (halfWindowHeight *
 				// pointsYPositions.get(index) / maxVal);
 				yData[index] = (-1) * (halfWindowHeight * pointsYPositions.get(index) / maxAbsVal);
@@ -76,7 +76,7 @@ public class DrawUtils
 			}
 			
 			saveNewAdjustedPosition(xData, yData, dataPersister);
-			// �ú�ɫ����ͼ��
+			// 用红色来画图形
 			d.setColor(dataPersister.getPresentColor());
 			d.draw(path);
 		}

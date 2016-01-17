@@ -25,14 +25,14 @@ public class Cmds {
 
     public static final String ACQUISITION_SETTINT = "acquisition_setting";
 
-    public static final String WAVE_LENGTH = "wave_length";
-    public static final String PULSE_WIDTH = "pulse_width";
+    public static final String LASER = "laser";
+    public static final String PULSE = "pulse";
     public static final String RANGE = "range";
-    public static final String ACQUISITION_TIME = "acquisition_time";
+    public static final String ACQ_TIME = "acq_time";
     public static final String RESOLUTION = "resolution";
 
-    public static final String MANU_CONFIG = "manual";
-    public static final String AUTO_CONFIG = "auto";
+    public static final String MANU_CONFIG = "MANual";
+    public static final String AUTO_CONFIG = "AUTO";
 
     public static final String MEAS_DEFAULT = "measDefault";
     public static final String MEAS_MANUAL = "measOnDemand";
