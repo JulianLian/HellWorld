@@ -109,7 +109,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		this.rangeCB.addItem("20 km");
 		this.rangeCB.addItem("40 km");
 
-		this.resolutionCB.addItem("自动");
+		this.resolutionCB.addItem("Auto");
 		this.resolutionCB.addItem("4 cm");
 		this.resolutionCB.addItem("8 cm");
 		this.resolutionCB.addItem("16 cm");
@@ -387,11 +387,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	{
 		if(permittedVal != null)
 		{
-//			refillPermittedModulr(permittedVal);
-//			refillPermittedFunction(permittedVal);
-//			refillPermittedOTUIn(permittedVal);
-//			refillPermittedOTUOut(permittedVal);
-//			refillPermittedWaveLength(permittedVal);
+			refillPermittedModulr(permittedVal);
+			refillPermittedFunction(permittedVal);
+			refillPermittedOTUIn(permittedVal);
+			refillPermittedOTUOut(permittedVal);
+			refillPermittedWaveLength(permittedVal);
 //			refillPermittedPulseWidth(permittedVal);
 			refillPermittedRange(permittedVal);
 			refillPermittedResolution(permittedVal);
@@ -404,12 +404,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.RESOLUTION);
 		if(vals!= null && vals.size() > 0)
 		{
+			resolutionCB.removeActionListener(choiceAction);
 			resolutionCB.removeAllItems();
 			for(String item : vals)
 			{
 				resolutionCB.addItem(item);
 			}
-			resolutionCB.setSelectedIndex(1);
+			resolutionCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -419,12 +420,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.RANGE);
 		if(vals!= null && vals.size() > 0)
 		{
+			rangeCB.removeActionListener(choiceAction);
 			rangeCB.removeAllItems();
 			for(String item : vals)
 			{
 				rangeCB.addItem(item);
 			}
-			rangeCB.setSelectedIndex(1);
+			rangeCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -434,11 +436,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.PULSE_WIDTH);
 		if(vals!= null && vals.size() > 0)
 		{
+			pulseWidthCB.removeActionListener(choiceAction);
 			pulseWidthCB.removeAllItems();
 			for(String item : vals)
 			{
 				pulseWidthCB.addItem(item);
 			}
+			pulseWidthCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -448,12 +452,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.WAVE_LENGTH);
 		if(vals!= null && vals.size() > 0)
 		{
+			waveLengthCB.removeActionListener(choiceAction);
 			waveLengthCB.removeAllItems();
 			for(String item : vals)
 			{
 				waveLengthCB.addItem(item);
 			}
-			waveLengthCB.setSelectedIndex(1);
+			waveLengthCB.removeActionListener(choiceAction);
 		}
 	}
 
@@ -463,11 +468,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.OTU_OUT);
 		if(vals!= null && vals.size() > 0)
 		{
+			otuOutPortCB.removeActionListener(choiceAction);
 			otuOutPortCB.removeAllItems();
 			for(String item : vals)
 			{
 				otuOutPortCB.addItem(item);
 			}
+			otuOutPortCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -477,11 +484,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.OTU_IN);
 		if(vals!= null && vals.size() > 0)
 		{
+			otuInPortCB.removeActionListener(choiceAction);
 			otuInPortCB.removeAllItems();
 			for(String item : vals)
 			{
 				otuInPortCB.addItem(item);
 			}
+			otuInPortCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -491,11 +500,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.FUNCTION);
 		if(vals!= null && vals.size() > 0)
 		{
+			functionCB.removeActionListener(choiceAction);
 			functionCB.removeAllItems();
 			for(String item : vals)
 			{
 				functionCB.addItem(item);
 			}
+			functionCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -504,11 +515,13 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		List<String> vals = permittedVal.get(Protocol.MODULE);
 		if(vals!= null && vals.size() > 0)
 		{
+			moduleCB.removeActionListener(choiceAction);
 			moduleCB.removeAllItems();
 			for(String item : vals)
 			{
 				moduleCB.addItem(item);
 			}
+			moduleCB.addActionListener(choiceAction);
 		}
 	}
 }

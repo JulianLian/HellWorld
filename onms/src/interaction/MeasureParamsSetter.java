@@ -11,9 +11,9 @@ import java.util.*;
 public class MeasureParamsSetter implements ICommuParamAssiciation {
     @Override
     public Map<String, List<String>> getPermitItemWhenSelect(Map<String, String> selectedItems) {
-        System.out.println("selected Items: " + selectedItems.size());
-        for (String key : selectedItems.keySet())
-            System.out.println(key + ": " + selectedItems.get(key));
+//        System.out.println("selected Items: " + selectedItems.size());
+//        for (String key : selectedItems.keySet())
+//            System.out.println(key + ": " + selectedItems.get(key));
 
         if (selectedItems != null) {
             Map<String, List<String>> paramAvailable = new HashMap<>();
@@ -27,7 +27,7 @@ public class MeasureParamsSetter implements ICommuParamAssiciation {
             }
 
             if (selectedItems.get(Protocol.RESOLUTION) != null) {
-
+                return null;
             }else if (selectedItems.get(Protocol.RANGE) != null) {
                 List<String> ranges = getAvailableMeasureParams(Protocol.RESOLUTION, selectedItems);
 
@@ -37,12 +37,12 @@ public class MeasureParamsSetter implements ICommuParamAssiciation {
                 paramAvailable.remove(Protocol.RESOLUTION);
             }
 
-            System.out.println("<Param Retrun>");
-            for (String paramKey : paramAvailable.keySet()) {
-                for (String ps : paramAvailable.get(paramKey)) {
-                    System.out.println(paramKey+": "+ps);
-                }
-            }
+//            System.out.println("<Param Retrun>");
+//            for (String paramKey : paramAvailable.keySet()) {
+//                for (String ps : paramAvailable.get(paramKey)) {
+//                    System.out.println(paramKey+": "+ps);
+//                }
+//            }
 
             return paramAvailable;
         }
@@ -120,7 +120,7 @@ public class MeasureParamsSetter implements ICommuParamAssiciation {
         }
 
         String rtnVal = (String) commandHandle.commonSocketInterface(cmdParam).get(cmdParam.get(Cmds.CMD));
-        System.out.println("rtnVal:"+rtnVal);
+//        System.out.println("rtnVal:"+rtnVal);
         String[] parts = rtnVal.split(",");
         for (String part : parts) {
             availableMeasureArgs.add(part.substring(1,part.length()-1));

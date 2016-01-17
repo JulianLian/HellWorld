@@ -19,22 +19,9 @@ public class OTDRTraceGetter implements IDataGetter {
         super();
     }
 
-//    @Override
-//    public boolean startFetchData() {
     public OTDRTrace measureOnDemand(Map<String, String> measureParams) {
-        System.out.println("module: " + measureParams.get(Protocol.MODULE));
-        System.out.println("otu_out: " + measureParams.get(Protocol.OTU_OUT));
-//        System.out.println("manual: " + measureParams.get(Protocol.MANU_CONFIG));
-        System.out.println("manual: " + measureParams.get(Protocol.ACQUISITION_SETTINT));
-        System.out.println("pulse: " + measureParams.get(Protocol.PULSE_WIDTH));
-        System.out.println("range: " + measureParams.get(Protocol.RANGE));
-        System.out.println("acq_time: " + measureParams.get(Protocol.ACQUISITION_TIME));
-        System.out.println("acq_min: " + measureParams.get(Protocol.ACQUISITION_TIME_MINUTES));
-        System.out.println("acq_sec: " + measureParams.get(Protocol.ACQUISITION_TIME_SECONDS));
-        System.out.println("laser: " + measureParams.get(Protocol.WAVE_LENGTH));
-        System.out.println("resolution: " + measureParams.get(Protocol.RESOLUTION));
-        System.out.println("function: " + measureParams.get(Protocol.FUNCTION));
-        HashMap cmdMocker = new HashMap<>();
+
+        HashMap<String, String> cmdMocker = new HashMap<>();
 
         cmdMocker.put(Cmds.CMD, Cmds.MEAS_MANUAL);
 
@@ -60,7 +47,7 @@ public class OTDRTraceGetter implements IDataGetter {
         cmdMocker.put(Cmds.LASER, param.substring(0, param.indexOf(" ")));
 
         param = measureParams.get(Protocol.RESOLUTION);
-        cmdMocker.put(Cmds.RESOLUTION, param.equals("自动") ? "0" : param);
+        cmdMocker.put(Cmds.RESOLUTION, param.equals("Auto") ? "0" : param);
 
         cmdMocker.put(Cmds.FUNCTION, "\""+measureParams.get(Protocol.FUNCTION)+"\"");
 
@@ -70,7 +57,7 @@ public class OTDRTraceGetter implements IDataGetter {
 
         System.out.println(result.get(Cmds.MEAS_STATUS));
         try {
-            Thread.currentThread().sleep(30000);
+            Thread.currentThread().sleep(Integer.parseInt(cmdMocker.get(Cmds.ACQ_TIME)) * 1000 + 25000);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -144,7 +131,7 @@ public class OTDRTraceGetter implements IDataGetter {
         if ( this.trace == null) {
             return null;
         }
-
+        System.out.println("Data Number: "+trace.DataPoints.length);
         return trace.getDataPoints();
     }
 

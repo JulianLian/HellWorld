@@ -138,7 +138,7 @@ public class CommandHandle {
                 System.out.println("Command \"" + cmd.get(Cmds.CMD) + "\" not support!");
                 break;
         }
-        System.out.println("cmdLine: "+cmdLine);
+//        System.out.println("cmdLine: "+cmdLine);
         return cmdLine;
     }
 
