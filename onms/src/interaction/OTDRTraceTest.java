@@ -36,4 +36,13 @@ public class OTDRTraceTest {
         trace.setYscale("0.001470");
         assertEquals(0.001470, trace.getDoubleYscale());
     }
+
+//    @Test
+//    public void testFloatToString(){
+//        String s = "1.2 m";
+//        String[] parts = s.split(" ");
+//        String[] partss = parts[0].split(Pattern.quote("."));
+//        System.out.println(partss[0]);
+//        System.out.println(parts[1] == "cm" ? parts[0] : parts[0].split(Pattern.quote("."))[0]);
+//    }
 }

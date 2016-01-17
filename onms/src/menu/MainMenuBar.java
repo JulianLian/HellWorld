@@ -163,7 +163,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 
 		devParamSetting = new JMenuItem("设备参数...");
 		devParamSetting.addActionListener(this);
-		communicateMenu.add(devParamSetting);
+		//communicateMenu.add(devParamSetting);
 	}
 
 	private void setFileMenu ()
@@ -271,6 +271,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 			GraphShowPanel.setNotBeginMeasureState();
 			this.clearAll();
 			mainFrame.getGraphControllerpanel().clearAll();
+                        mainFrame.getEventPanel().clearKeyPointData();
 			PoPDialog saveDialog = mainFrame.getSaveDialog();
 			if (saveDialog != null)
 				saveDialog.clearAll();

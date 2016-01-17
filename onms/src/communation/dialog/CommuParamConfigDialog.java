@@ -74,15 +74,49 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		this.functionCB.addItem("SM-OTDR");
 		this.otuInPortCB.addItem("01");
 		this.otuOutPortCB.addItem("01");
+		this.otuOutPortCB.addItem("02");
+		this.otuOutPortCB.addItem("03");
+		this.otuOutPortCB.addItem("04");
+		this.otuOutPortCB.addItem("05");
+		this.otuOutPortCB.addItem("06");
+		this.otuOutPortCB.addItem("07");
+		this.otuOutPortCB.addItem("08");
+		this.otuOutPortCB.addItem("09");
+		this.otuOutPortCB.addItem("10");
+		this.otuOutPortCB.addItem("11");
+		this.otuOutPortCB.addItem("12");
+		this.otuOutPortCB.setSelectedIndex(0);
 
 		this.acquisitionSettingCB.addItem(Protocol.MANU_CONFIG);
 		this.acquisitionSettingCB.addItem(Protocol.AUTO_CONFIG);
 		this.acquisitionSettingCB.setSelectedIndex(1);
 
 		this.waveLengthCB.addItem("1650 nm");
+
 		this.pulseWidthCB.addItem("3 ns");
+		this.pulseWidthCB.addItem("30 ns");
+		this.pulseWidthCB.addItem("100 ns");
+		this.pulseWidthCB.addItem("300 ns");
+		this.pulseWidthCB.addItem("1 us");
+		this.pulseWidthCB.addItem("3 us");
+		this.pulseWidthCB.addItem("10 us");
+		this.pulseWidthCB.addItem("20 us");
+		this.pulseWidthCB.setSelectedIndex(0);
+
 		this.rangeCB.addItem("2 km");
+		this.rangeCB.addItem("5 km");
+		this.rangeCB.addItem("10 km");
+		this.rangeCB.addItem("20 km");
+		this.rangeCB.addItem("40 km");
+
 		this.resolutionCB.addItem("自动");
+		this.resolutionCB.addItem("4 cm");
+		this.resolutionCB.addItem("8 cm");
+		this.resolutionCB.addItem("16 cm");
+		this.resolutionCB.addItem("32 cm");
+		this.resolutionCB.addItem("64 cm");
+		this.resolutionCB.setSelectedIndex(0);
+
 		waveLengthCB.setEnabled(false);
 		pulseWidthCB.setEnabled(false);
 		rangeCB.setEnabled(false);
@@ -291,7 +325,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 				List <Double> waveData = devDataGetter.getWaveData(getSelectedDevParam);
 				List <String> eventData = devDataGetter.getEventData(getSelectedDevParam);
 				mainFrame.getGraph().showPortData(waveData);
-//				mainFrame.getGraph().showEventData(eventData);
+				mainFrame.getEventPanel().showKeyPoints(eventData);
 				mainFrame.getGraphControllerpanel().getCurSelectionPanel()
 						.setStateEnable(CurveSelectionPanel.PORT_CUR_SELECTION, true);
 			}
@@ -320,10 +354,18 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		{
 			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_MINUTES, minOrSecond);
 		}
+		else
+		{
+			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_MINUTES, "0");
+		}
 		minOrSecond = acquisitionSecField.getText();
 		if(minOrSecond != null && !minOrSecond.trim().equals(""))
 		{
 			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_SECONDS, minOrSecond);
+		}
+		else
+		{
+			selectedDevQueryParamMap.put(Protocol.ACQUISITION_TIME_SECONDS, "20");
 		}
 		selectedDevQueryParamMap.put(Protocol.RESOLUTION, (String)resolutionCB.getSelectedItem());
 		return selectedDevQueryParamMap;
@@ -345,12 +387,12 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	{
 		if(permittedVal != null)
 		{
-			refillPermittedModulr(permittedVal);
-			refillPermittedFunction(permittedVal);
-			refillPermittedOTUIn(permittedVal);
-			refillPermittedOTUOut(permittedVal);
-			refillPermittedWaveLength(permittedVal);
-			refillPermittedPulseWidth(permittedVal);
+//			refillPermittedModulr(permittedVal);
+//			refillPermittedFunction(permittedVal);
+//			refillPermittedOTUIn(permittedVal);
+//			refillPermittedOTUOut(permittedVal);
+//			refillPermittedWaveLength(permittedVal);
+//			refillPermittedPulseWidth(permittedVal);
 			refillPermittedRange(permittedVal);
 			refillPermittedResolution(permittedVal);
 		}
@@ -367,6 +409,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 			{
 				resolutionCB.addItem(item);
 			}
+			resolutionCB.setSelectedIndex(1);
 		}
 	}
 
@@ -381,6 +424,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 			{
 				rangeCB.addItem(item);
 			}
+			rangeCB.setSelectedIndex(1);
 		}
 	}
 
@@ -409,6 +453,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 			{
 				waveLengthCB.addItem(item);
 			}
+			waveLengthCB.setSelectedIndex(1);
 		}
 	}
 

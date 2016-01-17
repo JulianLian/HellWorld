@@ -22,18 +22,48 @@ public class OTDRTraceGetter implements IDataGetter {
 //    @Override
 //    public boolean startFetchData() {
     public OTDRTrace measureOnDemand(Map<String, String> measureParams) {
+        System.out.println("module: " + measureParams.get(Protocol.MODULE));
+        System.out.println("otu_out: " + measureParams.get(Protocol.OTU_OUT));
+//        System.out.println("manual: " + measureParams.get(Protocol.MANU_CONFIG));
+        System.out.println("manual: " + measureParams.get(Protocol.ACQUISITION_SETTINT));
+        System.out.println("pulse: " + measureParams.get(Protocol.PULSE_WIDTH));
+        System.out.println("range: " + measureParams.get(Protocol.RANGE));
+        System.out.println("acq_time: " + measureParams.get(Protocol.ACQUISITION_TIME));
+        System.out.println("acq_min: " + measureParams.get(Protocol.ACQUISITION_TIME_MINUTES));
+        System.out.println("acq_sec: " + measureParams.get(Protocol.ACQUISITION_TIME_SECONDS));
+        System.out.println("laser: " + measureParams.get(Protocol.WAVE_LENGTH));
+        System.out.println("resolution: " + measureParams.get(Protocol.RESOLUTION));
+        System.out.println("function: " + measureParams.get(Protocol.FUNCTION));
         HashMap cmdMocker = new HashMap<>();
 
         cmdMocker.put(Cmds.CMD, Cmds.MEAS_MANUAL);
-        cmdMocker.put(Protocol.MODULE, "MOD1");
-        cmdMocker.put(Protocol.OTU_OUT, "01");
-        cmdMocker.put(Protocol.MANU_CONFIG, "MANual");
-        cmdMocker.put(Protocol.PULSE_WIDTH, "1000");
-        cmdMocker.put(Protocol.RANGE, "20");
-        cmdMocker.put(Protocol.ACQUISITION_TIME, "15");
-        cmdMocker.put(Protocol.WAVE_LENGTH, "1650");
-        cmdMocker.put(Protocol.RESOLUTION, "64");
-        cmdMocker.put(Protocol.FUNCTION, "\"SM-OTDR\"");
+
+        String param = measureParams.get(Protocol.MODULE);
+        cmdMocker.put(Cmds.MODULE, param.substring(0, param.indexOf(":")));
+
+        cmdMocker.put(Cmds.OTU_OUT, "01");
+
+//        param = measureParams.get(Protocol.MANU_CONFIG);
+        cmdMocker.put(Cmds.MANU_CONFIG, "MAN");
+
+        String[] parts = measureParams.get(Protocol.PULSE_WIDTH).split(" ");
+        cmdMocker.put(Cmds.PULSE, (parts[1].equals("ns") ) ? parts[0] : parts[0]+"000");
+
+        param = measureParams.get(Protocol.RANGE);
+        cmdMocker.put(Cmds.RANGE, param.substring(0, param.indexOf(" ")));
+
+        cmdMocker.put(Cmds.ACQ_TIME,
+                String.valueOf(60 * Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_MINUTES)) +
+                        Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_SECONDS))));
+
+        param = measureParams.get(Protocol.WAVE_LENGTH);
+        cmdMocker.put(Cmds.LASER, param.substring(0, param.indexOf(" ")));
+
+        param = measureParams.get(Protocol.RESOLUTION);
+        cmdMocker.put(Cmds.RESOLUTION, param.equals("自动") ? "0" : param);
+
+        cmdMocker.put(Cmds.FUNCTION, "\""+measureParams.get(Protocol.FUNCTION)+"\"");
+
 
         CommandHandle cmdHandler = new CommandHandle();
         HashMap result = cmdHandler.commonSocketInterface(cmdMocker);
