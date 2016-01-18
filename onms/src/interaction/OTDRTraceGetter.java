@@ -28,10 +28,10 @@ public class OTDRTraceGetter implements IDataGetter {
         String param = measureParams.get(Protocol.MODULE);
         cmdMocker.put(Cmds.MODULE, param.substring(0, param.indexOf(":")));
 
-        cmdMocker.put(Cmds.OTU_OUT, "01");
+        cmdMocker.put(Cmds.OTU_OUT, measureParams.get(Protocol.OTU_OUT));
 
-//        param = measureParams.get(Protocol.MANU_CONFIG);
-        cmdMocker.put(Cmds.MANU_CONFIG, "MAN");
+        param = measureParams.get(Protocol.ACQUISITION_SETTINT);
+        cmdMocker.put(Cmds.MANU_CONFIG, param.equals(Protocol.MANU_CONFIG) ? "MAN" : "AUTO");
 
         String[] parts = measureParams.get(Protocol.PULSE_WIDTH).split(" ");
         cmdMocker.put(Cmds.PULSE, (parts[1].equals("ns") ) ? parts[0] : parts[0]+"000");
@@ -75,42 +75,35 @@ public class OTDRTraceGetter implements IDataGetter {
         CommandHandle commandHandle = new CommandHandle();
         OTDRTrace trace = new OTDRTrace();
 
-        byte[] rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
-        if (!(new String(rcvBuff)).contains("AVAILABLE")) {
-            System.out.println("STATUS: "+new String(rcvBuff));
+        String rcvStr = commandHandle.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
+        if (!(rcvStr).contains("AVAILABLE")) {
+            System.out.println("STATUS: "+rcvStr);
             System.out.println("Trace not available. Please try later.");
             return null;
         }
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.SYSTEM_DATE);
-        trace.setDate(new String(rcvBuff));
+        trace.setDate(commandHandle.builtInCommandWithoutParam(Cmds.SYSTEM_DATE));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.SYSTEM_TIME);
-        trace.setTime(new String(rcvBuff));
+        trace.setTime(commandHandle.builtInCommandWithoutParam(Cmds.SYSTEM_TIME));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XOFFSET);
-        trace.setXoffset(new String(rcvBuff));
+        trace.setXoffset( commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XOFFSET));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XSCALE);
-        trace.setXscale( new String(rcvBuff));
+        trace.setXscale( commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XSCALE));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XUNIT);
-        trace.setXunit(new String(rcvBuff));
+        trace.setXunit( commandHandle.builtInCommandWithoutParam(Cmds.CURVE_XUNIT));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YOFFSET);
-        trace.setYoffset( new String(rcvBuff));
+        trace.setYoffset( commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YOFFSET));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YSCALE);
-        trace.setYscale( new String(rcvBuff));
+        trace.setYscale( commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YSCALE));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YUNIT);
-        trace.setYunit( new String(rcvBuff));
+        trace.setYunit( commandHandle.builtInCommandWithoutParam(Cmds.CURVE_YUNIT));
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.CURVE_BUFFER);
+        byte[] rcvBuff = commandHandle.curveBufferCommand(Cmds.CURVE_BUFFER);
         trace.DataPoints = rcvBuff;
 
-        rcvBuff = commandHandle.builtInCommandWithoutParam(Cmds.TABLE_SIZE);
-        int keyEventSize = rcvBuff[0] - '0';
+        int keyEventSize = Integer.parseInt( commandHandle.builtInCommandWithoutParam(Cmds.TABLE_SIZE));
+
+        System.out.println("KeyEventSize:"+keyEventSize);
         trace.KeyEventSize = keyEventSize;
 
         for (int i = 1; i <= keyEventSize; i++) {
@@ -119,7 +112,7 @@ public class OTDRTraceGetter implements IDataGetter {
             newCmd.put(Cmds.TABLE_LINE_NUM, Integer.toString(i));
             rcvBuff = commandHandle.builtInCommandWithParam(newCmd);
 
-            trace.KeyEvents.add(new String(rcvBuff));
+            trace.KeyEvents.add((new String(rcvBuff)).replaceAll("\\n|\\r", " "));
         }
 
         return trace;
@@ -131,16 +124,22 @@ public class OTDRTraceGetter implements IDataGetter {
         if ( this.trace == null) {
             return null;
         }
+        System.out.println("Date       : "+trace.Date+" "+trace.Time);
+        System.out.println("Module     : "+trace.Module);
+        System.out.println("Function   : "+trace.Function);
+        System.out.println("Laser      : "+trace.Laser);
+        System.out.println("Pulse      : "+trace.Pulsewidth);
+        System.out.println("Acq time   : "+trace.AcqTime);
+        System.out.println("Range      : "+trace.Range);
+        System.out.println("Resolution : "+trace.Resolution);
+        System.out.println("Index      : 1.465");
         System.out.println("Data Number: "+trace.DataPoints.length);
+        System.out.println("Event Num  : "+trace.KeyEvents.size());
         return trace.getDataPoints();
     }
 
     @Override
     public List<String> getEventData(Map<String, String> permittedVal) {
-        List<String> eventsList = trace.getKeyEvents();
-        for (String s : eventsList) {
-            System.out.println(s);
-        }
         return trace.getKeyEvents();
     }
 }

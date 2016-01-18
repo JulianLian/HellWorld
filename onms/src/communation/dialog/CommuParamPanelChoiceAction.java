@@ -1,14 +1,16 @@
 package communation.dialog;
 
-import communation.ICommuParamAssiciation;
-import communation.Protocol;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JComboBox;
+
+import communation.ICommuParamAssiciation;
+import communation.Protocol;
 
 public class CommuParamPanelChoiceAction implements ActionListener
 {

@@ -11,13 +11,15 @@
  */
 package persistant;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import datastruct.SerialDataFromToFile;
 import domain.BusinessConst;
 import main.Md711MainFrame;
-
-import javax.swing.*;
-import java.io.File;
-import java.io.FileOutputStream;
 
 public class SaveWithoughtConfirmPoPDialog
 {
@@ -47,14 +49,16 @@ public class SaveWithoughtConfirmPoPDialog
 				one = new SerialDataFromToFile(
 						InventoryData.getDataFromPortImmutable(), tempCapleType,
 						tempCableLength, tempDsDepth, tempFsDate, tempWrongType,
-						tempWrongDistance, tempTestClerk, tempTestDate, tempNote);
+						tempWrongDistance, tempTestClerk, tempTestDate, tempNote,
+						mf.getEventPanel().getkeyPointPanel().getEventData());
 			}
 			else if (mf.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
 				one = new SerialDataFromToFile(
 						InventoryData.getCanTransformedDataFromFile(), tempCapleType,
 						tempCableLength, tempDsDepth, tempFsDate, tempWrongType,
-						tempWrongDistance, tempTestClerk, tempTestDate, tempNote);
+						tempWrongDistance, tempTestClerk, tempTestDate, tempNote,
+						mf.getEventPanel().getkeyPointPanel().getEventData());
 			}
 			try
 			{

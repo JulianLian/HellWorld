@@ -1,16 +1,26 @@
 package dataview;
 
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JTextField;
+
+import datastruct.EventDataStruct;
 import domain.BusinessConst;
 import persistant.FileDataPersister;
 import persistant.IDataPersister;
 import persistant.PortDataPersister;
 import persistant.WindowControlEnv;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.List;
 
 public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListener
 {
@@ -205,11 +215,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				amplyOrShrink(PortDataPersister.getInstance(), true);
+				amplyOrShrink(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), 
+						true);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				amplyOrShrink(FileDataPersister.getInstance(), true);
+				amplyOrShrink(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), true);
 			}
 			mainFrameRepaint();
 		}
@@ -219,11 +232,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				amplyOrShrink(PortDataPersister.getInstance(), false);
+				amplyOrShrink(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()),
+						false);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				amplyOrShrink(FileDataPersister.getInstance(), false);
+				amplyOrShrink(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), false);
 			}
 			mainFrameRepaint();
 		}
@@ -233,11 +249,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				moveVertical(PortDataPersister.getInstance(), true);
+				moveVertical(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), 
+						true);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				moveVertical(FileDataPersister.getInstance(), true);
+				moveVertical(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), true);
 			}
 
 			mainFrameRepaint();
@@ -248,11 +267,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				moveVertical(PortDataPersister.getInstance(), false);
+				moveVertical(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), 
+						false);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				moveVertical(FileDataPersister.getInstance(), false);
+				moveVertical(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), false);
 			}
 			mainFrameRepaint();
 		}
@@ -262,11 +284,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				moveHorizontal(PortDataPersister.getInstance(), true);
+				moveHorizontal(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), 
+						true);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				moveHorizontal(FileDataPersister.getInstance(), true);
+				moveHorizontal(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), true);
 			}
 
 			mainFrameRepaint();
@@ -277,11 +302,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				moveHorizontal(PortDataPersister.getInstance(), false);
+				moveHorizontal(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), 
+						false);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				moveHorizontal(FileDataPersister.getInstance(), false);
+				moveHorizontal(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), false);
 			}
 			mainFrameRepaint();
 		}
@@ -291,11 +319,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				horizontalWinZipOrAnti(PortDataPersister.getInstance(), true);
+				horizontalWinZipOrAnti(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), 
+						true);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				horizontalWinZipOrAnti(FileDataPersister.getInstance(), true);
+				horizontalWinZipOrAnti(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), true);
 			}
 			mainFrameRepaint();
 		}
@@ -306,11 +337,13 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
-				horizontalWinZipOrAnti(PortDataPersister.getInstance(), false);
+				horizontalWinZipOrAnti(PortDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), false);
 			}
 			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
-				horizontalWinZipOrAnti(FileDataPersister.getInstance(), false);
+				horizontalWinZipOrAnti(FileDataPersister.getInstance(
+						controlPanel.getMainFrame().getEventPanel().getkeyPointPanel()), false);
 			}
 			mainFrameRepaint();
 		}
@@ -340,6 +373,13 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		List<Double> xData = dataPersister.getCashedXData();
 		for (int j = 0, length = xData.size(); j < length; j++)
 			xData.set(j, xData.get(j).doubleValue() * amplifyFactors);
+		//事件点放大缩小
+		Map<String, Double> eventXData = dataPersister.eventDataIDPositionMap();
+		for(Map.Entry<String, Double> entry : eventXData.entrySet())
+		{			
+			double val = entry.getValue().doubleValue() * amplifyFactors;
+			entry.setValue(val);
+		}		
 	}
 
 	public void moveVertical (IDataPersister dataPersister , boolean isUpDirection)
@@ -370,6 +410,14 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			xData.set(j, xData.get(j).doubleValue() + delta);
 		}
+		
+		//事件的坐标
+		Map<String, Double> eventXData = dataPersister.eventDataIDPositionMap();
+		for(Map.Entry<String, Double> entry : eventXData.entrySet())
+		{			
+			double val = entry.getValue().doubleValue() + delta;
+			entry.setValue(val);
+		}	
 	}
 
 	private void horizontalWinZipOrAnti (IDataPersister dataPersister , boolean isWinZip)
@@ -381,6 +429,13 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			xData.set(j, xData.get(j).doubleValue() * factor);
 		}
+		//事件的横坐标
+		Map<String, Double> eventXData = dataPersister.eventDataIDPositionMap();
+		for(Map.Entry<String, Double> entry : eventXData.entrySet())
+		{			
+			double val = entry.getValue().doubleValue() * factor;
+			entry.setValue(val);
+		}	
 	}
 
 	public void mainFrameRepaint ()

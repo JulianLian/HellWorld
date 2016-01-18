@@ -1,8 +1,12 @@
 package dataview;
 
-import javax.swing.*;
+import java.awt.FlowLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
 
 public class FaultDistancePanel extends JPanel
 {

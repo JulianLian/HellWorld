@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.SaveInfo;
+import main.Md711MainFrame;
 import persistant.InventoryData;
 
 public abstract class SerializableData implements Serializable
@@ -24,17 +25,20 @@ public abstract class SerializableData implements Serializable
 	}
 	
 	public abstract List<Double> getWavePoints ();
+	public abstract List<EventDataStruct> getEventData();
 	
-	public static List<Double> readFromFile (FileInputStream inStream) throws IOException , ClassNotFoundException
+	public static List<Double> readFromFile (FileInputStream inStream, Md711MainFrame mainFrame) throws IOException , ClassNotFoundException
 	{
 		ObjectInputStream ooStream = new ObjectInputStream(inStream);
 		
 		SerializableData s = (SerializableData) (ooStream.readObject());
 		
 		List<Double> one = s.getWavePoints();		
+		List<EventDataStruct> eventDatas = s. getEventData();
 				
 		InventoryData.setCanTransformedDataFromFile(one);
 		InventoryData.setDataFromFileNeedPrint(new ArrayList<Double>(one));
+		mainFrame.getEventPanel().showEventDataStruct(eventDatas);
 		return one;
 		// InventoryData.setDataFromFileNeedPrint(two);
 		//详情才需要下面这句

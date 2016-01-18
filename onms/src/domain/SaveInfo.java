@@ -1,5 +1,7 @@
 package domain;
 
+import datastruct.SerialDataFromToFile;
+
 public class SaveInfo
 {
 	// 下面是有关文件中调入得波形得信息，即用户在存储时输入得信息

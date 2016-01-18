@@ -1,12 +1,14 @@
 package draw;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
+import java.util.List;
+
 import domain.ListUtils;
 import domain.PointHelper;
 import persistant.IDataPersister;
-
-import java.awt.*;
-import java.awt.geom.GeneralPath;
-import java.util.List;
 
 public class DrawUtils
 {
@@ -54,8 +56,6 @@ public class DrawUtils
 			double xData[] = new double[pointCounts];
 			double yData[] = new double[pointCounts];
 			
-			// double maxVal =
-			// ListUtils.getMaxNumber(pointsYPositions);
 			double maxAbsVal = ListUtils.getMaxAbsNumber(pointsYPositions);
 			
 			double intervalDistance = (pointCounts == 1 ? 0 : (((screenWidth)) / (pointCounts - 1)));
@@ -63,12 +63,9 @@ public class DrawUtils
 			for (int index = 0; index < pointCounts; index++)
 			{
 				xData[index] = baseX + intervalDistance * index;
-				// 我们让最大数为最上面可视区域－1,最大值/信号值＝(height/2-11)/我们这里的相对坐标值
-				// yData[index] = (-1)* (halfWindowHeight *
-				// pointsYPositions.get(index) / maxVal);
 				yData[index] = (-1) * (halfWindowHeight * pointsYPositions.get(index) / maxAbsVal);
 				minVal = Math.min(minVal, yData[index]);
-				// yData[index] += screenHeight / 4;
+				
 				if (index == 0)
 					path.moveTo(xData[index], yData[index]);
 				else

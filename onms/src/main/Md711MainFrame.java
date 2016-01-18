@@ -6,6 +6,18 @@ package main;
  * 预期完成时间： 40天
  */
 
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
+import java.awt.Toolkit;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+
 import action.Action;
 import dataview.CurveSelectionPanel;
 import dataview.GraphControllerPanel;
@@ -16,9 +28,6 @@ import menu.MainMenuBar;
 import persistant.PoPDialog;
 import persistant.SaveWithoughtConfirmPoPDialog;
 import persistant.WindowControlEnv;
-
-import javax.swing.*;
-import java.awt.*;
 
 /*
  *

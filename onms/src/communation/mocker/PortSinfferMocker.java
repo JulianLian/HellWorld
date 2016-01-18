@@ -1,9 +1,16 @@
 package communation.mocker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import communation.IDataGetter;
 import filedatagetter.PersistRawDataReader;
-
-import java.util.*;
+import main.Md711MainFrame;
+import persistant.InventoryData;
+import persistant.WindowControlEnv;
 
 public class PortSinfferMocker implements IDataGetter
 {
@@ -106,8 +113,10 @@ public class PortSinfferMocker implements IDataGetter
 	public List<String> getEventData (Map<String, String> permittedVal)
 	{
 		List<String>  eventData = new ArrayList<String>();
-		eventData.add("1 2 3 4 5 6 7");
-		eventData.add("7 6 5 4 3 2 1");
+		//目前只显示7列
+		eventData.add("  1,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
+		eventData.add("  2,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
+		eventData.add("7,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
 		return eventData;
 	}
 

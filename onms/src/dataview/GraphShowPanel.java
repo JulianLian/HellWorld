@@ -6,14 +6,11 @@ package dataview;
  * 本类意在完成一个图形显示功能，数据
  * 从Data中获取
  */
-import domain.BusinessConst;
-import domain.DistanceCalculator;
-import draw.DrawUtils;
-import main.Md711MainFrame;
-import persistant.*;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -21,6 +18,18 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+
+import javax.swing.JPanel;
+
+import domain.BusinessConst;
+import domain.DistanceCalculator;
+import draw.DrawUtils;
+import main.Md711MainFrame;
+import persistant.FileDataPersister;
+import persistant.IDataPersister;
+import persistant.InventoryData;
+import persistant.PortDataPersister;
+import persistant.WindowControlEnv;
 
 public class GraphShowPanel extends JPanel implements MouseMotionListener, MouseListener
 {
@@ -92,8 +101,8 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		selectedEndY = e.getY();
 		if (firstPositionHorizontalVal != selectedEndX && clickTimes != 2 && needAmplyfySelectedArea())
 		{
-			amplifySelectArea(FileDataPersister.getInstance());
-			amplifySelectArea(PortDataPersister.getInstance());
+			amplifySelectArea(FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+			amplifySelectArea(PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			resetAmplyParam();
 		}
 		repaint();
@@ -155,21 +164,25 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			// 如果端口数据还没有做坐标调整，则这次需要调整
 			if (WindowControlEnv.getRepaintForPortInfoCome())
 			{
-				DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(), PortDataPersister.getInstance());
+				DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
+						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			}
 			else
 			{
-				DrawUtils.drawPersistData(g2, PortDataPersister.getInstance());
+				DrawUtils.drawPersistData(g2,
+						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			}
 			// ********************************************画文件数据
 			// 文件数据坐标尚未调整
 			if (WindowControlEnv.getRepaintForFileInfoCome())
 			{
-				DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(), FileDataPersister.getInstance());
+				DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
+						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			}
 			else
 			{
-				DrawUtils.drawPersistData(g2, FileDataPersister.getInstance());
+				DrawUtils.drawPersistData(g2,
+						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			}
 			// resetAmplyParam();
 			// ******************************************************************如果要跟踪鼠标位置
@@ -347,4 +360,11 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		md.showGraph();
 	}
 
+	public void showEventVerticalPosition (Double xPosition)
+	{
+		setNotBeginMeasureState();
+		firstPositionHorizontalVal = xPosition.intValue();
+		clickTimes++;
+		repaint();
+	}
 }

@@ -2,23 +2,28 @@ package persistant;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Map;
+
+import datastruct.EventDataStruct;
+import main.KeyPointPanel;
 
 public class PortDataPersister implements IDataPersister
 {
 	private static PortDataPersister INS;
+	private KeyPointPanel keyPointPanel;
 	
-	public static PortDataPersister getInstance ()
+	public static PortDataPersister getInstance (KeyPointPanel keyPointPanel)
 	{
 		if (INS == null)
 		{
-			INS = new PortDataPersister();
+			INS = new PortDataPersister(keyPointPanel);
 		}
 		return INS;
 	}
 	
-	private PortDataPersister()
+	private PortDataPersister(KeyPointPanel keyPointPanel)
 	{
-	
+		this.keyPointPanel = keyPointPanel;
 	}
 	
 	@Override
@@ -55,5 +60,11 @@ public class PortDataPersister implements IDataPersister
 	public List<Double> getCashedYData ()
 	{
 		return InventoryData.getCanTransformedDataFromPort();
+	}
+	
+	@Override
+	public Map<String, Double> eventDataIDPositionMap ()
+	{
+		return keyPointPanel.getEventDataIDPositionMap();
 	}
 }
