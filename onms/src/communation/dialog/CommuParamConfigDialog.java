@@ -41,7 +41,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	private Md711MainFrame	mainFrame;
 	private CommuParamConfigDialog(Md711MainFrame	mainFrame)
 	{
-		super(mainFrame, "查询参数", true);
+		super(mainFrame, "检测参数", true);
 		this.mainFrame = mainFrame;
 		this.setResizable(false);
 		layoutPanel();
@@ -56,7 +56,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	{
 		choiceAction = new CommuParamPanelChoiceAction(this);
 		choiceAction.setPermitCommuParamDealer(new MeasureParamsSetter());
+                addActionListener();
+        }
 
+	private void addActionListener()
+	{
 		moduleCB.addActionListener(choiceAction);
 		functionCB.addActionListener(choiceAction);
 		otuInPortCB.addActionListener(choiceAction);
@@ -66,6 +70,19 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		pulseWidthCB.addActionListener(choiceAction);
 		rangeCB.addActionListener(choiceAction);
 		resolutionCB.addActionListener(choiceAction);
+	}
+
+	private void removeActionListener()
+	{
+		moduleCB.removeActionListener(choiceAction);
+		functionCB.removeActionListener(choiceAction);
+		otuInPortCB.removeActionListener(choiceAction);
+		otuOutPortCB.removeActionListener(choiceAction);
+		acquisitionSettingCB.removeActionListener(choiceAction);
+		waveLengthCB.removeActionListener(choiceAction);
+		pulseWidthCB.removeActionListener(choiceAction);
+		rangeCB.removeActionListener(choiceAction);
+		resolutionCB.removeActionListener(choiceAction);
 	}
 
 	private void loadInitParam ()
@@ -117,6 +134,8 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		this.resolutionCB.addItem("64 cm");
 		this.resolutionCB.setSelectedIndex(0);
 
+		this.acquisitionSecField.setText("20");
+
 		waveLengthCB.setEnabled(false);
 		pulseWidthCB.setEnabled(false);
 		rangeCB.setEnabled(false);
@@ -134,7 +153,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 
 	private JPanel layoutButtonPanel ()
 	{
-		confirmButton = new JButton("查询");
+		confirmButton = new JButton("检测");
 		cancelButton = new JButton("取消");
 		confirmButton.addActionListener(this);
 		cancelButton.addActionListener(this);
@@ -316,11 +335,12 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		}
 		else if (e.getSource().equals(confirmButton))
 		{
+			mainFrame.geCheckMenuBar().reset();
 			INS.setVisible(false);
 			// 由这个类去完成数据采集任务
 			IDataGetter devDataGetter = devDataGetter();
 			Map<String, String> getSelectedDevParam = formSelectedDevQueryParam();
-//			if(devDataGetter.startFetchData())
+			if(devDataGetter != null)
 			{
 				List <Double> waveData = devDataGetter.getWaveData(getSelectedDevParam);
 				List <String> eventData = devDataGetter.getEventData(getSelectedDevParam);
@@ -387,6 +407,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	{
 		if(permittedVal != null)
 		{
+			removeActionListener();
 			refillPermittedModulr(permittedVal);
 			refillPermittedFunction(permittedVal);
 			refillPermittedOTUIn(permittedVal);
@@ -395,6 +416,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 //			refillPermittedPulseWidth(permittedVal);
 			refillPermittedRange(permittedVal);
 			refillPermittedResolution(permittedVal);
+			addActionListener();
 		}
 	}
 
@@ -404,13 +426,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.RESOLUTION);
 		if(vals!= null && vals.size() > 0)
 		{
-			resolutionCB.removeActionListener(choiceAction);
 			resolutionCB.removeAllItems();
 			for(String item : vals)
 			{
 				resolutionCB.addItem(item);
 			}
-			resolutionCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -420,13 +440,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.RANGE);
 		if(vals!= null && vals.size() > 0)
 		{
-			rangeCB.removeActionListener(choiceAction);
 			rangeCB.removeAllItems();
 			for(String item : vals)
 			{
 				rangeCB.addItem(item);
 			}
-			rangeCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -436,13 +454,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.PULSE_WIDTH);
 		if(vals!= null && vals.size() > 0)
 		{
-			pulseWidthCB.removeActionListener(choiceAction);
 			pulseWidthCB.removeAllItems();
 			for(String item : vals)
 			{
 				pulseWidthCB.addItem(item);
 			}
-			pulseWidthCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -452,13 +468,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.WAVE_LENGTH);
 		if(vals!= null && vals.size() > 0)
 		{
-			waveLengthCB.removeActionListener(choiceAction);
 			waveLengthCB.removeAllItems();
 			for(String item : vals)
 			{
 				waveLengthCB.addItem(item);
 			}
-			waveLengthCB.removeActionListener(choiceAction);
 		}
 	}
 
@@ -468,13 +482,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.OTU_OUT);
 		if(vals!= null && vals.size() > 0)
 		{
-			otuOutPortCB.removeActionListener(choiceAction);
 			otuOutPortCB.removeAllItems();
 			for(String item : vals)
 			{
 				otuOutPortCB.addItem(item);
 			}
-			otuOutPortCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -484,13 +496,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.OTU_IN);
 		if(vals!= null && vals.size() > 0)
 		{
-			otuInPortCB.removeActionListener(choiceAction);
 			otuInPortCB.removeAllItems();
 			for(String item : vals)
 			{
 				otuInPortCB.addItem(item);
 			}
-			otuInPortCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -500,13 +510,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		vals = permittedVal.get(Protocol.FUNCTION);
 		if(vals!= null && vals.size() > 0)
 		{
-			functionCB.removeActionListener(choiceAction);
 			functionCB.removeAllItems();
 			for(String item : vals)
 			{
 				functionCB.addItem(item);
 			}
-			functionCB.addActionListener(choiceAction);
 		}
 	}
 
@@ -515,13 +523,11 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		List<String> vals = permittedVal.get(Protocol.MODULE);
 		if(vals!= null && vals.size() > 0)
 		{
-			moduleCB.removeActionListener(choiceAction);
 			moduleCB.removeAllItems();
 			for(String item : vals)
 			{
 				moduleCB.addItem(item);
 			}
-			moduleCB.addActionListener(choiceAction);
 		}
 	}
 }

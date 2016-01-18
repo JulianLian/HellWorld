@@ -1,32 +1,34 @@
 package menu;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
+
 import action.Action;
 import communation.FileDataGetter;
 import communation.IDataGetter;
 import communation.dialog.CommuAddrConfigDialog;
-import communation.mocker.PortSinfferMocker;
 import dataview.CurveSelectionPanel;
 import dataview.GraphShowPanel;
 import devconfig.DeviceConfigDialog;
-import domain.HardWare;
 import main.AboutMessage;
 import main.Md711MainFrame;
 import persistant.InventoryData;
 import persistant.PoPDialog;
 import persistant.WindowControlEnv;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.List;
-
 public class MainMenuBar extends JMenuBar implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 	// 分别是"文件"，"设定"，"通讯"，"属性","帮助"菜单
 	private JMenu fileMenu;
-	private JMenu portSelectMenu;
 	private JMenu communicateMenu;
 	private JMenu waveAttr; // 如果是从文件中导入波形，则多一个"波形信息"菜单
 	private JMenu helpMenu;
@@ -38,17 +40,10 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 	private JMenuItem exit;
 
 	// "设定"下面的菜单项目
-	private JMenu comPortSelectMenu; // 端口功能也隐藏
-	// "端口"下面有4个端口可以选择
-	private JRadioButtonMenuItem com1;
-	private JRadioButtonMenuItem com2;
-	private JRadioButtonMenuItem com3;
-	private JRadioButtonMenuItem com4;
-	private ButtonGroup bg;
 
 	// "通信"菜单的子菜单，点击后便开始通信
 	private JMenuItem beginCommu;
-	private JMenuItem stopCommu;
+	private JMenuItem resetMenuItem;
 	private JMenuItem commuParamSetting;
 	private JMenuItem devParamSetting;
 
@@ -76,40 +71,6 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		waveAttrMenu();
 		// "帮助"菜单
 		setHelpMenu();
-		// 端口选择菜单，这里没有加入主菜单
-		setPortSelectionMenu();
-	}
-
-	private void setPortSelectionMenu ()
-	{
-		portSelectMenu = new JMenu("端口选择(P)");
-		portSelectMenu.setMnemonic(KeyEvent.VK_P);
-		portSelectMenu.getAccessibleContext().setAccessibleDescription("参数设置");
-
-		// *******************端口选择的下级菜单
-		comPortSelectMenu = new JMenu("选择端口");
-		bg = new ButtonGroup();
-		com1 = new JRadioButtonMenuItem(HardWare.COM1);
-		com2 = new JRadioButtonMenuItem(HardWare.COM2);
-		com3 = new JRadioButtonMenuItem(HardWare.COM3);
-		com4 = new JRadioButtonMenuItem(HardWare.COM4);
-		com1.setSelected(true);
-		com1.addActionListener(this);
-		com2.addActionListener(this);
-		com3.addActionListener(this);
-		com4.addActionListener(this);
-		bg.add(com1);
-		bg.add(com2);
-		bg.add(com3);
-		bg.add(com4);
-		comPortSelectMenu.add(com1);
-		comPortSelectMenu.add(com2);
-		comPortSelectMenu.add(com3);
-		comPortSelectMenu.add(com4);
-
-		portSelectMenu.add(comPortSelectMenu);
-
-		// add(portSelectMenu);
 	}
 
 	private void setHelpMenu ()
@@ -146,11 +107,11 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		beginCommu = new JMenuItem("开始通信");
 		beginCommu.addActionListener(this);
 		// communicateMenu.add(beginCommu);
-		stopCommu = new JMenuItem("置位");
-		stopCommu.addActionListener(this);
-		stopCommu.setEnabled(true);
+		resetMenuItem = new JMenuItem("置位");
+		resetMenuItem.addActionListener(this);
+		resetMenuItem.setEnabled(true);
 		// stopCommu.setEnabled(false);
-		communicateMenu.add(stopCommu);
+		communicateMenu.add(resetMenuItem);
 
 		JMenuItem commuAddrSetting = new JMenuItem("通讯参数...");
 		commuAddrSetting.setActionCommand("commuAddrSetting");
@@ -212,20 +173,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 	@Override
 	public void actionPerformed (ActionEvent e)
 	{
-		// 端口选择事件
-		if (e.getSource().equals(com1))
-			mainFrame.setPort(HardWare.COM1);
-
-		else if (e.getSource().equals(com2))
-			mainFrame.setPort(HardWare.COM2);
-
-		else if (e.getSource().equals(com3))
-			mainFrame.setPort(HardWare.COM3);
-		else if (e.getSource().equals(com4))
-			mainFrame.setPort(HardWare.COM4);
-
-			// 文件－退出
-		else if (e.getSource().equals(exit))
+		if (e.getSource().equals(exit))
 		{
 			System.exit(0);
 		}
@@ -263,29 +211,9 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 
 		// ****************************点击开始复位
 		// 让面板上的所有元素复原，同时把已经生成的对象销毁
-		else if (e.getSource().equals(stopCommu))
-		{
-			InventoryData.clearPersistData();
-			WindowControlEnv.toDefaultParam();
-
-			GraphShowPanel.setNotBeginMeasureState();
-			this.clearAll();
-			mainFrame.getGraphControllerpanel().clearAll();
-                        mainFrame.getEventPanel().clearKeyPointData();
-			PoPDialog saveDialog = mainFrame.getSaveDialog();
-			if (saveDialog != null)
-				saveDialog.clearAll();
-			try
+		else if (e.getSource().equals(resetMenuItem))
 			{
-				AboutMessage am = mainFrame.getAm();
-				if (am != null)
-					am.clearAll();// AboutMessage
-			}
-			catch (Exception eee)
-			{
-				System.err.println("错误");
-			}
-			mainFrame.getGraph().repaint();
+			reset();
 		}
 		// ********************************* 保存事件
 		else if (e.getSource().equals(save))
@@ -311,7 +239,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 				lineAttr.setEnabled(true);
 				prin.setEnabled(true);
 				save.setEnabled(false);
-				stopCommu.setEnabled(true);
+				resetMenuItem.setEnabled(true);
 			}
 			else
 			{
@@ -324,24 +252,34 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		}
 	}
 
-	private IDataGetter getFileDataGetter()
+	public void reset ()
+	{
+		InventoryData.clearPersistData();
+		WindowControlEnv.toDefaultParam();
+		
+		GraphShowPanel.setNotBeginMeasureState();
+		this.clearAll();
+		mainFrame.getGraphControllerpanel().clearAll();
+		mainFrame.getEventPanel().clearKeyPointData();
+		PoPDialog saveDialog = mainFrame.getSaveDialog();
+		if (saveDialog != null)
+			saveDialog.clearAll();
+		try
+		{
+			AboutMessage am = mainFrame.getAm();
+			if (am != null)
+				am.clearAll();// AboutMessage
+		}
+		catch (Exception eee)
+	{
+			System.err.println("错误");
+		}
+		mainFrame.getGraph().repaint();
+	}
+
+	private IDataGetter getFileDataGetter ()
 	{
 		return new FileDataGetter(mainFrame);
-	}
-//	public void fetchWaveShapeDataFromDev ()
-//	{
-//		// 由这个类去完成数据采集任务
-//		createDataGetter();
-//		if (portDataGetter.startFetchData())
-//		{
-//			mainFrame.getGraphControllerpanel().getCurSelectionPanel()
-//					.setStateEnable(CurveSelectionPanel.PORT_CUR_SELECTION, true);
-//		}
-//	}
-
-	private IDataGetter createDataGetter ()
-	{
-		return new PortSinfferMocker();
 	}
 
 	public void jbRedSelectAction ()
@@ -357,7 +295,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 
 	public void jbGreenSelectAction ()
 	{
-		mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
+		CurveSelectionPanel.selectFileDataLine();
 		lineAttr.setEnabled(true);
 		prin.setEnabled(true);
 		save.setEnabled(false);
@@ -370,7 +308,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 
 	public void clickStopCommuItem ()
 	{
-		stopCommu.doClick();
+		resetMenuItem.doClick();
 	}
 
 	private void clearAll ()
@@ -378,12 +316,8 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		lineAttr.setEnabled(false);
 		save.setEnabled(false);
 		prin.setEnabled(false);
-		com1.setSelected(true);
-		com2.setSelected(false);
-		com3.setSelected(false);
-		com4.setSelected(false);
 		beginCommu.setEnabled(true);
-		stopCommu.setEnabled(true);
+		resetMenuItem.setEnabled(true);
 		// stopCommu.setEnabled(false);
 		prin.setEnabled(false);
 		save.setEnabled(false);

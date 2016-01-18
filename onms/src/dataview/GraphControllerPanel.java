@@ -1,11 +1,13 @@
 package dataview;
 
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.border.EtchedBorder;
+
 import domain.HardWare;
 import main.Md711MainFrame;
-
-import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import java.awt.*;
 
 public class GraphControllerPanel extends JPanel // JTabbedPane
 {

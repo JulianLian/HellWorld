@@ -88,6 +88,7 @@ public class CommandHandle {
                     cmd.get(Cmds.LASER)+","+
                     cmd.get(Cmds.RESOLUTION)+","+ // <Laser> : string of characters
                     cmd.get(Cmds.FUNCTION); // <Function name> : ["SM-OTDR"]
+                System.out.println("cmdLine: "+cmdLine);
             break;
             case Cmds.TCPPORT:
                 // PC : MODule:FUNCtion:PORT? OPPSide,SLIC1,"OTDR"
@@ -281,7 +282,15 @@ public class CommandHandle {
         return mapCommand(cmd);
     }
 
-    byte[] builtInCommandWithoutParam(String cmd) {
+    String builtInCommandWithoutParam(String cmd) {
+        HashMap newCmd = new HashMap();
+        newCmd.put(Cmds.CMD, cmd);
+        byte[] rcvBuff = sendAndEcho(convertToCmdline(newCmd));
+
+        return (rcvBuff == null) ? null : new String(rcvBuff).replaceAll("\\n|\\r", "");
+    }
+
+    byte[] curveBufferCommand(String cmd) {
         HashMap newCmd = new HashMap();
         newCmd.put(Cmds.CMD, cmd);
         String cmdLine = convertToCmdline(newCmd);

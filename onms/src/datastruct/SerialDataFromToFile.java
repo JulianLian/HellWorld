@@ -11,17 +11,8 @@ package datastruct;
  *
  */
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import domain.SaveInfo;
-import persistant.InventoryData;
 
 public class SerialDataFromToFile extends SerializableData
 {
@@ -56,6 +47,8 @@ public class SerialDataFromToFile extends SerializableData
 	// ±¸×¢
 	private String note;
 	
+	private List<EventDataStruct> eventData;
+	
 	// *********************************************
 	public SerialDataFromToFile()
 	{
@@ -63,7 +56,8 @@ public class SerialDataFromToFile extends SerializableData
 	}
 	
 	public SerialDataFromToFile(List<Double> v, String cableType, String cableLength, String dsDepth, String fsDate,
-			String wrongType, String wrongDistance, String testClerk, String testDate, String note)
+			String wrongType, String wrongDistance, String testClerk, String testDate, String note,
+			List<EventDataStruct> eventData)
 	{
 		
 		this.data = v;
@@ -86,9 +80,11 @@ public class SerialDataFromToFile extends SerializableData
 		
 		this.note = note;
 		
+		this.eventData = eventData;
 	}
 	
 	// ***************************************************************
+	@Override
 	public List<Double> getWavePoints ()
 	{	
 		return data;
@@ -157,12 +153,24 @@ public class SerialDataFromToFile extends SerializableData
 		
 	}
 	
+	public List<EventDataStruct> getEventData ()
+	{
+		return eventData;
+	}
+	
+	public void setEventData (List<EventDataStruct> eventData)
+	{
+		this.eventData = eventData;
+	}
+	
 	// ********************************************************	
-//	public void readFromFile (FileInputStream inStream) throws IOException , ClassNotFoundException
+	// public void readFromFile (FileInputStream inStream) throws
+	// IOException , ClassNotFoundException
 //	{
 //		ObjectInputStream ooStream = new ObjectInputStream(inStream);
 //		
-//		SerialDataFromToFile s = (SerialDataFromToFile) (ooStream.readObject());
+	// SerialDataFromToFile s = (SerialDataFromToFile)
+	// (ooStream.readObject());
 //		
 //		List<Double> one = s.getWavePoints();		
 //				

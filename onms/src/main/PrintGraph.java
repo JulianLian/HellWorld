@@ -8,15 +8,17 @@ package main;
  *整个界面是上方是图形，下方是详细资料
  *
  */
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+
 import domain.BusinessConst;
 import domain.SaveInfo;
 import persistant.InventoryData;
 import persistant.PoPDialog;
-
-import java.awt.*;
-import java.awt.geom.GeneralPath;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
 
 public class PrintGraph implements Printable
 {

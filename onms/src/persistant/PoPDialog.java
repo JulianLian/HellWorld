@@ -11,17 +11,28 @@
  */
 package persistant;
 
-import datastruct.SerialDataFromToFile;
-import domain.BusinessConst;
-import main.Md711MainFrame;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+
+import datastruct.SerialDataFromToFile;
+import domain.BusinessConst;
+import main.Md711MainFrame;
 
 /*
  *  创建标题边框
@@ -471,14 +482,16 @@ public class PoPDialog extends JDialog implements ActionListener
 					one = new SerialDataFromToFile(InventoryData.getDataFromPortImmutable(),
 							tempCapleType, tempCableLength, tempDsDepth, tempFsDate,
 							tempWrongType, tempWrongDistance, tempTestClerk, tempTestDate,
-							tempNote);
+							tempNote,
+							mf.getEventPanel().getkeyPointPanel().getEventData());
 				}
 				else if (mf.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
 				{
 					one = new SerialDataFromToFile(InventoryData.getCanTransformedDataFromFile(),
 							tempCapleType, tempCableLength, tempDsDepth, tempFsDate,
 							tempWrongType, tempWrongDistance, tempTestClerk, tempTestDate,
-							tempNote);
+							tempNote,
+							mf.getEventPanel().getkeyPointPanel().getEventData());
 				}
 				try
 				{

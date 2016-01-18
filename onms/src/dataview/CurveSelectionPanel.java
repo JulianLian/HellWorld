@@ -1,12 +1,17 @@
 package dataview;
 
-import domain.BusinessConst;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.TitledBorder;
+
+import domain.BusinessConst;
 
 public class CurveSelectionPanel extends JPanel implements ActionListener
 {

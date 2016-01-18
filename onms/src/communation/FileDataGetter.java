@@ -38,7 +38,7 @@ public class FileDataGetter implements IDataGetter
 				try
 				{
 					f = new FileInputStream(file);
-					waveData = SerializableData.readFromFile(f);
+					waveData = SerializableData.readFromFile(f, mainFrame);
 				}
 				catch (Exception ee)
 				{					
