@@ -118,7 +118,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		commuAddrSetting.addActionListener(this);
 		communicateMenu.add(commuAddrSetting);
 
-		commuParamSetting = new JMenuItem("查询参数...");
+		commuParamSetting = new JMenuItem("检测参数...");
 		commuParamSetting.addActionListener(this);
 		communicateMenu.add(commuParamSetting);
 

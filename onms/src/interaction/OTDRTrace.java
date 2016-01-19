@@ -52,6 +52,8 @@ public class OTDRTrace {
     public String getTime() { return Time;}
     public void setTime(String time) { Time = time; }
 
+    public String getMeasTime() { return Date+" "+Time; }
+
     public String getSwitchNumber() { return SwitchNumber; }
     public void setSwitchNumber(String switchNumber) { SwitchNumber = switchNumber; }
 

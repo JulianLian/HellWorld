@@ -21,49 +21,62 @@ public class OTDRTraceGetter implements IDataGetter {
 
     public OTDRTrace measureOnDemand(Map<String, String> measureParams) {
 
-        HashMap<String, String> cmdMocker = new HashMap<>();
+        HashMap<String, String> cmdGetter = new HashMap<>();
 
-        cmdMocker.put(Cmds.CMD, Cmds.MEAS_MANUAL);
+        cmdGetter.put(Cmds.CMD, Cmds.MEAS_MANUAL);
 
         String param = measureParams.get(Protocol.MODULE);
-        cmdMocker.put(Cmds.MODULE, param.substring(0, param.indexOf(":")));
+        cmdGetter.put(Cmds.MODULE, param.substring(0, param.indexOf(":")));
 
-        cmdMocker.put(Cmds.OTU_OUT, measureParams.get(Protocol.OTU_OUT));
+        cmdGetter.put(Cmds.OTU_OUT, measureParams.get(Protocol.OTU_OUT));
 
         param = measureParams.get(Protocol.ACQUISITION_SETTINT);
-        cmdMocker.put(Cmds.MANU_CONFIG, param.equals(Protocol.MANU_CONFIG) ? "MAN" : "AUTO");
+        cmdGetter.put(Cmds.MANU_CONFIG, param.equals(Protocol.MANU_CONFIG) ? "MAN" : "AUTO");
 
         String[] parts = measureParams.get(Protocol.PULSE_WIDTH).split(" ");
-        cmdMocker.put(Cmds.PULSE, (parts[1].equals("ns") ) ? parts[0] : parts[0]+"000");
+        cmdGetter.put(Cmds.PULSE, (parts[1].equals("ns")) ? parts[0] : parts[0] + "000");
 
         param = measureParams.get(Protocol.RANGE);
-        cmdMocker.put(Cmds.RANGE, param.substring(0, param.indexOf(" ")));
+        cmdGetter.put(Cmds.RANGE, param.substring(0, param.indexOf(" ")));
 
-        cmdMocker.put(Cmds.ACQ_TIME,
+        cmdGetter.put(Cmds.ACQ_TIME,
                 String.valueOf(60 * Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_MINUTES)) +
                         Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_SECONDS))));
 
         param = measureParams.get(Protocol.WAVE_LENGTH);
-        cmdMocker.put(Cmds.LASER, param.substring(0, param.indexOf(" ")));
+        cmdGetter.put(Cmds.LASER, param.substring(0, param.indexOf(" ")));
 
         param = measureParams.get(Protocol.RESOLUTION);
-        cmdMocker.put(Cmds.RESOLUTION, param.equals("Auto") ? "0" : param);
+        cmdGetter.put(Cmds.RESOLUTION, param.equals("Auto") ? "0" : param);
 
-        cmdMocker.put(Cmds.FUNCTION, "\""+measureParams.get(Protocol.FUNCTION)+"\"");
+        cmdGetter.put(Cmds.FUNCTION, "\"" + measureParams.get(Protocol.FUNCTION) + "\"");
 
 
         CommandHandle cmdHandler = new CommandHandle();
-        HashMap result = cmdHandler.commonSocketInterface(cmdMocker);
+        cmdHandler.commonSocketInterface(cmdGetter);
 
-        System.out.println(result.get(Cmds.MEAS_STATUS));
-        try {
-            Thread.currentThread().sleep(Integer.parseInt(cmdMocker.get(Cmds.ACQ_TIME)) * 1000 + 25000);
-        } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+        String status = cmdHandler.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
+        while (!status.equals("AVAILIABLE")){
+            try {
+                Thread.currentThread().sleep(3000);
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+            status = cmdHandler.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
         }
 
-        return getOTDRTrace();
+        OTDRTrace trace =  getOTDRTrace();
+        trace.setAcqTime(cmdGetter.get(Cmds.ACQ_TIME)+" s");
+        trace.setFunction(measureParams.get(Protocol.FUNCTION));
+        trace.setModule(measureParams.get(Protocol.MODULE));
+        trace.setLaser(measureParams.get(Protocol.WAVE_LENGTH));
+        trace.setPulsewidth(measureParams.get(Protocol.PULSE_WIDTH));
+        trace.setRange(measureParams.get(Protocol.RANGE));
+        trace.setResolution(measureParams.get(Protocol.RESOLUTION));
+        trace.setNindex("1.465");
+
+        return trace;
     }
 
 //    @Override
@@ -124,17 +137,17 @@ public class OTDRTraceGetter implements IDataGetter {
         if ( this.trace == null) {
             return null;
         }
-        System.out.println("Date       : "+trace.Date+" "+trace.Time);
-        System.out.println("Module     : "+trace.Module);
-        System.out.println("Function   : "+trace.Function);
-        System.out.println("Laser      : "+trace.Laser);
-        System.out.println("Pulse      : "+trace.Pulsewidth);
-        System.out.println("Acq time   : "+trace.AcqTime);
-        System.out.println("Range      : "+trace.Range);
-        System.out.println("Resolution : "+trace.Resolution);
-        System.out.println("Index      : 1.465");
+        System.out.println("Date       : "+trace.getMeasTime());
+        System.out.println("Module     : "+trace.getModule());
+        System.out.println("Function   : "+trace.getFunction());
+        System.out.println("Laser      : "+trace.getLaser());
+        System.out.println("Pulse      : "+trace.getPulsewidth());
+        System.out.println("Acq time   : "+trace.getAcqTime());
+        System.out.println("Range      : "+trace.getRange());
+        System.out.println("Resolution : "+trace.getResolution());
+        System.out.println("Index      : "+trace.getNindex());
         System.out.println("Data Number: "+trace.DataPoints.length);
-        System.out.println("Event Num  : "+trace.KeyEvents.size());
+        System.out.println("Event Num  : "+trace.getKeyEvents().size());
         return trace.getDataPoints();
     }
 
