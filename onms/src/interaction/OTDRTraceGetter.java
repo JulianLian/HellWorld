@@ -3,6 +3,7 @@ package interaction;
 import communation.IDataGetter;
 import communation.Protocol;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +40,9 @@ public class OTDRTraceGetter implements IDataGetter {
         param = measureParams.get(Protocol.RANGE);
         cmdGetter.put(Cmds.RANGE, param.substring(0, param.indexOf(" ")));
 
-        cmdGetter.put(Cmds.ACQ_TIME,
-                String.valueOf(60 * Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_MINUTES)) +
-                        Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_SECONDS))));
+        int acqSeconds = 60 * Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_MINUTES)) +
+                Integer.parseInt(measureParams.get(Protocol.ACQUISITION_TIME_SECONDS));
+        cmdGetter.put(Cmds.ACQ_TIME, String.valueOf(acqSeconds));
 
         param = measureParams.get(Protocol.WAVE_LENGTH);
         cmdGetter.put(Cmds.LASER, param.substring(0, param.indexOf(" ")));
@@ -56,7 +57,9 @@ public class OTDRTraceGetter implements IDataGetter {
         cmdHandler.commonSocketInterface(cmdGetter);
 
         String status = cmdHandler.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
-        while (!status.equals("AVAILIABLE")){
+        int tryTimes = acqSeconds / 3 + 20;
+        while ( (status.equals("WAITING") || status.equals("IN_PROGRESS")) &&
+                tryTimes > 0) {
             try {
                 Thread.currentThread().sleep(3000);
             } catch (InterruptedException e) {
@@ -64,6 +67,14 @@ public class OTDRTraceGetter implements IDataGetter {
                 e.printStackTrace();
             }
             status = cmdHandler.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
+            tryTimes--;
+        }
+
+        if (!status.equals("AVAILABLE")) {
+            JOptionPane.showMessageDialog(null,
+                    "Add measurement failed. Please try again!",
+                    "STATUS",JOptionPane.DEFAULT_OPTION);
+            return null;
         }
 
         OTDRTrace trace =  getOTDRTrace();
@@ -116,7 +127,6 @@ public class OTDRTraceGetter implements IDataGetter {
 
         int keyEventSize = Integer.parseInt( commandHandle.builtInCommandWithoutParam(Cmds.TABLE_SIZE));
 
-        System.out.println("KeyEventSize:"+keyEventSize);
         trace.KeyEventSize = keyEventSize;
 
         for (int i = 1; i <= keyEventSize; i++) {
@@ -128,6 +138,8 @@ public class OTDRTraceGetter implements IDataGetter {
             trace.KeyEvents.add((new String(rcvBuff)).replaceAll("\\n|\\r", " "));
         }
 
+        trace.writeDataPointsToFile();
+
         return trace;
     }
 
@@ -137,6 +149,11 @@ public class OTDRTraceGetter implements IDataGetter {
         if ( this.trace == null) {
             return null;
         }
+        printTraceInfo();
+        return trace.getDataPoints();
+    }
+
+    private void printTraceInfo() {
         System.out.println("Date       : "+trace.getMeasTime());
         System.out.println("Module     : "+trace.getModule());
         System.out.println("Function   : "+trace.getFunction());
@@ -146,13 +163,19 @@ public class OTDRTraceGetter implements IDataGetter {
         System.out.println("Range      : "+trace.getRange());
         System.out.println("Resolution : "+trace.getResolution());
         System.out.println("Index      : "+trace.getNindex());
+        System.out.println("Xoffset    : "+trace.getDoubleXoffset());
+        System.out.println("Xunit      : "+trace.getXunit());
+        System.out.println("Yoffset    : "+trace.getDoubleYoffset());
+        System.out.println("Yunit      : "+trace.getYunit());
         System.out.println("Data Number: "+trace.DataPoints.length);
         System.out.println("Event Num  : "+trace.getKeyEvents().size());
-        return trace.getDataPoints();
     }
 
     @Override
     public List<String> getEventData(Map<String, String> permittedVal) {
+//        for (String event : trace.KeyEvents) {
+//            System.out.println(event);
+//        }
         return trace.getKeyEvents();
     }
 }

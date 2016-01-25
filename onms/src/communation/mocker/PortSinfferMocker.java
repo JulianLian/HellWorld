@@ -114,10 +114,28 @@ public class PortSinfferMocker implements IDataGetter
 	{
 		List<String>  eventData = new ArrayList<String>();
 		//目前只显示7列
+//		eventData.add("  1,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
+//		eventData.add("  2,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
+//		eventData.add("7,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
+//		eventData.add("  3,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
+//		eventData.add("  4,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
+//		eventData.add("5,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
+//		eventData.add("  6,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
+//		eventData.add("  8,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
+//		eventData.add("9,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
+//		eventData.add("  13,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
+//		eventData.add("  14,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
+//		eventData.add("15,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
+//		eventData.add(" 16,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
+//		eventData.add("  18,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
+//		eventData.add("19,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
 		eventData.add("  1,,     0.00,~ 24.482,~>-25.75,,     0.00, ");
-		eventData.add("  2,,     0.01,~ 28.482,~>-20.75,,     0.05, ");
-		eventData.add("7,Reflection,  5688.89,  1.266, -50.86,  0.226,  1678.02,  1.440");
-		return eventData;
+		eventData.add("  2,,     500,~ 24.482,~>-25.75,,     0.00, ");
+		eventData.add("  3,,     1000,~ 24.482,~>-25.75,,     0.00, ");
+		eventData.add("  4,,     1500,~ 24.482,~>-25.75,,     0.00, ");
+		eventData.add("  5,,     2000,~ 24.482,~>-25.75,,     0.00, ");
+		
+				return eventData;
 	}
 
 }

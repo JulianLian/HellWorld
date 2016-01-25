@@ -46,4 +46,38 @@ public class PersistRawDataReader
 		}
 		return dataPoints;
 	}
+	public static List<String> getEventData (String filePath)
+	{
+		List<String> dataPoints = new ArrayList<String>();
+		BufferedReader br = null;
+		try
+		{
+			FileReader fr = new FileReader(filePath);
+			br = new BufferedReader(fr);
+			String sb;
+			while ((sb = br.readLine()) != null)
+			{
+				dataPoints.add(sb);
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (br != null)
+			{
+				try
+				{
+					br.close();
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+		return dataPoints;
+	}
 }

@@ -12,6 +12,8 @@ import javax.swing.border.CompoundBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +32,8 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	JComboBox<String> waveLengthCB = new JComboBox<String>();
 	JComboBox<String> pulseWidthCB = new JComboBox<String>();
 	JComboBox<String> rangeCB = new JComboBox<String>();
-	private JTextField acquisitionMinField = new JTextField(6);
-	private JTextField acquisitionSecField = new JTextField(6);
+	private JTextField acquisitionMinField = new JTextField(5);
+	private JTextField acquisitionSecField = new JTextField(5);
 	JComboBox<String> resolutionCB = new JComboBox<String>();
 	private CommuParamPanelChoiceAction choiceAction;
 	public static CommuParamConfigDialog INS;
@@ -39,6 +41,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	private JButton confirmButton;
 	private JButton cancelButton;
 	private Md711MainFrame	mainFrame;
+	
 	private CommuParamConfigDialog(Md711MainFrame	mainFrame)
 	{
 		super(mainFrame, "检测参数", true);
@@ -248,12 +251,41 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 				GridBagConstraints.NONE,//fill
 				new Insets(2,0,4,4),0,0));
 		//----------------------------------------------
-		JPanel acquiteTimePanel = new JPanel();
-		acquiteTimePanel.add(new JLabel("获取时间:"));
-		acquiteTimePanel.add(this.acquisitionMinField);
-		acquiteTimePanel.add(new JLabel("分钟"));
-		acquiteTimePanel.add(this.acquisitionSecField);
-		acquiteTimePanel.add(new JLabel("秒"));
+	        		JPanel acquiteTimePanel = new JPanel(new GridBagLayout());
+		acquiteTimePanel.add(new JLabel("获取时间:"),
+				new GridBagConstraints(0, 0, 1, 1, 0, 0, // weights
+						GridBagConstraints.LINE_START, // anchor
+						GridBagConstraints.NONE, // fill
+						new Insets(0, 2, 0, 0), 0, 0));
+		
+		setOnlyIntTimeIsAccept();
+		
+		acquiteTimePanel.add(this.acquisitionMinField,
+				new GridBagConstraints(1, 0, 1, 1, 0, 0, // weights
+						GridBagConstraints.LINE_START, // anchor
+						GridBagConstraints.NONE, // fill
+						new Insets(0, 0, 0, 0), 0, 0));
+		acquiteTimePanel.add(new JLabel("分钟"),
+				new GridBagConstraints(2, 0, 1, 1, 0, 0, // weights
+						GridBagConstraints.LINE_START, // anchor
+						GridBagConstraints.NONE, // fill
+						new Insets(0, 0, 0, 0), 0, 0));
+		acquiteTimePanel.add(this.acquisitionSecField,
+				new GridBagConstraints(3, 0, 1, 1, 0, 0, // weights
+						GridBagConstraints.LINE_START, // anchor
+						GridBagConstraints.NONE, // fill
+						new Insets(0, 0, 0, 0), 0, 0));
+		acquiteTimePanel.add(new JLabel("秒"),
+				new GridBagConstraints(4, 0, 1, 1, 0, 0, // weights
+						GridBagConstraints.LINE_START, // anchor
+						GridBagConstraints.NONE, // fill
+						new Insets(0, 0, 0, 0), 0, 0));
+		//JPanel acquiteTimePanel = new JPanel();
+		//acquiteTimePanel.add(new JLabel("获取时间:"));
+		//acquiteTimePanel.add(this.acquisitionMinField);
+		//acquiteTimePanel.add(new JLabel("分钟"));
+		//acquiteTimePanel.add(this.acquisitionSecField);
+		//acquiteTimePanel.add(new JLabel("秒"));
 
 		panel.add(acquiteTimePanel, new GridBagConstraints(2,1,4,1
 				,0,0,//weights
@@ -276,6 +308,26 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		fatherPanel.add(panel, BorderLayout.CENTER);
 	}
 
+	private void setOnlyIntTimeIsAccept ()
+	{
+		KeyAdapter keyAdapter = new KeyAdapter() {
+			public void keyTyped (KeyEvent e)
+			{
+				int keyChar = e.getKeyChar();
+				if (keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9)
+				{
+				
+				}
+				else
+				{
+					e.consume();
+				}
+			}
+		};
+		acquisitionMinField.addKeyListener(keyAdapter);
+		acquisitionSecField.addKeyListener(keyAdapter);
+	}
+	
 	private void layoutOTUInOutAndAcquisitionTypePanel (JPanel fatherPanel)
 	{
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -345,9 +397,10 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 				List <Double> waveData = devDataGetter.getWaveData(getSelectedDevParam);
 				List <String> eventData = devDataGetter.getEventData(getSelectedDevParam);
 				mainFrame.getGraph().showPortData(waveData);
-				mainFrame.getEventPanel().showKeyPoints(eventData);
+				mainFrame.getEventPanel().showKeyPoints(eventData, getSelectedDevParam);
 				mainFrame.getGraphControllerpanel().getCurSelectionPanel()
 						.setStateEnable(CurveSelectionPanel.PORT_CUR_SELECTION, true);
+				mainFrame.getEventPanel().showQueryPropertyPanel(getSelectedDevParam);
 			}
 		}
 	}
@@ -362,7 +415,8 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		selectedDevQueryParamMap.put(Protocol.OTU_IN, (String)otuInPortCB.getSelectedItem());
 		selectedDevQueryParamMap.put(Protocol.OTU_OUT, (String)otuOutPortCB.getSelectedItem());
 
-		selectedDevQueryParamMap.put(Protocol.ACQUISITION_SETTINT, (String)acquisitionSettingCB.getSelectedItem());
+		selectedDevQueryParamMap.put(Protocol.ACQUISITION_SETTINT,
+				(String) acquisitionSettingCB.getSelectedItem());
 
 		selectedDevQueryParamMap.put(Protocol.WAVE_LENGTH, (String)waveLengthCB.getSelectedItem());
 		selectedDevQueryParamMap.put(Protocol.PULSE_WIDTH, (String)pulseWidthCB.getSelectedItem());
@@ -531,3 +585,4 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		}
 	}
 }
+

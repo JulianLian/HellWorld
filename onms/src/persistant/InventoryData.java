@@ -72,10 +72,10 @@ public class InventoryData
 		return xDataFromPort;
 	}
 
-	public static void setXDataFromPort (List<Double> c)
-	{
-		xDataFromPort = c;
-	}
+//	public static void setXDataFromPort (List<Double> c)
+//	{
+//		xDataFromPort = c;
+//	}
 
 	public static int getXDataFromPortLength ()
 	{
@@ -147,3 +147,4 @@ public class InventoryData
 			xDataFromFile.clear();
 	}
 }
+

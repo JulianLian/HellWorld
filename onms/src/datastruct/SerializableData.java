@@ -8,8 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import domain.SaveInfo;
 import main.Md711MainFrame;
 import persistant.InventoryData;
 
@@ -26,6 +26,7 @@ public abstract class SerializableData implements Serializable
 	
 	public abstract List<Double> getWavePoints ();
 	public abstract List<EventDataStruct> getEventData();
+	public abstract Map<String, String> getSelectedDevParam();
 	
 	public static List<Double> readFromFile (FileInputStream inStream, Md711MainFrame mainFrame) throws IOException , ClassNotFoundException
 	{
@@ -34,14 +35,15 @@ public abstract class SerializableData implements Serializable
 		SerializableData s = (SerializableData) (ooStream.readObject());
 		
 		List<Double> one = s.getWavePoints();		
-		List<EventDataStruct> eventDatas = s. getEventData();
 				
 		InventoryData.setCanTransformedDataFromFile(one);
 		InventoryData.setDataFromFileNeedPrint(new ArrayList<Double>(one));
-		mainFrame.getEventPanel().showEventDataStruct(eventDatas);
+		mainFrame.getEventPanel().showEventDataStructWhenReadFromFile(
+				s. getEventData(),s.getSelectedDevParam());
+		mainFrame.getEventPanel().showQueryPropertyPanel(s.getSelectedDevParam());
 		return one;
 		// InventoryData.setDataFromFileNeedPrint(two);
-		//ÏêÇé²ÅĞèÒªÏÂÃæÕâ¾ä
+		//ï¿ï¿ªï¿‡ï¿©ï¾²ï¿…ï¿ï¿¨ï¿’ï¾ªï¿ï¿‚ï¿ƒï¿¦ï¿•ï¿¢ï¾¾ï¿¤
 //		SaveInfo.restoreSaveInfo(s);
 	}
 }

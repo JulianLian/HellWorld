@@ -23,9 +23,10 @@ public class KeyPointPanel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 	private DefaultTableModel tableModel = new KeyEventTableModel();
-	private JTable table = new JTable(tableModel);
+	private JTable table = new JTable(tableModel);	
 	private Map<String, Double> eventDataIDPositionMap = new HashMap<String, Double>();
 	private List<EventDataStruct> eventData = new ArrayList<EventDataStruct>();
+	private Map<String, String> selectedDevParam;
 	private Md711MainFrame mainFrame;
 	public KeyPointPanel(Md711MainFrame mainFrame)
 	{
@@ -42,7 +43,7 @@ public class KeyPointPanel extends JPanel
 		table.getSelectionModel().addListSelectionListener(new RowListener());
 		 table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		//◊¯±Í±‰ªØ∫Ûµƒ–¬◊¯±Í
+		//ÂùêÊ†áÂèòÂåñÂêéÁöÑÊñ∞ÂùêÊ†á
 		KeyEventTableModel.hideTableColumn(table, table.getColumnCount() - 1);
 		JScrollPane scrollPane = new JScrollPane(table);
 		this.add(scrollPane,
@@ -52,11 +53,13 @@ public class KeyPointPanel extends JPanel
 						new Insets(0, 0, 0, 0), 0, 0));
 	}
 	
-	public void showKeyPointsWithOneEventOneString (List<String> data)
+	public void showKeyPointsWithOneEventOneString (List<String> data, 
+			Map<String, String> selectedDevParam)
 	{
 		clearTableData();
 		eventDataIDPositionMap.clear();
 		eventData.clear();
+		this.selectedDevParam = selectedDevParam;
 		for(String oneLineData : data)
 		{
 			String[] oneLineVal = oneLineData.split(",");
@@ -65,11 +68,13 @@ public class KeyPointPanel extends JPanel
 		}		
 	}
 	
-	public void showEventDataStruct (List<EventDataStruct> data)
+	public void showEventDataStructWhenReadFromFile (List<EventDataStruct> data, 
+			Map<String, String> selectedDevParam)
 	{
 		clearTableData();
 		eventDataIDPositionMap.clear();
 		eventData = data;
+		this.selectedDevParam = selectedDevParam;
 		for(EventDataStruct oneStruct : data)
 		{
 			addOneLineWithLastColMeansEventData(
@@ -96,8 +101,8 @@ public class KeyPointPanel extends JPanel
 		for(int index = 0 ; index < length - 1; index ++)
 		{
 			row[index] = oneLineVal[index].trim();
-		}		
-		//’‚∏ˆ◊÷∂Œø…“‘±‰ªØ£¨±Ì æ∫·◊¯±Í£¨‘⁄∑≈¥ÛÀı–°π˝≥Ã÷–∑¢…˙±‰ªØ
+		}
+		//Ëøô‰∏™Â≠óÊÆµÂèØ‰ª•ÂèòÂåñÔºåË°®Á§∫Ê®™ÂùêÊ†áÔºåÂú®ÊîæÂ§ßÁº©Â∞èËøáÁ®ã‰∏≠ÂèëÁîüÂèòÂåñ
 		row[length - 1] = oneLineVal[2].trim(); 
 		tableModel.addRow(row);
 	}
@@ -109,16 +114,18 @@ public class KeyPointPanel extends JPanel
 		eventDataIDPositionMap.clear();
 	}
 	
-	public List<Double> getCashedEventXData ()
-	{		
-		return new ArrayList<Double>(eventDataIDPositionMap.values());
-	}
 	
 	public List<EventDataStruct>  getEventData()
 	{
 		return  eventData;
-	}
+	}	
 	
+	
+	public Map<String, String> getSelectedDevParam ()
+	{
+		return selectedDevParam == null ? new HashMap<String, String>(0) : selectedDevParam;
+	}
+
 	public Map<String, Double> getEventDataIDPositionMap()
 	{
 		return eventDataIDPositionMap;
@@ -136,7 +143,7 @@ public class KeyPointPanel extends JPanel
 			 String id = (String)table.getValueAt(selectedRows[0], 0);
 			 Double xPosition = eventDataIDPositionMap.get(id.trim());
 			 mainFrame.getGraph().showEventVerticalPosition(xPosition);
+		 }
 	}
-}
 
 }

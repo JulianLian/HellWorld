@@ -35,14 +35,14 @@ public class SaveWithoughtConfirmPoPDialog
 		String tempTestClerk = new String();
 		String tempTestDate = new String();
 		String tempNote = new String();
-
+		
 		// 下面就是打开按钮
 		JFileChooser jf = new JFileChooser();
 		jf.setCurrentDirectory(new File("data"));
 		int returnVal = jf.showSaveDialog(mf);
 		if (returnVal == JFileChooser.APPROVE_OPTION)
 		{
-
+			
 			SerialDataFromToFile one = null;
 			if (mf.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
 			{
@@ -50,7 +50,8 @@ public class SaveWithoughtConfirmPoPDialog
 						InventoryData.getDataFromPortImmutable(), tempCapleType,
 						tempCableLength, tempDsDepth, tempFsDate, tempWrongType,
 						tempWrongDistance, tempTestClerk, tempTestDate, tempNote,
-						mf.getEventPanel().getkeyPointPanel().getEventData());
+						mf.getEventPanel().getkeyPointPanel().getEventData(),
+						mf.getEventPanel().getkeyPointPanel().getSelectedDevParam());
 			}
 			else if (mf.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
 			{
@@ -58,11 +59,12 @@ public class SaveWithoughtConfirmPoPDialog
 						InventoryData.getCanTransformedDataFromFile(), tempCapleType,
 						tempCableLength, tempDsDepth, tempFsDate, tempWrongType,
 						tempWrongDistance, tempTestClerk, tempTestDate, tempNote,
-						mf.getEventPanel().getkeyPointPanel().getEventData());
+						mf.getEventPanel().getkeyPointPanel().getEventData(),
+						mf.getEventPanel().getkeyPointPanel().getSelectedDevParam());
 			}
 			try
 			{
-
+				
 				File file = jf.getSelectedFile();
 				FileOutputStream f = new FileOutputStream(file);
 				one.writeToFile(f);
@@ -73,8 +75,8 @@ public class SaveWithoughtConfirmPoPDialog
 			{
 				javax.swing.JOptionPane.showMessageDialog(null, "文件保存发生错误");
 				System.err.println("文件保存发生错误");
-
-			}
+				
+			}			
 		}
 	}
 }

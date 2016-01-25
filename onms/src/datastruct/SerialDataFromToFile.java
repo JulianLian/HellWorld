@@ -1,10 +1,10 @@
 package datastruct;
 /*
  *
- *@author Ñî°²Ó¡
+ *@author æ¨å®‰å°
  *
  *
- *Õâ¸öÊı¾İ½á¹¹ÊÇ±£´æÓÃ»§»ñÈ¡µÄ¶Ë¿ÚÊı¾İ£¬²¢×¼±¸ËÍÍùÎÄ¼şÖĞ´æ´¢
+ *è¿™ä¸ªæ•°æ®ç»“æ„æ˜¯ä¿å­˜ç”¨æˆ·è·å–çš„ç«¯å£æ•°æ®ï¼Œå¹¶å‡†å¤‡é€å¾€æ–‡ä»¶ä¸­å­˜å‚¨
  *
  *
  *
@@ -13,41 +13,43 @@ package datastruct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SerialDataFromToFile extends SerializableData
 {
 	
-	// ·Å¶Ë¿ÚĞÅºÅÊı¾İ
+	// æ”¾ç«¯å£ä¿¡å·æ•°æ®
 	private List<Double> data = new ArrayList<Double>();
 	
-	// µçÀÂĞÍºÅ
+	// ç”µç¼†å‹å·
 	private String cableType;
 	
-	// µçÀÂ³¤¶È
+	// ç”µç¼†é•¿åº¦
 	private String cableLength;
 	
-	// ·óÉèÉî¶È
+	// æ•·è®¾æ·±åº¦
 	private String dsDepth;
 	
-	// ·óÉèÈÕÆÚ
+	// æ•·è®¾æ—¥æœŸ
 	private String fsDate;
 	
-	// ¹ÊÕÏĞÔÖÊ
+	// æ•…éšœæ€§è´¨
 	private String wrongType;
 	
-	// ¹ÊÕÏ¾àÀë
+	// æ•…éšœè·ç¦»
 	private String wrongDistance;
 	
-	// ²âÊÔÈËÔ±
+	// æµ‹è¯•äººå‘˜
 	private String testClerk;
 	
-	// ²âÊÔÈÕÆÚ
+	// æµ‹è¯•æ—¥æœŸ
 	private String testDate;
 	
-	// ±¸×¢
+	// å¤‡æ³¨
 	private String note;
 	
 	private List<EventDataStruct> eventData;
+	private Map<String, String> selectedDevParam;
 	
 	// *********************************************
 	public SerialDataFromToFile()
@@ -57,7 +59,8 @@ public class SerialDataFromToFile extends SerializableData
 	
 	public SerialDataFromToFile(List<Double> v, String cableType, String cableLength, String dsDepth, String fsDate,
 			String wrongType, String wrongDistance, String testClerk, String testDate, String note,
-			List<EventDataStruct> eventData)
+			List<EventDataStruct> eventData, 
+			Map<String, String> selectedDevParam)
 	{
 		
 		this.data = v;
@@ -81,12 +84,14 @@ public class SerialDataFromToFile extends SerializableData
 		this.note = note;
 		
 		this.eventData = eventData;
+		
+		this.selectedDevParam = selectedDevParam;
 	}
 	
 	// ***************************************************************
 	@Override
 	public List<Double> getWavePoints ()
-	{	
+	{
 		return data;
 	}
 	
@@ -162,21 +167,32 @@ public class SerialDataFromToFile extends SerializableData
 	{
 		this.eventData = eventData;
 	}
+
+	@Override
+	public Map<String, String> getSelectedDevParam ()
+	{
+		return selectedDevParam;
+	}
+
+	public void setSelectedDevParam (Map<String, String> selectedDevParam)
+	{
+		this.selectedDevParam = selectedDevParam;
+	}	
 	
-	// ********************************************************	
+	// ********************************************************
 	// public void readFromFile (FileInputStream inStream) throws
 	// IOException , ClassNotFoundException
-//	{
-//		ObjectInputStream ooStream = new ObjectInputStream(inStream);
-//		
+	// {
+	// ObjectInputStream ooStream = new ObjectInputStream(inStream);
+	//
 	// SerialDataFromToFile s = (SerialDataFromToFile)
 	// (ooStream.readObject());
-//		
-//		List<Double> one = s.getWavePoints();		
-//				
-//		InventoryData.setCanTransformedDataFromFile(one);
-//		InventoryData.setDataFromFileNeedPrint(new ArrayList<Double>(one));
-//		// InventoryData.setDataFromFileNeedPrint(two);
-//		SaveInfo.restoreSaveInfo(s);
-//	}
+	//
+	// List<Double> one = s.getWavePoints();
+	//
+	// InventoryData.setCanTransformedDataFromFile(one);
+	// InventoryData.setDataFromFileNeedPrint(new ArrayList<Double>(one));
+	// // InventoryData.setDataFromFileNeedPrint(two);
+	// SaveInfo.restoreSaveInfo(s);
+	// }
 }

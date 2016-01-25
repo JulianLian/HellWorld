@@ -193,3 +193,4 @@ public class AboutMessage extends JDialog implements ActionListener
 	}
 
 }
+

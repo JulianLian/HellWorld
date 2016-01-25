@@ -1,6 +1,8 @@
 package interaction;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,7 @@ public class OTDRTrace {
     public String getTime() { return Time;}
     public void setTime(String time) { Time = time; }
 
-    public String getMeasTime() { return Date+" "+Time; }
+    public String getMeasTime() { return Date.replace(',','-')+" "+Time.replace(',',':'); }
 
     public String getSwitchNumber() { return SwitchNumber; }
     public void setSwitchNumber(String switchNumber) { SwitchNumber = switchNumber; }
@@ -88,7 +90,7 @@ public class OTDRTrace {
 
     public void setXscale(String xscale) { this.Xscale = xscale; }
 
-    public String getXunit() { return this.Yunit; }
+    public String getXunit() { return this.Xunit; }
     public void setXunit(String s) { this.Xunit = s; }
 
     public void setYoffset(String yoffset) {
@@ -183,4 +185,32 @@ public class OTDRTrace {
         }
     }
 
+    void writeDataPointsToFile() {
+        FileOutputStream dfos = null;
+        FileOutputStream efos = null;
+        try {
+            dfos = new FileOutputStream("DataPoints.txt");
+            efos = new FileOutputStream("KeyEvent.txt");
+
+            List<Double> dataList = this.getDataPoints();
+
+            for (Double d : dataList){
+                dfos.write(d.toString().getBytes());
+                dfos.write(' ');
+            }
+
+            List<String> eventList = this.getKeyEvents();
+            for (String s : eventList) {
+                efos.write(s.getBytes());
+                efos.write("\n".getBytes());
+            }
+
+            dfos.close();
+            efos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

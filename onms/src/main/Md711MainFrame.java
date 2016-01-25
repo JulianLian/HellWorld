@@ -6,10 +6,12 @@ package main;
  * 预期完成时间： 40天
  */
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
 import java.awt.Toolkit;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import action.Action;
 import dataview.CurveSelectionPanel;
@@ -25,6 +28,7 @@ import dataview.GraphShowPanel;
 import domain.HardWare;
 import domain.ProductInfo;
 import menu.MainMenuBar;
+import menu.MainToolBar;
 import persistant.PoPDialog;
 import persistant.SaveWithoughtConfirmPoPDialog;
 import persistant.WindowControlEnv;
@@ -38,7 +42,7 @@ import persistant.WindowControlEnv;
  * 上下左右移动图形；同时能够显示多个波形，方便用户对比它们；
  * 同时用户可以打印这次的波形以及波形数据，能够把界面上的波形
  * 存储到文件中；用户也能够调用历史数据进行显示等等处理
- *
+ * 
  *-Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=8000
  */
 
@@ -49,49 +53,61 @@ public class Md711MainFrame extends JFrame
 	private GraphShowPanel graph; // 显示图形的面板类
 	private AboutMessage am; // 用户点击后会显示文件数据的信息
 	private PoPDialog saveDialog; // 用户在这里填入保存的文件的信息
-
+	
 	// **********************************************菜单选项定义
 	private MainMenuBar checkerMenuBar;
-
+	
 	private ControlAreaJTabbedPanel controlJtabbedPanel;
-
+	
 	public Md711MainFrame()
 	{
-		action.Action.closingAction(this);
-
+		Action.closingAction(this);
 		initMenuBar();
 		initGraphicControllerPanel();
-
-		layoutPanel();
+		layoutPanel();		
+//		try
+//		{
+//			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+//			// "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
+//			//"javax.swing.plaf.metal.MetalLookAndFeel"
+//			//"com.sun.java.swing.plaf.mac.MacLookAndFeel";			
+//			//com.sun.java.swing.plaf.windows.WindowsLookAndFeel
+//			//com.sun.java.swing.plaf.mac.MacLookAndFeel
+//		}
+//		catch (Exception e)
+//		{
+//		}		
+//		setDefaultLookAndFeelDecorated(true);
 	}
-
+	
 	private void layoutPanel ()
 	{
+		setLayout(new BorderLayout());
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
 		JTabbedPane graphScrollPane = initDataShowPanel();
 		splitPane.setLeftComponent(graphScrollPane);
-		// JScrollPane graphScrollPane = new
-		// JScrollPane(initDataShowPanel());
-		// splitPane.setLeftComponent(graphScrollPane);
+		
 		JScrollPane controlPanel = new JScrollPane(controlJtabbedPanel);
 		controlPanel.setMaximumSize(new Dimension(controlPanel.getPreferredSize().width, 100));
 		splitPane.setRightComponent(controlPanel);
-		graphScrollPane.setMinimumSize(new Dimension(800, 600));
+		graphScrollPane.setMinimumSize(new Dimension(800, 560));
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
-		splitPane.setEnabled(false);
-		splitPane.setDividerLocation(0.80);
+//		splitPane.setEnabled(false);
+		splitPane.setDividerLocation(0.75);
 		splitPane.setResizeWeight(1);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
 		Action.setJSplitPaneAction(splitPane);
-		this.setContentPane(splitPane);
+		
+		add(MainToolBar.createToolBar(this), BorderLayout.PAGE_START);
+		add(splitPane, BorderLayout.CENTER);
 	}
-
+	
 	private void initGraphicControllerPanel ()
 	{
 		controlJtabbedPanel = new ControlAreaJTabbedPanel(this);
 		graph = new GraphShowPanel(this);
 	}
-
+	
 	private JTabbedPane initDataShowPanel ()
 	{
 		JTabbedPane tabbedPane = new JTabbedPane();
@@ -102,65 +118,65 @@ public class Md711MainFrame extends JFrame
 		tabbedPane.add(new JPanel(), "设置告警提示");
 		tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
+		
 		return tabbedPane;
 	}
-
+	
 	private void initMenuBar ()
 	{
 		checkerMenuBar = new MainMenuBar(this);
 		setJMenuBar(checkerMenuBar);
 	}
-
+	
 	public void curAttrAction ()
 	{
 		am = new AboutMessage(this);
 		am.showMessage();
 	}
-
+	
 	public void saveAction ()
 	{
 		// saveDialog = new PoPDialog(this);
 		SaveWithoughtConfirmPoPDialog.save(this);
 		WindowControlEnv.setPortDataHaveSaved(true);
 	}
-
+	
 	public MainMenuBar geCheckMenuBar ()
 	{
 		return checkerMenuBar;
 	}
-
+	
 	public GraphShowPanel getGraph ()
 	{
 		return graph;
 	}
-
+	
 	public PoPDialog getSaveDialog ()
 	{
 		return saveDialog;
 	}
 	// ******************************************* **********************
-
+	
 	public AboutMessage getAm ()
 	{
 		return am;
 	}
-
+	
 	// ********************************设置通讯端口
 	public void setPort (String port)
 	{
 		whichCommPort = port;
 	}
-
+	
 	// 获取通讯端口
 	public String getPort ()
 	{
 		return whichCommPort;
 	}
-
+	
 	// ************************ 下面完成数据波形显示功能 ******************************
 	// *************************** *******************************
-
+	
 	public void showGraph ()
 	{
 		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
@@ -169,7 +185,7 @@ public class Md711MainFrame extends JFrame
 		geCheckMenuBar().setSaveItemState(true);
 		graph.repaint();
 	}
-
+	
 	public void showFileGraph ()
 	{
 		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
@@ -179,16 +195,16 @@ public class Md711MainFrame extends JFrame
 		geCheckMenuBar().setSaveItemState(true);
 		graph.repaint();
 	}
-
+	
 	public void setCommunationPort (String port)
 	{
 		whichCommPort = port;
 	}
-
+	
 	// ******************************** *********************
 	// ******************************** 整个系统的入口 **********************
 	// ******************************* ***********************
-
+	
 	public static void main (String[] args)
 	{
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -197,15 +213,15 @@ public class Md711MainFrame extends JFrame
 				createAndShowGUI();
 			}
 		});
-
+		
 	}
-
+	
 	private static void createAndShowGUI ()
 	{
 		Md711MainFrame window = new Md711MainFrame();
-
+		
 		window.setTitle(ProductInfo.getProductName());
-
+		
 		// 让屏幕最大化
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = kit.getScreenSize();
@@ -217,14 +233,11 @@ public class Md711MainFrame extends JFrame
 		window.setLocation(insets.left, insets.top);
 		window.setVisible(true);
 	}
-
+	
 	public GraphControllerPanel getGraphControllerpanel ()
 	{
 		return controlJtabbedPanel.getGraphControllerpanel();
 	}
-
-	public ControlAreaJTabbedPanel getEventPanel ()
-	{		
-		return controlJtabbedPanel;
-	}
+	
+	public ControlAreaJTabbedPanel getEventPanel () { return controlJtabbedPanel; }
 }

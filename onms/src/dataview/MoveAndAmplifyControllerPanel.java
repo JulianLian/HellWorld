@@ -25,10 +25,10 @@ import persistant.WindowControlEnv;
 public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListener
 {
 	private GraphControllerPanel controlPanel;
-	private static final String BASE_IMG_PATH = "../icon/";
+	
 	private JPanel downFirstPane;
 	private JProgressBar progressBar = new JProgressBar(0, 4096);
-	private JButton restoreButton = new JButton("复原");
+	private JButton restoreButton = new JButton("复原",  Constant.createImageIcon("restore.png"));
 
 	private JButton jbStep;// 步长
 
@@ -78,55 +78,52 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		jbStep.addActionListener(this);
 		setStepEnable(false);
 
-		jbAug = new JButton("放大");// , createImageIcon("zoomIn.gif"));
+		jbAug = new JButton("放大" , Constant.createImageIcon("zoomIn.gif"));
 		jtfAug = new JTextField("2");
 		jbAug.setToolTipText("图形放大");
 		jtfAug.setToolTipText("图形放大倍数");
 		jbAug.addActionListener(this);
 
-		jbShrink = new JButton("缩小");// ,
-		// createImageIcon("zoomOut.gif"));
+		jbShrink = new JButton("缩小" ,  Constant.createImageIcon("zoomOut.gif"));
 		jtfShrink = new JTextField("2");
 		jbShrink.setToolTipText("图形缩小");
 		jtfShrink.setToolTipText("图形缩小倍数");
 		jbShrink.addActionListener(this);
 
-		ImageIcon upIcon = createImageIcon("up.gif");
-		// ImageIcon upIcon = createImageIcon("../icon/up.gif");
-		jbUpMove = new JButton("上移", upIcon);
+		jbUpMove = new JButton("上移",  Constant.createImageIcon("up.gif"));
 		jtfUpMove = new JTextField("2");
 		jbUpMove.setToolTipText("图形上移");
 		jtfUpMove.setToolTipText("图形上移象素");
 		jbUpMove.addActionListener(this);
 
-		ImageIcon downIcon = createImageIcon("down.gif");
+		ImageIcon downIcon =  Constant.createImageIcon("down.gif");
 		jbDownMove = new JButton("下移", downIcon);
 		jtfDownMove = new JTextField("2");
 		jbDownMove.setToolTipText("图形下移");
 		jtfDownMove.setToolTipText("图形下移象素");
 		jbDownMove.addActionListener(this);
 
-		ImageIcon leftIcon = createImageIcon("left.gif");
+		ImageIcon leftIcon =  Constant.createImageIcon("left.gif");
 		jbLeftMove = new JButton("左移", leftIcon);
 		jtfLeftMove = new JTextField("2");
 		jbLeftMove.setToolTipText("图形左移");
 		jtfLeftMove.setToolTipText("图形左移象素");
 		jbLeftMove.addActionListener(this);
 
-		ImageIcon rightIcon = createImageIcon("right.gif");
+		ImageIcon rightIcon =  Constant.createImageIcon("right.gif");
 		jbRightMove = new JButton("右移", rightIcon);
 		jtfRightMove = new JTextField("2");
 		jbRightMove.setToolTipText("图形右移");
 		jtfRightMove.setToolTipText("图形右移象素");
 		jbRightMove.addActionListener(this);
 
-		jbWinzip = new JButton("压缩");
+		jbWinzip = new JButton("压缩",  Constant.createImageIcon("winzip.gif"));
 		jtfWinzip = new JTextField("2");
 		jbWinzip.setToolTipText("图形横向压缩");
 		jtfWinzip.setToolTipText("图形横向压缩倍数");
 		jbWinzip.addActionListener(this);
 
-		jbAntiWinzip = new JButton("拉伸");
+		jbAntiWinzip = new JButton("拉伸",Constant.createImageIcon("arrows_stretch.png"));
 		jtfAntiWinzip = new JTextField("2");
 		jbAntiWinzip.setToolTipText("图形横向拉伸");
 		jtfAntiWinzip.setToolTipText("图形横向拉伸倍数");
@@ -373,13 +370,6 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		List<Double> xData = dataPersister.getCashedXData();
 		for (int j = 0, length = xData.size(); j < length; j++)
 			xData.set(j, xData.get(j).doubleValue() * amplifyFactors);
-		//事件点放大缩小
-		Map<String, Double> eventXData = dataPersister.eventDataIDPositionMap();
-		for(Map.Entry<String, Double> entry : eventXData.entrySet())
-		{			
-			double val = entry.getValue().doubleValue() * amplifyFactors;
-			entry.setValue(val);
-		}		
 	}
 
 	public void moveVertical (IDataPersister dataPersister , boolean isUpDirection)
@@ -410,14 +400,6 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			xData.set(j, xData.get(j).doubleValue() + delta);
 		}
-		
-		//事件的坐标
-		Map<String, Double> eventXData = dataPersister.eventDataIDPositionMap();
-		for(Map.Entry<String, Double> entry : eventXData.entrySet())
-		{			
-			double val = entry.getValue().doubleValue() + delta;
-			entry.setValue(val);
-		}	
 	}
 
 	private void horizontalWinZipOrAnti (IDataPersister dataPersister , boolean isWinZip)
@@ -429,13 +411,6 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		{
 			xData.set(j, xData.get(j).doubleValue() * factor);
 		}
-		//事件的横坐标
-		Map<String, Double> eventXData = dataPersister.eventDataIDPositionMap();
-		for(Map.Entry<String, Double> entry : eventXData.entrySet())
-		{			
-			double val = entry.getValue().doubleValue() * factor;
-			entry.setValue(val);
-		}	
 	}
 
 	public void mainFrameRepaint ()
@@ -750,17 +725,18 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 	}
 
 	// **********************这是用来创建一个图标对象的，我们用来放在按钮上做图像
-	protected static ImageIcon createImageIcon (String path)
-	{
-		java.net.URL imgURL = MoveAndAmplifyControllerPanel.class.getResource(BASE_IMG_PATH + path);
-		if (imgURL != null)
-		{
-			return new ImageIcon(imgURL);
-		}
-		else
-		{
-			System.err.println("Couldn't find file: " + path);
-			return null;
-		}
-	}
+//	protected static ImageIcon createImageIcon (String path)
+//	{
+//		java.net.URL imgURL = MoveAndAmplifyControllerPanel.class.getResource(dataview.Constant.BASE_IMG_PATH + path);
+//		if (imgURL != null)
+//		{
+//			return new ImageIcon(imgURL);
+//		}
+//		else
+//		{
+//			System.err.println("Couldn't find file: " + path);
+//			return null;
+//		}
+//	}
 }
+

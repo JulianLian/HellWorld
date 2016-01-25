@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,7 +20,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 import domain.BusinessConst;
 import domain.DistanceCalculator;
@@ -35,8 +38,9 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 {
 	private Md711MainFrame md;
 	// 跟踪光标位置的直线横坐标
-	private static int firstPositionHorizontalVal; // ******获取测量用的第一条竖线的横坐标
-	private static int secondPositionHorizontalVal; // ********获取测量用的第二条竖线的横坐标
+	private static double firstPositionHorizontalVal; // ******获取测量用的第一条竖线的横坐标
+	private static double secondPositionHorizontalVal; // ********获取测量用的第二条竖线的横坐标
+	private static double firstEventHorizontalVal = Double.MIN_VALUE;
 	private double selectedStartX;
 	private double selectedStartY;
 	private double selectedEndX;
@@ -54,7 +58,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		this.md = md;
 		addMouseMotionListener(this);
 		addMouseListener(this);
-		this.setBackground(Color.BLACK);
+		this.setBackground(Color.LIGHT_GRAY);
 	}
 
 	// ***********************************************鼠标事件，我们只处理移动和点击事件
@@ -63,15 +67,62 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	{
 		if (waitSelectFirstPosition())
 		{
-			firstPositionHorizontalVal = e.getX();
+			firstPositionHorizontalVal = e.getPoint().getX();// e.getX();
 		}
 		else if (waitSelectSecondPosition())
 		{
-			secondPositionHorizontalVal = e.getX();
+			secondPositionHorizontalVal = e.getPoint().getX();// e.getX();
 		}
+		showCursorPosition(e.getPoint());		
 		repaint();
 	}
 
+	private void showCursorPosition (Point point)
+	{
+		Double x = calCussorCorrectPosition(point.getX());
+		if(x != null)
+		{
+			showCursorPosition(x, point);
+		}
+	}
+	
+	private Double calCussorCorrectPosition (double xPosition)
+	{
+		Double measureLen = getMeasureDistance();
+		if(measureLen == null)
+		{
+			return null;
+		}
+		if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
+		{
+			return DistanceCalculator.countCursonPositionForPort(xPosition, measureLen,
+					this.getSize().getWidth() / 2);
+		}
+		else if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
+		{
+			return DistanceCalculator.countCursonPositionForFile(xPosition, measureLen,
+					this.getSize().getWidth() / 2);
+		}
+		return null;
+	}
+
+	private void showCursorPosition(double correctPosition, Point point)
+	{
+		JPopupMenu popup = new JPopupMenu();
+		popup.setBorder(null);
+		popup.setOpaque(false);		
+		JPanel infoPanel = new JPanel();
+		infoPanel.setOpaque(false);
+		JLabel label = new JLabel(correctPosition + " km");
+		label.setBorder(null);
+		label.setForeground(Color.red);
+		label.setBackground(null);
+		label.setOpaque(false);
+		infoPanel.add(label);		
+		popup.add(infoPanel);		
+		popup.show(md, (int) point.getX()+10, (int) point.getY()+50);
+	}
+	
 	@Override
 	public void mouseClicked (MouseEvent e)
 	{
@@ -84,12 +135,12 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		setNotBeginMeasureState();
 		if (!isDragging)
 		{
-			selectedStartX = e.getX();
-			selectedStartY = e.getY();
+			selectedStartX = e.getPoint().getX();// e.getX();
+			selectedStartY = e.getPoint().getY();// e.getY();
 		}
 		isDragging = true;
-		selectedEndX = e.getX();
-		selectedEndY = e.getY();
+		selectedEndX = e.getPoint().getX();// e.getX();
+		selectedEndY = e.getPoint().getY();// e.getY();
 		repaint();
 	}
 
@@ -97,9 +148,10 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	public void mouseReleased (MouseEvent e)
 	{
 		isDragging = false;
-		selectedEndX = e.getX();
-		selectedEndY = e.getY();
-		if (firstPositionHorizontalVal != selectedEndX && clickTimes != 2 && needAmplyfySelectedArea())
+		selectedEndX = e.getPoint().getX();// e.getX();
+		selectedEndY = e.getPoint().getY();// e.getY();
+		if (Math.abs(firstPositionHorizontalVal - selectedEndX) >= 0.001 && clickTimes != 2
+				&& needAmplyfySelectedArea())
 		{
 			amplifySelectArea(FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			amplifySelectArea(PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
@@ -116,16 +168,16 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	@Override
 	public void mousePressed (MouseEvent e)
 	{
-		selectedStartX = e.getX();
-		selectedStartY = e.getY();
+		selectedStartX = e.getPoint().getX();// e.getX();
+		selectedStartY = e.getPoint().getY();// e.getY();
 		if (waitSelectFirstPosition())
 		{
-			firstPositionHorizontalVal = e.getX();
+			firstPositionHorizontalVal = e.getPoint().getX();// e.getX();
 			clickTimes++;
 		}
 		else if (waitSelectSecondPosition())
 		{
-			secondPositionHorizontalVal = e.getX();
+			secondPositionHorizontalVal = e.getPoint().getX();// e.getX();
 			clickTimes++;
 			calFaultDistanceAndShow();
 		}
@@ -186,26 +238,41 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			}
 			// resetAmplyParam();
 			// ******************************************************************如果要跟踪鼠标位置
-			if (firstPositionHorizontalVal != Integer.MIN_VALUE)
+			if (firstPositionHorizontalVal != Double.MIN_VALUE)
 			{
 				// 绘制要测量的起始点竖线
 				g2.setColor(Color.yellow);
 				g2.draw(new Line2D.Double(firstPositionHorizontalVal + xBase,
-						-dimension.getWidth() / 2 - 10, firstPositionHorizontalVal + xBase,
-						dimension.getWidth() / 2));
+						-dimension.getHeight() / 2, firstPositionHorizontalVal + xBase,
+						dimension.getHeight()  / 2));
+//				g2.draw(new Line2D.Double(firstPositionHorizontalVal + xBase,
+//						-dimension.getWidth() / 2 - 10, firstPositionHorizontalVal + xBase,
+//						dimension.getWidth() / 2));
 			}
-			if (secondPositionHorizontalVal != Integer.MIN_VALUE)
+			if (secondPositionHorizontalVal != Double.MIN_VALUE)
 			{
 				// 绘制要测量的起始点竖线
 				g2.setColor(Color.yellow);
 				g2.draw(new Line2D.Double(secondPositionHorizontalVal + xBase,
-						-dimension.getWidth() / 2 - 10, secondPositionHorizontalVal + xBase,
-						dimension.getWidth() / 2));
+						-dimension.getHeight() / 2, secondPositionHorizontalVal + xBase,
+						dimension.getHeight() / 2));
+//				g2.draw(new Line2D.Double(secondPositionHorizontalVal + xBase,
+//						-dimension.getWidth() / 2 - 10, secondPositionHorizontalVal + xBase,
+//						dimension.getWidth() / 2));
+			}
+			if (firstEventHorizontalVal != Double.MIN_VALUE)
+			{
+				// 绘制要测量的起始点竖线
+				g2.setColor(Color.yellow);
+				g2.draw(new Line2D.Double(firstEventHorizontalVal, -dimension.getHeight() / 2,
+						firstEventHorizontalVal, dimension.getHeight() / 2));
+//				g2.draw(new Line2D.Double(firstEventHorizontalVal, -dimension.getWidth() / 2,
+//						firstEventHorizontalVal, dimension.getWidth() / 2));
 			}
 
 			// ***************************处理测量距离
-			if (firstPositionHorizontalVal != Integer.MIN_VALUE
-					&& secondPositionHorizontalVal != Integer.MIN_VALUE)
+			if (firstPositionHorizontalVal != Double.MIN_VALUE
+					&& secondPositionHorizontalVal != Double.MIN_VALUE)
 			{
 				calFaultDistanceAndShow();
 			}
@@ -302,18 +369,42 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 
 	private void calFaultDistanceAndShow ()
 	{
+		Double measureLen = getMeasureDistance();
+		if (measureLen != null)
+		{
 		if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
 		{
-			md.getGraphControllerpanel().fillDistanceInfo("" + DistanceCalculator.countPortWrongDistance(
-					secondPositionHorizontalVal - firstPositionHorizontalVal, 30));
+				md.getGraphControllerpanel()
+						.fillDistanceInfo("" + DistanceCalculator.countPortWrongDistance(
+								secondPositionHorizontalVal
+										- firstPositionHorizontalVal,
+								measureLen));
 
 		}
 		if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
 		{
-			// 30个信号数据用时1微秒
-			md.getGraphControllerpanel().fillDistanceInfo("" + DistanceCalculator.countFileWrongDistance(
-					secondPositionHorizontalVal - firstPositionHorizontalVal, 30));
+				// 30个信号数据用时1微秒
+				md.getGraphControllerpanel()
+						.fillDistanceInfo("" + DistanceCalculator.countFileWrongDistance(
+								secondPositionHorizontalVal
+										- firstPositionHorizontalVal,
+								measureLen));
+			}
 		}
+	}
+	
+	private Double getMeasureDistance ()
+	{
+		String measureLen = md.getEventPanel().getkeyPointPanel().getSelectedDevParam()
+				.get(communation.Protocol.RANGE);
+		if (measureLen != null)
+		{
+			if (measureLen.endsWith("km"))
+			{
+				return Double.valueOf(measureLen.substring(0, measureLen.length() - 2).trim());
+			}
+		}
+		return null;
 	}
 
 	private boolean waitSelectSecondPosition ()
@@ -334,8 +425,8 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	public static void setNotBeginMeasureState ()
 	{
 		clickTimes = 0;
-		firstPositionHorizontalVal = Integer.MIN_VALUE;
-		secondPositionHorizontalVal = Integer.MIN_VALUE;
+		firstPositionHorizontalVal = Double.MIN_VALUE;
+		secondPositionHorizontalVal = Double.MIN_VALUE;
 	}
 
 	private void resetAmplyParam ()
@@ -363,8 +454,21 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	public void showEventVerticalPosition (Double xPosition)
 	{
 		setNotBeginMeasureState();
-		firstPositionHorizontalVal = xPosition.intValue();
-		clickTimes++;
+		Double measureLen = getMeasureDistance();
+		if (measureLen != null)
+		{
+			if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
+			{
+				firstEventHorizontalVal = DistanceCalculator
+						.countKeyEventWindowPositionForPort(xPosition / 1000., measureLen);
+			}
+			else if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
+			{
+				firstEventHorizontalVal = DistanceCalculator
+						.countKeyEventWindowPositionForFile(xPosition / 1000., measureLen);
+			}
 		repaint();
+		}
 	}
 }
+
