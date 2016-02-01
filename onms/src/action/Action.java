@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSplitPane;
 
+import env.MDLogger;
+import i18n.I18n;
 import main.Md711MainFrame;
 import main.PrintGraph;
 
@@ -66,8 +68,9 @@ public class Action
 		}
 		catch (PrinterException d)
 		{
-			System.err.println(d);
-			JOptionPane.showMessageDialog(mainFrame, "打印错误", "出现错误", JOptionPane.ERROR_MESSAGE);
+			MDLogger.INS.error(d.getMessage());
+			JOptionPane.showMessageDialog(mainFrame, I18n.INS.getI18Str("printError"), 
+					I18n.INS.getI18Str("errorOccurse"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

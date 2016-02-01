@@ -2,6 +2,8 @@ package domain;
 
 import java.util.List;
 
+import env.MDLogger;
+
 public class ListUtils
 {
 	public static double getMaxNumber (List<Double> v)
@@ -15,8 +17,9 @@ public class ListUtils
 			}
 
 		}
-		catch (Exception eee)
+		catch (Exception e)
 		{
+		        MDLogger.INS.error(e.getMessage());
 			System.err.println("计算最大数出错");
 		}
 		return max;
@@ -33,8 +36,9 @@ public class ListUtils
 			}
 
 		}
-		catch (Exception eee)
+		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			System.err.println("计算最大数出错");
 		}
 		return max;

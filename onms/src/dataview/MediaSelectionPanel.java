@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import env.MDLogger;
 import persistant.WindowControlEnv;
 
 public class MediaSelectionPanel extends JPanel implements ActionListener
@@ -112,6 +113,7 @@ public class MediaSelectionPanel extends JPanel implements ActionListener
 			}
 			catch (Exception ee)
 			{
+				MDLogger.INS.error(ee.getMessage());
 				WindowControlEnv.setMediaSpeed(sp);
 				controlPanel.getMainFrame().getGraph().repaint();
 			}

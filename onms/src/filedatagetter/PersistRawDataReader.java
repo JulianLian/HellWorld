@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import env.MDLogger;
+
 public class PersistRawDataReader
 {
 	public static List<Double> getWaveDoubleData (String filePath)
@@ -28,7 +30,7 @@ public class PersistRawDataReader
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			MDLogger.INS.error(e.getMessage());
 		}
 		finally
 		{
@@ -40,7 +42,7 @@ public class PersistRawDataReader
 				}
 				catch (IOException e)
 				{
-					e.printStackTrace();
+					MDLogger.INS.error(e.getMessage());
 				}
 			}
 		}
@@ -62,7 +64,7 @@ public class PersistRawDataReader
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			MDLogger.INS.error(e.getMessage());
 		}
 		finally
 		{
@@ -74,7 +76,7 @@ public class PersistRawDataReader
 				}
 				catch (IOException e)
 				{
-					e.printStackTrace();
+					MDLogger.INS.error(e.getMessage());
 				}
 			}
 		}

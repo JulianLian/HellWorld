@@ -20,6 +20,7 @@ import dataview.Constant;
 import dataview.CurveSelectionPanel;
 import dataview.GraphShowPanel;
 import devconfig.DeviceConfigDialog;
+import env.MDLogger;
 import main.AboutMessage;
 import main.Md711MainFrame;
 import persistant.InventoryData;
@@ -281,9 +282,9 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 			if (am != null)
 				am.clearAll();// AboutMessage
 		}
-		catch (Exception eee)
+		catch (Exception e)
 		{
-			System.err.println("错误");
+			MDLogger.INS.error(e.getMessage());
 		}
 		mainFrame.getGraph().repaint();
 	}

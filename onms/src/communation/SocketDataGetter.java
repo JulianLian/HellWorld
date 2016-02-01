@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
+import env.MDLogger;
 import main.Md711MainFrame;
 
 public class SocketDataGetter implements IDataGetter
@@ -53,7 +54,7 @@ public class SocketDataGetter implements IDataGetter
 		}
 		catch (Exception e)
 		{
-			System.err.println("异常:" + e.getMessage());
+			MDLogger.INS.error(e.getMessage());
 			return false;
 		}
 		finally
@@ -66,6 +67,7 @@ public class SocketDataGetter implements IDataGetter
 				}
 				catch (IOException e)
 				{
+					MDLogger.INS.error(e.getMessage());
 					socket = null;
 				}
 			}

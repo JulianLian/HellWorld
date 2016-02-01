@@ -3,6 +3,7 @@ package interaction;
 import communation.Protocol;
 import env.Environment;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -190,7 +191,12 @@ public class CommandHandle {
 
             return baos.toByteArray();
         } catch (SocketTimeoutException e) {
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "connect to "+Environment.peerIP+" TIMEOUT",
+                    "TCP CONNECTION",
+                    JOptionPane.DEFAULT_OPTION);
+            System.out.println(e.getMessage());
+//            e.printStackTrace();
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (IOException e) {

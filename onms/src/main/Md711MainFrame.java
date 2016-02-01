@@ -11,7 +11,6 @@ import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
 import java.awt.Toolkit;
-import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -19,14 +18,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import action.Action;
 import dataview.CurveSelectionPanel;
 import dataview.GraphControllerPanel;
 import dataview.GraphShowPanel;
 import domain.HardWare;
-import domain.ProductInfo;
+import i18n.I18n;
 import menu.MainMenuBar;
 import menu.MainToolBar;
 import persistant.PoPDialog;
@@ -94,8 +92,8 @@ public class Md711MainFrame extends JFrame
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 //		splitPane.setEnabled(false);
-		splitPane.setDividerLocation(0.75);
-		splitPane.setResizeWeight(1);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
+		splitPane.setDividerLocation(0.80);
+		splitPane.setResizeWeight(0.5);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
 		Action.setJSplitPaneAction(splitPane);
 		
 		add(MainToolBar.createToolBar(this), BorderLayout.PAGE_START);
@@ -220,7 +218,7 @@ public class Md711MainFrame extends JFrame
 	{
 		Md711MainFrame window = new Md711MainFrame();
 		
-		window.setTitle(ProductInfo.getProductName());
+		window.setTitle(I18n.INS.getI18Str("frameTitle"));
 		
 		// 让屏幕最大化
 		Toolkit kit = Toolkit.getDefaultToolkit();
@@ -239,5 +237,9 @@ public class Md711MainFrame extends JFrame
 		return controlJtabbedPanel.getGraphControllerpanel();
 	}
 	
-	public ControlAreaJTabbedPanel getEventPanel () { return controlJtabbedPanel; }
+	public ControlAreaJTabbedPanel getEventPanel ()
+	{
+		return controlJtabbedPanel;
+	}
 }
+

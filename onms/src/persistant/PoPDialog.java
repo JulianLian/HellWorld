@@ -32,6 +32,7 @@ import javax.swing.border.TitledBorder;
 
 import datastruct.SerialDataFromToFile;
 import domain.BusinessConst;
+import env.MDLogger;
 import main.Md711MainFrame;
 
 /*
@@ -504,8 +505,9 @@ public class PoPDialog extends JDialog implements ActionListener
 					JOptionPane.showMessageDialog(this, "保存成功", "保存结果",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
-				catch (Exception ddd)
+				catch (Exception ee)
 				{
+				MDLogger.INS.error(ee.getMessage());
 					javax.swing.JOptionPane.showMessageDialog(null, "文件保存发生错误");
 					System.err.println("文件保存发生错误");
 					

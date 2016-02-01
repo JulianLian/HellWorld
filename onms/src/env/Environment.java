@@ -52,7 +52,7 @@ public class Environment
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			MDLogger.INS.error(e.getMessage());
 		}
 		finally
 		{			
@@ -65,7 +65,7 @@ public class Environment
 			}
 			catch (IOException e)
 			{								
-				e.printStackTrace();
+				MDLogger.INS.error(e.getMessage());
 			}
 		}
 	}
@@ -101,7 +101,7 @@ public class Environment
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			MDLogger.INS.error(e.getMessage());
 		}
 		finally
 		{					
@@ -114,7 +114,7 @@ public class Environment
 				}
 				catch (IOException e)
 				{
-					
+					MDLogger.INS.error(e.getMessage());
 				}
 		}
 	}

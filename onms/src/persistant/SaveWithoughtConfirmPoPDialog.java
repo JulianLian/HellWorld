@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import datastruct.SerialDataFromToFile;
 import domain.BusinessConst;
+import env.MDLogger;
 import main.Md711MainFrame;
 
 public class SaveWithoughtConfirmPoPDialog
@@ -71,12 +72,12 @@ public class SaveWithoughtConfirmPoPDialog
 				JOptionPane.showMessageDialog(mf, "保存成功", "保存结果",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
-			catch (Exception ddd)
+			catch (Exception e)
 			{
+				MDLogger.INS.error(e.getMessage());
 				javax.swing.JOptionPane.showMessageDialog(null, "文件保存发生错误");
-				System.err.println("文件保存发生错误");
-				
 			}			
 		}
 	}
 }
+

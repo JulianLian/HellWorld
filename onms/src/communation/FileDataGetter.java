@@ -10,6 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import datastruct.SerializableData;
+import env.MDLogger;
 import main.Md711MainFrame;
 import persistant.WindowControlEnv;
 
@@ -42,7 +43,8 @@ public class FileDataGetter implements IDataGetter
 				}
 				catch (Exception ee)
 				{					
-					JOptionPane.showMessageDialog(mainFrame, "ÎÄ¼ş¶ÁÈëÊ±·¢Éú´íÎó...", "´íÎó",
+					MDLogger.INS.error(ee.getMessage());
+					JOptionPane.showMessageDialog(mainFrame, "æ–‡ä»¶è¯»å…¥æ—¶å‘ç”Ÿé”™è¯¯...", "é”™è¯¯",
 							JOptionPane.ERROR_MESSAGE);					
 				}
 				finally
@@ -53,7 +55,8 @@ public class FileDataGetter implements IDataGetter
 					}
 					catch (IOException e)
 					{
-						JOptionPane.showMessageDialog(mainFrame, "ÎÄ¼ş¶ÁÈëÊ±·¢Éú´íÎó...", "´íÎó",
+						MDLogger.INS.error(e.getMessage());
+						JOptionPane.showMessageDialog(mainFrame, "æ–‡ä»¶è¯»å…¥æ—¶å‘ç”Ÿé”™è¯¯...", "é”™è¯¯",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -69,3 +72,4 @@ public class FileDataGetter implements IDataGetter
 		return null;
 	}
 }
+

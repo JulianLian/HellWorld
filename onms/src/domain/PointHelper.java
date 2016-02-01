@@ -3,6 +3,8 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import env.MDLogger;
+
 public class PointHelper
 {
 	public static List<Double> adjustYDataList (List<Double> yDataList , int step)
@@ -32,7 +34,7 @@ public class PointHelper
 		}
 		catch (Exception e)
 		{
-			System.err.println("由步长计算数据量时候出错");
+			MDLogger.INS.error(e.getMessage());
 		}
 		return 0;
 	}

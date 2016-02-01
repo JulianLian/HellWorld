@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 
 import datastruct.EventDataStruct;
 import domain.BusinessConst;
+import env.MDLogger;
 import persistant.FileDataPersister;
 import persistant.IDataPersister;
 import persistant.PortDataPersister;
@@ -434,6 +435,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+		        MDLogger.INS.error(e.getMessage());
 			// 这里就有用户写小数时的处理方法
 			jtfStep.setText("1");
 			return 1;
@@ -456,6 +458,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfAug.setText("2");
 			return 2;
 		}
@@ -483,6 +486,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfShrink.setText("2");
 			return 2;
 		}
@@ -499,6 +503,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfUpMove.setText("2");
 			return 2;
 		}
@@ -519,6 +524,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfDownMove.setText("2");
 			return 2;
 		}
@@ -539,6 +545,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfLeftMove.setText("2");
 			return 2;
 		}
@@ -560,6 +567,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfRightMove.setText("2");
 			return 2;
 		}
@@ -587,6 +595,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfWinzip.setText("2");
 			return 2;
 		}
@@ -608,6 +617,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		catch (Exception e)
 		{
+			MDLogger.INS.error(e.getMessage());
 			jtfAntiWinzip.setText("2");
 			return 2;
 		}
