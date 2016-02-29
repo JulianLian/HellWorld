@@ -14,16 +14,16 @@ public class KeyEventTableModel extends DefaultTableModel
 {	
 	private static final long serialVersionUID = 1L;
 		private static String[] columnNames = {
-			I18n.INS.getI18Str("NO"), I18n.INS.getI18Str("EventType"), 
-			I18n.INS.getI18Str("Position"), I18n.INS.getI18Str("loss"), 
+			I18n.INS.getI18Str("NO"), I18n.INS.getI18Str("EventType"),
+			I18n.INS.getI18Str("Position"), I18n.INS.getI18Str("loss"),
 			I18n.INS.getI18Str("reflect"), I18n.INS.getI18Str("slope"),
-			I18n.INS.getI18Str("distanceToPreEvent"), 
+			I18n.INS.getI18Str("distanceToPreEvent"),
 			I18n.INS.getI18Str("lossTotal"),
 			""};
 //	private static String[] columnNames = { "Event No.", "Event Type", "Distance(m)", "Loss(dB)", "Reflectance(dB)",
 //			"Slope(dB/km)", "Rel.Dist.(m)", "Total loss(OTDR)(dB)",""};
 //	private static String[] columnNames = {
-//			"编号", "事件类型", "位置(m)", "损耗(dB)", "反射(dB)", 
+//			"编号", "事件类型", "位置(m)", "损耗(dB)", "反射(dB)",
 //			"衰减(dB/km)", "相对上一事件距离(m)","累损(OTDR)(dB)",
 //			"" };
 			

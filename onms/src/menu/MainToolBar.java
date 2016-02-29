@@ -20,40 +20,40 @@ public class MainToolBar
 	public static JToolBar createToolBar (Md711MainFrame mainFrame)
 	{
 		JToolBar toolBar = new JToolBar("CommunicationToolBar");
-		addOpenButton(mainFrame, toolBar);		
+		addOpenButton(mainFrame, toolBar);
 		addSaveButton(mainFrame, toolBar);
 		addQueryButton(mainFrame, toolBar);
-	        toolBar.setFloatable(false);
+		toolBar.setFloatable(false);
 //	        toolBar.setRollover(true);
-	        return toolBar;
+		return toolBar;
 	}
 
 	private static void addQueryButton (Md711MainFrame mainFrame , JToolBar toolBar)
 	{
 		JButton queryDevDataButton = new JButton(Constant.createImageIcon("start.png"));
-		queryDevDataButton.setToolTipText("获取光纤数据");
+		queryDevDataButton.setToolTipText("鑾峰彇鍏夌氦鏁版嵁");
 		queryDevDataButton.addActionListener(new ActionListener()
-				{
-					@Override
-					public void actionPerformed (ActionEvent e)
-					{
-						CommuParamConfigDialog.showDialog(mainFrame);						
-					}			
-				});
+		{
+			@Override
+			public void actionPerformed (ActionEvent e)
+			{
+				CommuParamConfigDialog.showDialog(mainFrame);
+			}
+		});
 		toolBar.add(queryDevDataButton);
 	}
 
 	private static void addSaveButton (Md711MainFrame mainFrame , JToolBar toolBar)
 	{
 		JButton saveButton = new JButton( Constant.createImageIcon("save.png"));
-		saveButton.setToolTipText("保存波形文件");
+		saveButton.setToolTipText("淇濆瓨娉㈠舰鏂囦欢");
 		saveButton.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed (ActionEvent e)
 			{
-				mainFrame.saveAction();					
-			}			
+				mainFrame.saveAction();
+			}
 		});
 		toolBar.add(saveButton);
 	}
@@ -61,27 +61,27 @@ public class MainToolBar
 	private static void addOpenButton (Md711MainFrame mainFrame , JToolBar toolBar)
 	{
 		JButton openButton = new JButton(Constant.createImageIcon("open.png"));
-		openButton.setToolTipText("载入波形文件");
+		openButton.setToolTipText("杞藉叆娉㈠舰鏂囦欢");
 		openButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed (ActionEvent e)
+			{
+				IDataGetter fileDataGetter = new FileDataGetter(mainFrame);
+				List<Double> waveData = fileDataGetter.getWaveData(null);
+				if (waveData != null)
 				{
-					@Override
-					public void actionPerformed (ActionEvent e)
-					{
-						IDataGetter fileDataGetter = new FileDataGetter(mainFrame);
-						List<Double> waveData = fileDataGetter.getWaveData(null);
-						if (waveData != null)
-						{
-							// mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
-							CurveSelectionPanel.selectFileDataLine();
-							WindowControlEnv.setRepaintForFileInfoCome(true);
-							mainFrame.getGraphControllerpanel().setStateWhenOpenFile();
-							mainFrame.showFileGraph();
-							mainFrame.getGraphControllerpanel().getCurSelectionPanel()
-									.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, true);					
-					
-						}
-					}
-				});		
+					// mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
+					CurveSelectionPanel.selectFileDataLine();
+					WindowControlEnv.setRepaintForFileInfoCome(true);
+					mainFrame.getGraphControllerpanel().setStateWhenOpenFile();
+					mainFrame.showFileGraph();
+					mainFrame.getGraphControllerpanel().getCurSelectionPanel()
+							.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, true);
+
+				}
+			}
+		});
 		toolBar.add(openButton);
 	}
 }

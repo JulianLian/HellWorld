@@ -88,12 +88,12 @@ public class Md711MainFrame extends JFrame
 		JScrollPane controlPanel = new JScrollPane(controlJtabbedPanel);
 		controlPanel.setMaximumSize(new Dimension(controlPanel.getPreferredSize().width, 100));
 		splitPane.setRightComponent(controlPanel);
-		graphScrollPane.setMinimumSize(new Dimension(800, 560));
+		graphScrollPane.setMinimumSize(new Dimension(600, 420));
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 //		splitPane.setEnabled(false);
 		splitPane.setDividerLocation(0.80);
-		splitPane.setResizeWeight(0.5);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
+		splitPane.setResizeWeight(1);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
 		Action.setJSplitPaneAction(splitPane);
 		
 		add(MainToolBar.createToolBar(this), BorderLayout.PAGE_START);
