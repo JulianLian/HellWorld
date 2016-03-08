@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class SerialDataFromToFile extends SerializableData
 {
-	
+	private static final long serialVersionUID = 1L;
 	// 放端口信号数据
 	private List<Double> data = new ArrayList<Double>();
 	

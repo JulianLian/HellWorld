@@ -1,23 +1,17 @@
 package main;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import datastruct.EventDataStruct;
+import dataview.tablemodel.KeyEventTableModel;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-
-import datastruct.EventDataStruct;
-import dataview.tablemodel.KeyEventTableModel;
 
 public class KeyPointPanel extends JPanel
 {
@@ -28,6 +22,8 @@ public class KeyPointPanel extends JPanel
 	private List<EventDataStruct> eventData = new ArrayList<EventDataStruct>();
 	private Map<String, String> selectedDevParam;
 	private Md711MainFrame mainFrame;
+	private RowListener rowListener = new RowListener();
+
 	public KeyPointPanel(Md711MainFrame mainFrame)
 	{
 		layoutPanel();
@@ -40,7 +36,7 @@ public class KeyPointPanel extends JPanel
 		table.setFillsViewportHeight(true);
 		table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		table.getSelectionModel().addListSelectionListener(new RowListener());
+		table.getSelectionModel().addListSelectionListener(rowListener);
 		 table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 		//坐标变化后的新坐标
@@ -109,9 +105,11 @@ public class KeyPointPanel extends JPanel
 	
 	public void clearTableData()
 	{
+		table.getSelectionModel().removeListSelectionListener(rowListener);
 		table.removeAll();
 		tableModel.setRowCount(0);
 		eventDataIDPositionMap.clear();
+		table.getSelectionModel().addListSelectionListener(rowListener);
 	}
 	
 	
@@ -140,6 +138,8 @@ public class KeyPointPanel extends JPanel
 		                return;
 			 }
 			 int[] selectedRows = table.getSelectedRows();
+			 if (selectedRows.length == 0)
+				 return;
 			 String id = (String)table.getValueAt(selectedRows[0], 0);
 			 Double xPosition = eventDataIDPositionMap.get(id.trim());
 			 mainFrame.getGraph().showEventVerticalPosition(xPosition);
