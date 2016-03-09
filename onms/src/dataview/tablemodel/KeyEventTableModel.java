@@ -8,8 +8,7 @@ import java.util.Arrays;
 import java.util.Vector;
 
 public class KeyEventTableModel extends DefaultTableModel
-{	
-	private static final long serialVersionUID = 1L;
+{
 //		private static String[] columnNames = {
 //			I18n.INS.getI18Str("NO"), I18n.INS.getI18Str("EventType"),
 //			I18n.INS.getI18Str("Position"), I18n.INS.getI18Str("loss"),
