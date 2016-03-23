@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
-import datastruct.EventDataStruct;
-
 public interface IDataPersister
 {
 	public List<Double> getCashedXData();

@@ -23,10 +23,10 @@ public class FaultDistancePanel extends JPanel
 		setLayout(new FlowLayout());
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "故障距离",
 				TitledBorder.CENTER, TitledBorder.TOP));
-		jtfDistance = new JTextField(15);
+		jtfDistance = new JTextField(10);
 		jtfDistance.setEditable(false);
 		add(jtfDistance);
-		add(new JLabel("     米"));
+		add(new JLabel("     公里"));
 	}
 
 	public void fillDistanceInfo (String distanceStr)

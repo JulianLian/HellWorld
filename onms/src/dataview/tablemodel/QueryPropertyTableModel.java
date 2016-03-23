@@ -24,4 +24,3 @@ public class QueryPropertyTableModel extends DefaultTableModel
 		super(columnNameList, 0);
 	}
 }
-

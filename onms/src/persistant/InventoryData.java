@@ -147,4 +147,3 @@ public class InventoryData
 			xDataFromFile.clear();
 	}
 }
-

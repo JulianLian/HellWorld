@@ -19,7 +19,6 @@ import communation.dialog.CommuParamConfigDialog;
 import dataview.Constant;
 import dataview.CurveSelectionPanel;
 import dataview.GraphShowPanel;
-import devconfig.DeviceConfigDialog;
 import env.MDLogger;
 import main.AboutMessage;
 import main.Md711MainFrame;
@@ -120,14 +119,14 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		// stopCommu.setEnabled(false);
 		communicateMenu.add(resetMenuItem);
 		
-		JMenuItem commuAddrSetting = new JMenuItem("通讯",Constant.createImageIcon("communication.png"));
+		JMenuItem commuAddrSetting = new JMenuItem("通讯端口...",Constant.createImageIcon("communication.png"));
 		commuAddrSetting.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK));
 		commuAddrSetting.getAccessibleContext().setAccessibleDescription("通讯端口设置");
 		commuAddrSetting.setActionCommand("commuAddrSetting");
 		commuAddrSetting.addActionListener(this);
 		communicateMenu.add(commuAddrSetting);
 		
-		commuParamSetting = new JMenuItem("检测", Constant.createImageIcon("start.png"));
+		commuParamSetting = new JMenuItem("查询参数...", Constant.createImageIcon("start.png"));
 		commuParamSetting.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
 		commuParamSetting.getAccessibleContext().setAccessibleDescription("获取光纤数据");
 		commuParamSetting.addActionListener(this);
@@ -238,29 +237,26 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		{
 			IDataGetter fileDataGetter = getFileDataGetter();
 			List<Double> waveData = fileDataGetter.getWaveData(null);
+			mainFrame.showWaveData(waveData);
 			if (waveData != null)
 			{
-				// mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
-				CurveSelectionPanel.selectFileDataLine();
-				WindowControlEnv.setRepaintForFileInfoCome(true);
-				mainFrame.getGraphControllerpanel().setStateWhenOpenFile();
-				mainFrame.showFileGraph();
-				mainFrame.getGraphControllerpanel().getCurSelectionPanel()
-						.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, true);
-				lineAttr.setEnabled(true);
-				prin.setEnabled(true);
-				save.setEnabled(false);
-				resetMenuItem.setEnabled(true);
-			}
-			else
-			{
-				mainFrame.getGraphControllerpanel().getMoveAndAmplyPanel().setStepEnable(false);
+				resetMenuState();
 			}
 		}
 		else if (e.getSource().equals(lineAttr))
 		{
 			mainFrame.curAttrAction();
 		}
+	}
+	
+	
+	
+	public void resetMenuState ()
+	{
+		lineAttr.setEnabled(true);
+		prin.setEnabled(true);
+		save.setEnabled(false);
+		resetMenuItem.setEnabled(true);		
 	}
 	
 	public void reset ()
@@ -270,7 +266,8 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		
 		GraphShowPanel.setNotBeginMeasureState();
 		this.clearAll();
-		mainFrame.getGraphControllerpanel().clearAll();
+//		mainFrame.getGraphControllerpanel().clearAll();
+		mainFrame.clearControlParam();
 		mainFrame.getEventPanel().clearKeyPointData();
 		mainFrame.getEventPanel().clearQueryPropertyData();
 		PoPDialog saveDialog = mainFrame.getSaveDialog();
@@ -335,4 +332,3 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		save.setEnabled(false);
 	}
 }
-

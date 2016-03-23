@@ -11,17 +11,17 @@ import dataview.GraphControllerPanel;
 public class ControlAreaJTabbedPanel extends JTabbedPane
 {
 	private Md711MainFrame mainFrame;
-	private GraphControllerPanel graphControllerpanel;
+//	private GraphControllerPanel graphControllerpanel;
 	private KeyPointPanel keyPointPanel;
 	private QueryParamPanel queryParamPanel;
 	public ControlAreaJTabbedPanel(Md711MainFrame mainFrame)
 	{
 		super();
 		this.mainFrame = mainFrame;
-		initGraphicControllerPanel();
+//		initGraphicControllerPanel();
 		intKeyPointPanel();
 		initQueryParamPanel();
-		this.add(graphControllerpanel, "图像控制");
+//		this.add(graphControllerpanel, "图像控制");
 		this.add(keyPointPanel, "关键事件");
 		this.add(queryParamPanel, "图形属性");
 	}
@@ -33,7 +33,7 @@ public class ControlAreaJTabbedPanel extends JTabbedPane
 	
 	private void initQueryParamPanel ()
 	{
-		queryParamPanel = new QueryParamPanel(mainFrame);
+		queryParamPanel = new QueryParamPanel();
 	}
 	
 	public void showKeyPoints(List<String> data, Map<String, String> getSelectedDevParam)
@@ -47,15 +47,15 @@ public class ControlAreaJTabbedPanel extends JTabbedPane
 		keyPointPanel.showEventDataStructWhenReadFromFile(data, selectedDevParam);
 	}
 	
-	private void initGraphicControllerPanel ()
-	{
-		graphControllerpanel = new GraphControllerPanel(mainFrame);
-	}
+//	private void initGraphicControllerPanel ()
+//	{
+//		graphControllerpanel = new GraphControllerPanel(mainFrame);
+//	}
 	
-	public GraphControllerPanel getGraphControllerpanel ()
-	{
-		return graphControllerpanel;
-	}
+//	public GraphControllerPanel getGraphControllerpanel ()
+//	{
+//		return graphControllerpanel;
+//	}
 	
 	public void clearKeyPointData()
 	{
@@ -67,7 +67,10 @@ public class ControlAreaJTabbedPanel extends JTabbedPane
 		queryParamPanel.reset();
 	}
 	
-	public KeyPointPanel getkeyPointPanel() { return keyPointPanel; }
+	public KeyPointPanel getkeyPointPanel()
+	{
+		return keyPointPanel;
+	}
 
 	public void showQueryPropertyPanel (Map<String, String> selectedDevParam)
 	{

@@ -1,7 +1,7 @@
 package dataview;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,6 +12,7 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
 import domain.BusinessConst;
+import main.Md711MainFrame;
 
 public class CurveSelectionPanel extends JPanel implements ActionListener
 {
@@ -26,7 +27,8 @@ public class CurveSelectionPanel extends JPanel implements ActionListener
 
 	public CurveSelectionPanel(GraphControllerPanel controlPanel)
 	{
-		super(new FlowLayout());
+//		super(new FlowLayout());
+		super(new GridLayout(2,1));
 		this.controlPanel = controlPanel;
 		layoutPanel();
 	}
@@ -56,20 +58,19 @@ public class CurveSelectionPanel extends JPanel implements ActionListener
 	@Override
 	public void actionPerformed (ActionEvent e)
 	{
-		// ********************************************
 		// 如果用户选择"选择红色"，表示现在对端口波形处理
 		if (e.getSource().equals(jbRedSelect))
 		{
-			controlPanel.getMainFrame().geCheckMenuBar().jbRedSelectAction();
-			controlPanel.jbRedSelectAction();
+			Md711MainFrame mainFrame = controlPanel.getMainFrame();
+			mainFrame.geCheckMenuBar().jbRedSelectAction();
+			mainFrame.getMoveAndAmplyPanel().jbRedSelectAction();
 		}
-
 		if (e.getSource().equals(jbGreenSelect))
 		{
-			controlPanel.getMainFrame().geCheckMenuBar().jbGreenSelectAction();
-			controlPanel.jbGreenSelectAction();
+			Md711MainFrame mainFrame = controlPanel.getMainFrame();
+			mainFrame.geCheckMenuBar().jbGreenSelectAction();
+			mainFrame.getMoveAndAmplyPanel().jbGreenSelectAction();
 		}
-
 	}
 
 	public void setStateEnable (int whichCur , boolean isEnable)

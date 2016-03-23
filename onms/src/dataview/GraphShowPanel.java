@@ -10,12 +10,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -48,7 +48,6 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	private static boolean isDragging = false; // dataview.MoveAndAmplifyControllerPanel.amplyOrShrink(IDataPersister,
 	// double)
 	private static int clickTimes = 0;
-
 	// ********************************************
 	public GraphShowPanel(Md711MainFrame md)
 	{
@@ -58,7 +57,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		this.md = md;
 		addMouseMotionListener(this);
 		addMouseListener(this);
-		this.setBackground(Color.LIGHT_GRAY);
+		this.setBackground(Color.BLACK);
 	}
 
 	// ***********************************************鼠标事件，我们只处理移动和点击事件
@@ -120,7 +119,16 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		label.setOpaque(false);
 		infoPanel.add(label);		
 		popup.add(infoPanel);		
-		popup.show(md, (int) point.getX()+10, (int) point.getY()+50);
+		int xpos =  (int) point.getX() + 10;
+		if(xpos + 100> this.getWidth())
+		{
+			xpos -= 150;
+		}		
+		int ypos = (int) point.getY();
+		popup.show(this, xpos, ypos);
+		// int xpos = (int) point.getX() + 10;
+		// int ypos = (int) point.getY() + 50;
+		// popup.show(md, xpos, ypos);
 	}
 	
 	@Override
@@ -184,7 +192,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		else if (alreadyFormedTwoMeasurePoint())
 		{
 			setNotBeginMeasureState();
-			md.getGraphControllerpanel().fillDistanceInfo("");
+			md.getMoveAndAmplyPanel().getGraphicControlPanel().fillDistanceInfo("");
 		}
 		repaint();
 	}
@@ -245,8 +253,11 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				g2.draw(new Line2D.Double(firstPositionHorizontalVal + xBase,
 						-dimension.getHeight() / 2, firstPositionHorizontalVal + xBase,
 						dimension.getHeight()  / 2));
-//				g2.draw(new Line2D.Double(firstPositionHorizontalVal + xBase,
-//						-dimension.getWidth() / 2 - 10, firstPositionHorizontalVal + xBase,
+				// g2.draw(new
+				// Line2D.Double(firstPositionHorizontalVal +
+				// xBase,
+				// -dimension.getWidth() / 2 - 10,
+				// firstPositionHorizontalVal + xBase,
 //						dimension.getWidth() / 2));
 			}
 			if (secondPositionHorizontalVal != Double.MIN_VALUE)
@@ -256,8 +267,11 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				g2.draw(new Line2D.Double(secondPositionHorizontalVal + xBase,
 						-dimension.getHeight() / 2, secondPositionHorizontalVal + xBase,
 						dimension.getHeight() / 2));
-//				g2.draw(new Line2D.Double(secondPositionHorizontalVal + xBase,
-//						-dimension.getWidth() / 2 - 10, secondPositionHorizontalVal + xBase,
+				// g2.draw(new
+				// Line2D.Double(secondPositionHorizontalVal +
+				// xBase,
+				// -dimension.getWidth() / 2 - 10,
+				// secondPositionHorizontalVal + xBase,
 //						dimension.getWidth() / 2));
 			}
 			if (firstEventHorizontalVal != Double.MIN_VALUE)
@@ -266,8 +280,11 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				g2.setColor(Color.yellow);
 				g2.draw(new Line2D.Double(firstEventHorizontalVal, -dimension.getHeight() / 2,
 						firstEventHorizontalVal, dimension.getHeight() / 2));
-//				g2.draw(new Line2D.Double(firstEventHorizontalVal, -dimension.getWidth() / 2,
-//						firstEventHorizontalVal, dimension.getWidth() / 2));
+				// g2.draw(new
+				// Line2D.Double(firstEventHorizontalVal,
+				// -dimension.getWidth() / 2,
+				// firstEventHorizontalVal, dimension.getWidth()
+				// / 2));
 			}
 
 			// ***************************处理测量距离
@@ -311,41 +328,6 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		return Math.min(xTimes, yTimes);
 	}
 
-	private void amplifySelectArea (IDataPersister dataPersister , Graphics2D g2)
-	{
-		if (needAmplyfySelectedArea())
-		{
-			Dimension dimension = this.getSize();
-			// MoveAndAmplifyControllerPanel panel =
-			// md.getGraphControllerpanel().getMoveAndAmplyPanel();
-			double centerX = 0;// dimension.getWidth() / 2;
-			double centerY = 0;// dimension.getHeight() / 2;
-			double centerAreaX = selectedStartX + (selectedEndX - selectedStartX) / 2;
-			double centerAreaY = selectedStartY + (selectedEndY - selectedStartY) / 2;
-			double rightDelta = centerX - centerAreaX;
-			double downDelta = centerY - centerAreaY;
-
-			MoveAndAmplifyControllerPanel.moveVertical(dataPersister, rightDelta);
-			MoveAndAmplifyControllerPanel.moveHorizontal(dataPersister, downDelta);
-
-			double xAmplyTimes = dimension.getWidth() / Math.abs((selectedEndX - selectedStartX));
-			double yAmplyTimes = dimension.getHeight() / Math.abs(selectedEndY - selectedStartY);
-			double amplifyTimes = Math.min(xAmplyTimes, yAmplyTimes);
-			MoveAndAmplifyControllerPanel.amplyOrShrink(dataPersister, amplifyTimes);
-
-			AffineTransform transform = new AffineTransform();
-			transform.translate(rightDelta, downDelta);
-			transform.scale(amplifyTimes, amplifyTimes);
-			g2.setTransform(transform);
-
-			resetAmplyParam();
-		}
-		else
-		{
-			g2.getTransform().setToIdentity();
-		}
-	}
-
 	private boolean needAmplyfySelectedArea ()
 	{
 		return !isDragging && (selectedStartX != selectedEndX || selectedStartY != selectedEndY);
@@ -374,7 +356,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		{
 		if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
 		{
-				md.getGraphControllerpanel()
+				md.getMoveAndAmplyPanel().getGraphicControlPanel()
 						.fillDistanceInfo("" + DistanceCalculator.countPortWrongDistance(
 								secondPositionHorizontalVal
 										- firstPositionHorizontalVal,
@@ -384,7 +366,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
 		{
 				// 30个信号数据用时1微秒
-				md.getGraphControllerpanel()
+				md.getMoveAndAmplyPanel().getGraphicControlPanel()
 						.fillDistanceInfo("" + DistanceCalculator.countFileWrongDistance(
 								secondPositionHorizontalVal
 										- firstPositionHorizontalVal,
@@ -471,4 +453,3 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		}
 	}
 }
-

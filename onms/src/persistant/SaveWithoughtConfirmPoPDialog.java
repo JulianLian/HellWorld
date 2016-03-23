@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import communation.WaveDataSuffixFilter;
 import datastruct.SerialDataFromToFile;
 import domain.BusinessConst;
 import env.MDLogger;
@@ -39,6 +40,8 @@ public class SaveWithoughtConfirmPoPDialog
 		
 		// 下面就是打开按钮
 		JFileChooser jf = new JFileChooser();
+		WaveDataSuffixFilter fileFilter = new WaveDataSuffixFilter();		
+		jf.setFileFilter(fileFilter);
 		jf.setCurrentDirectory(new File("data"));
 		int returnVal = jf.showSaveDialog(mf);
 		if (returnVal == JFileChooser.APPROVE_OPTION)
@@ -63,14 +66,39 @@ public class SaveWithoughtConfirmPoPDialog
 						mf.getEventPanel().getkeyPointPanel().getEventData(),
 						mf.getEventPanel().getkeyPointPanel().getSelectedDevParam());
 			}
+			saveFile(mf, jf, one);			
+		}
+	}
+
+	private static void saveFile (Md711MainFrame mf , JFileChooser jf , SerialDataFromToFile one)
+	{
 			try
 			{
-				
 				File file = jf.getSelectedFile();
-				FileOutputStream f = new FileOutputStream(file);
+			String filepath=file.getPath();			        
+			String fileName = file.getName();
+			FileOutputStream f = null;
+			 if(!fileName.endsWith(".wave"))
+			 {
+				 fileName += ".wave";
+				 int nindex1=filepath.lastIndexOf("\\");
+			         String filepath1=filepath.substring(0,nindex1+1);				         
+			         f= new FileOutputStream(filepath1+fileName);
+			 }
+			 else
+			 {
+				 f = new FileOutputStream(file);
+			 }				
 				one.writeToFile(f);
 				JOptionPane.showMessageDialog(mf, "保存成功", "保存结果",
 						JOptionPane.INFORMATION_MESSAGE);
+//				f.close();
+			
+//				File file = jf.getSelectedFile();
+//				FileOutputStream f = new FileOutputStream(file);
+//				one.writeToFile(f);
+//				JOptionPane.showMessageDialog(mf, "保存成功", "保存结果",
+//						JOptionPane.INFORMATION_MESSAGE);
 			}
 			catch (Exception e)
 			{
@@ -79,5 +107,3 @@ public class SaveWithoughtConfirmPoPDialog
 			}			
 		}
 	}
-}
-

@@ -43,7 +43,7 @@ public abstract class SerializableData implements Serializable
 		mainFrame.getEventPanel().showQueryPropertyPanel(s.getSelectedDevParam());
 		return one;
 		// InventoryData.setDataFromFileNeedPrint(two);
-		//ￏ￪ￇ￩ﾲￅ￐￨ￒﾪￏￂￃ￦ￕ￢ﾾ￤
+		//详情才需要下面这句
 //		SaveInfo.restoreSaveInfo(s);
 	}
 }

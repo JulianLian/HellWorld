@@ -14,9 +14,7 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 	private Md711MainFrame mainFrame;
 	
 	// ----------------------------------------------------------------------
-	private MoveAndAmplifyControllerPanel moveAndAmplyPanel;
-	// 下面是介质选择按钮
-	// private MediaSelectionPanel mediaSelectionPanel;
+//	private MoveAndAmplifyControllerPanel moveAndAmplyPanel;	
 	private CurveSelectionPanel curSelectionPanel;
 	private FaultDistancePanel faultDistancePanel;
 	
@@ -28,12 +26,7 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 	
 	private void layoutPanel ()
 	{
-		moveAndAmplyPanel = new MoveAndAmplifyControllerPanel(this);
-		// **************************************************************************************有关介质选择选项，下方面板中的第3个面板
-		// mediaSelectionPanel = new MediaSelectionPanel(this);
-		// mediaSelectionPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-		// "介质选择",
-		// TitledBorder.CENTER, TitledBorder.TOP));
+//		moveAndAmplyPanel = new MoveAndAmplifyControllerPanel(this);
 		
 		// ***************************************************************************************下方面板中的第4个面板
 		// ************************有关故障距离面板
@@ -47,31 +40,21 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 		
 		JPanel faultDistanceAndMediaSelectionPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 		faultDistanceAndMediaSelectionPanel.add(faultAndCurSelectionPanel);
-		// faultDistanceAndMediaSelectionPanel.add(mediaSelectionPanel);
 		
 		this.setLayout(new GridLayout(1, 2, 10, 10));
-		this.add(moveAndAmplyPanel);
+//		this.add(moveAndAmplyPanel);
 		this.add(faultDistanceAndMediaSelectionPanel);
 		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 	}
 	
-	public MoveAndAmplifyControllerPanel getMoveAndAmplyPanel ()
-	{
-		return moveAndAmplyPanel;
-	}
 	
 	public void setStateWhenOpenFile ()
 	{
-		moveAndAmplyPanel.setStateWhenOpenFile();
-		// mediaSelectionPanel.setCanEnable(false);
 		curSelectionPanel.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, true);
 	}
 	
 	public void clearAll ()
 	{
-		moveAndAmplyPanel.initWidgetState();
-		// mediaSelectionPanel.setDefaultSelection();
-		// mediaSelectionPanel.setCanEnable(false);
 		curSelectionPanel.setStateEnable(CurveSelectionPanel.PORT_CUR_SELECTION, false);
 		curSelectionPanel.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, false);
 		curSelectionPanel.setSelectNothing();
@@ -84,40 +67,15 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 		return mainFrame;
 	}
 	
-	// public void setMediaSeletionEnState(boolean isEnable)
-	// {
-	// mediaSelectionPanel.setCanEnable(isEnable);
-	// }
 	
 	public void fillDistanceInfo (String distanceStr)
 	{
 		faultDistancePanel.fillDistanceInfo(distanceStr);
 	}
 	
-	public void jbRedSelectAction ()
-	{
-		moveAndAmplyPanel.jbRedSelectAction();
-	}
-	
-	public void jbGreenSelectAction ()
-	{
-		moveAndAmplyPanel.jbGreenSelectAction();
-	}
-	
-	public void setProgress (int howByteReceived)
-	{
-		moveAndAmplyPanel.setProgress(howByteReceived);
-	}
-	
-	public void setStateWhenRecvedData ()
-	{
-		moveAndAmplyPanel.setStateWhenRecvedData();
-		// setMediaSeletionEnState(true);
-	}
-	
 	public int getCurSelectedCurve ()
 	{
-		return curSelectionPanel.selectPortOrFileData();
+		return CurveSelectionPanel.selectPortOrFileData();
 	}
 	
 	public CurveSelectionPanel getCurSelectionPanel ()

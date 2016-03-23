@@ -3,7 +3,6 @@ package communation.dialog;
 import communation.IDataGetter;
 import communation.Protocol;
 import dataview.CurveSelectionPanel;
-import interaction.MeasureParamsSetter;
 import interaction.OTDRTraceGetter;
 import main.Md711MainFrame;
 
@@ -44,7 +43,7 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	
 	private CommuParamConfigDialog(Md711MainFrame	mainFrame)
 	{
-		super(mainFrame, "检测参数", true);
+		super(mainFrame, "查询参数", true);
 		this.mainFrame = mainFrame;
 		this.setResizable(false);
 		layoutPanel();
@@ -58,7 +57,6 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	private void setAction ()
 	{
 		choiceAction = new CommuParamPanelChoiceAction(this);
-		choiceAction.setPermitCommuParamDealer(new MeasureParamsSetter());
                 addActionListener();
         }
 
@@ -189,12 +187,15 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		//坐标，几行，几列
 
 		// Weights are used to determine how to distribute space among 
-		//columns (weightx) and among rows (weighty); this is important for 
+		// columns (weightx) and among rows (weighty); this is important
+		// for
 		//specifying resizing behavior
 
 		//anchor- when the component is smaller than its display area		
-		//fill-when the component's display area is larger than the component's requested size
-		//ipad-The width of the component will be at least its minimum width plus ipadx*2 pixels
+		// fill-when the component's display area is larger than the
+		// component's requested size
+		// ipad-The width of the component will be at least its minimum
+		// width plus ipadx*2 pixels
 
 		JPanel panel = new JPanel(new GridBagLayout());
 		CompoundBorder border = BorderFactory.createCompoundBorder(
@@ -202,51 +203,51 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 				BorderFactory.createTitledBorder("检测参数"));
 		panel.setBorder(border);
 		//----------------------------------------------
-		panel.add(new JLabel("波长:"), new GridBagConstraints(0,0,1,1
-				,0,0,//weights
+		panel.add(new JLabel("波长:"),
+				new GridBagConstraints(0, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.FIRST_LINE_START,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,2,4,2), 0,0));
-		panel.add(waveLengthCB, new GridBagConstraints(1,0,1,1
-				,0,0,//weights
+		panel.add(waveLengthCB,
+				new GridBagConstraints(1, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.CENTER,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,0,4,4),0,0));
 		//----------------------------------------------
-		panel.add(new JLabel("脉冲宽度:"), new GridBagConstraints(2,0,1,1
-				,0,0,//weights
+		panel.add(new JLabel("脉冲宽度:"),
+				new GridBagConstraints(2, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,20,4,0), 0,0));
-		panel.add(pulseWidthCB, new GridBagConstraints(3,0,1,1
-				,0,0,//weights
+		panel.add(pulseWidthCB,
+				new GridBagConstraints(3, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,0,4,2),0,0));
 		//-------------------------------------------------
-		panel.add(new JLabel("分辨率:"), new GridBagConstraints(4,0,1,1
-				,0,0,//weights
+		panel.add(new JLabel("分辨率:"),
+				new GridBagConstraints(4, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,30,4,0), 0,0));
-		panel.add(resolutionCB, new GridBagConstraints(5,0,1,1
-				,0,0,//weights
+		panel.add(resolutionCB,
+				new GridBagConstraints(5, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,0,4,2),0,0));
-		panel.add(new JLabel(), new GridBagConstraints(6,0,1,1
-				,1,0,//weights
+		panel.add(new JLabel(),
+				new GridBagConstraints(6, 0, 1, 1, 1, 0, // weights
 				GridBagConstraints.FIRST_LINE_END,//anchor
 				GridBagConstraints.HORIZONTAL,//fill
 				new Insets(2,0,4,2),1,0));
 		//----------------------------------------------
-		panel.add(new JLabel("范围:"), new GridBagConstraints(0,1,1,1
-				,0,0,//weights
+		panel.add(new JLabel("范围:"),
+				new GridBagConstraints(0, 1, 1, 1, 0, 0, // weights
 				GridBagConstraints.LINE_START,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,2,4,2), 0,0));
-		panel.add(rangeCB, new GridBagConstraints(1,1,1,1
-				,0,0,//weights
+		panel.add(rangeCB,
+				new GridBagConstraints(1, 1, 1, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,0,4,4),0,0));
@@ -287,14 +288,14 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		//acquiteTimePanel.add(this.acquisitionSecField);
 		//acquiteTimePanel.add(new JLabel("秒"));
 
-		panel.add(acquiteTimePanel, new GridBagConstraints(2,1,4,1
-				,0,0,//weights
+		panel.add(acquiteTimePanel,
+				new GridBagConstraints(2, 1, 4, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,16,4,0), 0,0));
 
-		panel.add(new JLabel(), new GridBagConstraints(6,1,1,1
-				,1,0,//weights
+		panel.add(new JLabel(),
+				new GridBagConstraints(6, 1, 1, 1, 1, 0, // weights
 				GridBagConstraints.LAST_LINE_END,//anchor
 				GridBagConstraints.HORIZONTAL,//fill
 				new Insets(2,0,4,2),0,0));
@@ -332,8 +333,8 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 	{
 		JPanel panel = new JPanel(new GridBagLayout());
 		panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
-		panel.add(new JLabel("光纤路径 OTU:0 "), new GridBagConstraints(0,0,1,1
-				,0,0,//weights
+		panel.add(new JLabel("光纤路径 OTU:0 "),
+				new GridBagConstraints(0, 0, 1, 1, 0, 0, // weights
 				GridBagConstraints.LINE_START,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,2,4,2), 0,0));
@@ -342,24 +343,24 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		switchPanel.add(this.otuInPortCB);
 		switchPanel.add(new JLabel("==>"));
 		switchPanel.add(this.otuOutPortCB);
-		panel.add(switchPanel, new GridBagConstraints(1,0,3,1
-				,0,0,//weights
+		panel.add(switchPanel,
+				new GridBagConstraints(1, 0, 3, 1, 0, 0, // weights
 				GridBagConstraints.WEST,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,0,4,4),0,0));
-		panel.add(new JLabel(), new GridBagConstraints(4,0,3,1
-				,1,0,//weights
+		panel.add(new JLabel(),
+				new GridBagConstraints(4, 0, 3, 1, 1, 0, // weights
 				GridBagConstraints.FIRST_LINE_END,//anchor
 				GridBagConstraints.HORIZONTAL,//fill
 				new Insets(2,0,4,4),0,0));
 
-		panel.add(new JLabel("检测设置:"), new GridBagConstraints(0,1,1,1
-				,0,0,//weights
+		panel.add(new JLabel("查询设置:"),
+				new GridBagConstraints(0, 1, 1, 1, 0, 0, // weights
 				GridBagConstraints.LINE_START,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,2,4,2), 0,0));
-		panel.add(this.acquisitionSettingCB, new GridBagConstraints(1,1,3,1
-				,0,0,//weights
+		panel.add(this.acquisitionSettingCB,
+				new GridBagConstraints(1, 1, 3, 1, 0, 0, // weights
 				GridBagConstraints.CENTER,//anchor
 				GridBagConstraints.NONE,//fill
 				new Insets(2,2,4,2), 0,0));
@@ -585,4 +586,3 @@ public class CommuParamConfigDialog extends JDialog implements ActionListener
 		}
 	}
 }
-

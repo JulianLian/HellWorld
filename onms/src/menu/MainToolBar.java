@@ -74,7 +74,7 @@ public class MainToolBar
 					// mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
 					CurveSelectionPanel.selectFileDataLine();
 					WindowControlEnv.setRepaintForFileInfoCome(true);
-					mainFrame.getGraphControllerpanel().setStateWhenOpenFile();
+							mainFrame.setStateWhenOpenFile();
 					mainFrame.showFileGraph();
 					mainFrame.getGraphControllerpanel().getCurSelectionPanel()
 							.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, true);

@@ -19,11 +19,9 @@ public class QueryParamPanel extends JPanel
 	private DefaultTableModel tableModel = new QueryPropertyTableModel();
 	private JTable table = new JTable(tableModel);	
 	private Map<String, String> selectedDevParam;
-	private Md711MainFrame mainFrame;
-	public QueryParamPanel(Md711MainFrame mainFrame)
+	public QueryParamPanel()
 	{
 		layoutPanel();
-		this.mainFrame = mainFrame;
 	}
 
 	private void layoutPanel ()
@@ -94,4 +92,3 @@ public class QueryParamPanel extends JPanel
 		}
 	}
 }
-

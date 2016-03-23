@@ -1,13 +1,14 @@
 package dataview;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -15,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 
-import datastruct.EventDataStruct;
 import domain.BusinessConst;
 import env.MDLogger;
 import persistant.FileDataPersister;
@@ -26,8 +26,8 @@ import persistant.WindowControlEnv;
 public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListener
 {
 	private GraphControllerPanel controlPanel;
+//	private FaultDistancePanel distancepanel;
 	
-	private JPanel downFirstPane;
 	private JProgressBar progressBar = new JProgressBar(0, 4096);
 	private JButton restoreButton = new JButton("复原",  Constant.createImageIcon("restore.png"));
 
@@ -59,117 +59,191 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 	private JButton jbAntiWinzip; // 拉伸图形
 	private JTextField jtfAntiWinzip;
 
-	public MoveAndAmplifyControllerPanel(GraphControllerPanel controlPanel)
+	public MoveAndAmplifyControllerPanel(GraphControllerPanel controlPanel, LayoutManager mgr)
 	{
 		super();
 		this.controlPanel = controlPanel;
+		setLayout(mgr == null ? new GridLayout(4, 1) : mgr);		
 		layoutPanel();
 	}
 
+	public MoveAndAmplifyControllerPanel(GraphControllerPanel controlPanel)
+	{
+		this(controlPanel, new GridLayout(4,1));
+	}
+	
 	private void layoutPanel ()
 	{
-		this.setLayout(new GridLayout(1, 2));
-		downFirstPane = new JPanel();
-		downFirstPane.setLayout(new GridLayout(0, 2));
+		JPanel downFirstPane = controlArea1();		
+		JPanel downSecondPane = controlArea2();
+		layoutMeasureDistancePanel();
+		setAllEnState(false);
+		this.add(downFirstPane);
+		this.add(downSecondPane);
+		this.add(controlPanel);
+//		this.add(distancepanel);
+	}
 
-		jbStep = new JButton("设定步长");
-		jtfStep = new JTextField("1");
-		jtfStep.setToolTipText("采样步长");
-		jtfStep.setToolTipText("相隔几个点采样");
-		jbStep.addActionListener(this);
-		setStepEnable(false);
-
-		jbAug = new JButton("放大" , Constant.createImageIcon("zoomIn.gif"));
-		jtfAug = new JTextField("2");
-		jbAug.setToolTipText("图形放大");
-		jtfAug.setToolTipText("图形放大倍数");
-		jbAug.addActionListener(this);
-
-		jbShrink = new JButton("缩小" ,  Constant.createImageIcon("zoomOut.gif"));
-		jtfShrink = new JTextField("2");
-		jbShrink.setToolTipText("图形缩小");
-		jtfShrink.setToolTipText("图形缩小倍数");
-		jbShrink.addActionListener(this);
+	private JPanel controlArea2 ()
+	{
+		JPanel downSecondPane = new JPanel(new GridLayout(5, 2));
 
 		jbUpMove = new JButton("上移",  Constant.createImageIcon("up.gif"));
+		setMoveControlWidgetSize(jbUpMove);
 		jtfUpMove = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfUpMove);
 		jbUpMove.setToolTipText("图形上移");
 		jtfUpMove.setToolTipText("图形上移象素");
 		jbUpMove.addActionListener(this);
 
 		ImageIcon downIcon =  Constant.createImageIcon("down.gif");
 		jbDownMove = new JButton("下移", downIcon);
+		setMoveControlWidgetSize(jbDownMove);
 		jtfDownMove = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfDownMove);
 		jbDownMove.setToolTipText("图形下移");
 		jtfDownMove.setToolTipText("图形下移象素");
 		jbDownMove.addActionListener(this);
 
 		ImageIcon leftIcon =  Constant.createImageIcon("left.gif");
 		jbLeftMove = new JButton("左移", leftIcon);
+		setMoveControlWidgetSize(jbLeftMove);
 		jtfLeftMove = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfLeftMove);
 		jbLeftMove.setToolTipText("图形左移");
 		jtfLeftMove.setToolTipText("图形左移象素");
 		jbLeftMove.addActionListener(this);
 
 		ImageIcon rightIcon =  Constant.createImageIcon("right.gif");
 		jbRightMove = new JButton("右移", rightIcon);
+		setMoveControlWidgetSize(jbRightMove);
 		jtfRightMove = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfRightMove);
 		jbRightMove.setToolTipText("图形右移");
 		jtfRightMove.setToolTipText("图形右移象素");
 		jbRightMove.addActionListener(this);
-
-		jbWinzip = new JButton("压缩",  Constant.createImageIcon("winzip.gif"));
-		jtfWinzip = new JTextField("2");
-		jbWinzip.setToolTipText("图形横向压缩");
-		jtfWinzip.setToolTipText("图形横向压缩倍数");
-		jbWinzip.addActionListener(this);
-
-		jbAntiWinzip = new JButton("拉伸",Constant.createImageIcon("arrows_stretch.png"));
-		jtfAntiWinzip = new JTextField("2");
-		jbAntiWinzip.setToolTipText("图形横向拉伸");
-		jtfAntiWinzip.setToolTipText("图形横向拉伸倍数");
-		jbAntiWinzip.addActionListener(this);
-
-		setAllEnState(false);
-
-		downFirstPane.add(jbStep);
-		downFirstPane.add(jtfStep);
-		downFirstPane.add(jbAug);
-		downFirstPane.add(jtfAug);
-		downFirstPane.add(jbShrink);
-		downFirstPane.add(jtfShrink);
-		downFirstPane.add(jbWinzip);
-		downFirstPane.add(jtfWinzip);
-		downFirstPane.add(jbAntiWinzip);
-		downFirstPane.add(jtfAntiWinzip);
-
-		downFirstPane.setBorder(BorderFactory.createEmptyBorder(7, 5, 5, 5));
-		// ************************下方面板中的第1块结束
-
-		progressBar.setValue(0);
-
+		// ************************下方面板中的第1块结束		
+		progressBar.setValue(0);		
 		// ************************下方面板中的第2块
+		setMoveControlWidgetSize(restoreButton);
 		restoreButton.addActionListener(this);
-		JPanel downSecondPane = new JPanel(new GridLayout(5, 2));
+		
 		// JButton jb = new JButton("通讯进度");
 		// jb.setToolTipText("端口通讯进度，若有,后面则后面进度条显示进度");
 		// jb.setEnabled(false);
 		// downSecondPane.add(jb);
 		// downSecondPane.add(progressBar);
-		downSecondPane.add(restoreButton);
-		downSecondPane.add(new JLabel());
-		downSecondPane.add(jbUpMove);
+		
+//		downSecondPane.add(new JLabel());
+//		downSecondPane.add(restoreButton);		
+		
 		downSecondPane.add(jtfUpMove);
-		downSecondPane.add(jbDownMove);
+		downSecondPane.add(jbUpMove);		
+		
 		downSecondPane.add(jtfDownMove);
-		downSecondPane.add(jbLeftMove);
+		downSecondPane.add(jbDownMove);
+		
 		downSecondPane.add(jtfLeftMove);
-		downSecondPane.add(jbRightMove);
+		downSecondPane.add(jbLeftMove);
+		
 		downSecondPane.add(jtfRightMove);
-		downSecondPane.setBorder(BorderFactory.createEmptyBorder(7, 5, 5, 5));
+		downSecondPane.add(jbRightMove);
+//		downSecondPane.setBorder(BorderFactory.createEmptyBorder(7, 5, 5, 5));
+		return downSecondPane;
+	}
+	
+	private void layoutMeasureDistancePanel()
+	{
+//		distancepanel = new  FaultDistancePanel();
+//		controlPanel
+	}
+	
+	private void setMoveControlWidgetSize(Component comp)
+	{
+		comp.setPreferredSize(new Dimension(85,10));
+	}
+	
+	private void setMoveControlFieldWidgetSize(Component comp)
+	{
+		comp.setPreferredSize(new Dimension(20,10));
+	}
 
-		this.add(downFirstPane);
-		this.add(downSecondPane);
+//	public FaultDistancePanel getDistancepanel ()
+//	{
+//		return distancepanel;
+//	}
+	
+	public GraphControllerPanel getGraphicControlPanel ()
+	{ 
+		return controlPanel;
+	}
+
+	private JPanel controlArea1 ()
+	{
+		JPanel downFirstPane = new JPanel();
+		downFirstPane.setLayout(new GridLayout(0, 2));
+		
+		jbStep = new JButton("设定步长");
+		setMoveControlWidgetSize(jbStep);
+		jtfStep = new JTextField("1");
+		setMoveControlFieldWidgetSize(jtfStep);
+		jtfStep.setToolTipText("采样步长");
+		jtfStep.setToolTipText("相隔几个点采样");
+		jbStep.addActionListener(this);
+		setStepEnable(false);
+		
+		jbAug = new JButton("放大" , Constant.createImageIcon("zoomIn.gif"));
+		setMoveControlWidgetSize(jbAug);
+		jtfAug = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfAug);
+		jbAug.setToolTipText("图形放大");
+		jtfAug.setToolTipText("图形放大倍数");
+		jbAug.addActionListener(this);
+		
+		jbShrink = new JButton("缩小" ,  Constant.createImageIcon("zoomOut.gif"));
+		setMoveControlWidgetSize(jbShrink);
+		jtfShrink = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfShrink);
+		jbShrink.setToolTipText("图形缩小");
+		jtfShrink.setToolTipText("图形缩小倍数");
+		jbShrink.addActionListener(this);	
+
+		jbWinzip = new JButton("压缩",  Constant.createImageIcon("winzip.gif"));
+		setMoveControlWidgetSize(jbWinzip);
+		jtfWinzip = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfWinzip);
+		jbWinzip.setToolTipText("图形横向压缩");
+		jtfWinzip.setToolTipText("图形横向压缩倍数");
+		jbWinzip.addActionListener(this);
+
+		jbAntiWinzip = new JButton("拉伸",Constant.createImageIcon("arrows_stretch.png"));
+		setMoveControlWidgetSize(jbAntiWinzip);
+		jtfAntiWinzip = new JTextField("2");
+		setMoveControlFieldWidgetSize(jtfAntiWinzip);
+		jbAntiWinzip.setToolTipText("图形横向拉伸");
+		jtfAntiWinzip.setToolTipText("图形横向拉伸倍数");
+		jbAntiWinzip.addActionListener(this);
+
+
+		downFirstPane.add(new JLabel());
+		downFirstPane.add(restoreButton);	
+		
+		downFirstPane.add(jtfStep);
+		downFirstPane.add(jbStep);
+		
+		downFirstPane.add(jtfAug);
+		downFirstPane.add(jbAug);
+		
+		downFirstPane.add(jtfShrink);
+		downFirstPane.add(jbShrink);
+		
+		downFirstPane.add(jtfWinzip);
+		downFirstPane.add(jbWinzip);
+		
+		downFirstPane.add(jtfAntiWinzip);
+		downFirstPane.add(jbAntiWinzip);
+//		downFirstPane.setBorder(BorderFactory.createEmptyBorder(7, 5, 5, 5));
+		return downFirstPane;
 	}
 
 	public JButton getJbStep ()
@@ -749,4 +823,3 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 //		}
 //	}
 }
-

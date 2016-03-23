@@ -6,23 +6,13 @@ package main;
  * 预期完成时间： 40天
  */
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.Insets;
-import java.awt.Toolkit;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
-
 import action.Action;
+import communation.FileDataGetter;
 import dataview.CurveSelectionPanel;
 import dataview.GraphControllerPanel;
 import dataview.GraphShowPanel;
+import dataview.MoveAndAmplifyControllerPanel;
+import dir.*;
 import domain.HardWare;
 import i18n.I18n;
 import menu.MainMenuBar;
@@ -30,6 +20,14 @@ import menu.MainToolBar;
 import persistant.PoPDialog;
 import persistant.SaveWithoughtConfirmPoPDialog;
 import persistant.WindowControlEnv;
+
+import javax.swing.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
+import java.io.File;
+import java.util.List;
 
 /*
  *
@@ -56,6 +54,7 @@ public class Md711MainFrame extends JFrame
 	private MainMenuBar checkerMenuBar;
 	
 	private ControlAreaJTabbedPanel controlJtabbedPanel;
+	private MoveAndAmplifyControllerPanel moveAndAmplyPanel;
 	
 	public Md711MainFrame()
 	{
@@ -82,19 +81,21 @@ public class Md711MainFrame extends JFrame
 	{
 		setLayout(new BorderLayout());
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
-		JTabbedPane graphScrollPane = initDataShowPanel();
+		JComponent graphScrollPane = initDataShowPanelWithFileDir();
 		splitPane.setLeftComponent(graphScrollPane);
 		
 		JScrollPane controlPanel = new JScrollPane(controlJtabbedPanel);
-		controlPanel.setMaximumSize(new Dimension(controlPanel.getPreferredSize().width, 100));
+//		controlPanel.setMaximumSize(new Dimension(controlPanel.getPreferredSize().width, 100));
+		controlPanel.setPreferredSize(new Dimension(controlPanel.getPreferredSize().width, 100));
+		controlPanel.setMinimumSize(new Dimension(controlPanel.getPreferredSize().width, 100));
 		splitPane.setRightComponent(controlPanel);
-		graphScrollPane.setMinimumSize(new Dimension(600, 420));
+		graphScrollPane.setMinimumSize(new Dimension(800, 560));
 		splitPane.setOneTouchExpandable(true);
 		splitPane.setContinuousLayout(true);
 //		splitPane.setEnabled(false);
 		splitPane.setDividerLocation(0.80);
-		splitPane.setResizeWeight(1);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
-		Action.setJSplitPaneAction(splitPane);
+		splitPane.setResizeWeight(0.5);// 将这个设置修改为1.0会将所有的空间指定给左边或上部的组件
+//		Action.setJSplitPaneAction(splitPane);
 		
 		add(MainToolBar.createToolBar(this), BorderLayout.PAGE_START);
 		add(splitPane, BorderLayout.CENTER);
@@ -106,18 +107,71 @@ public class Md711MainFrame extends JFrame
 		graph = new GraphShowPanel(this);
 	}
 	
-	private JTabbedPane initDataShowPanel ()
+	private JComponent initDataShowPanel ()
 	{
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.add(graph, "测试曲线显示");
+		layoutGraphicShowPanel(tabbedPane);
 		tabbedPane.add(new JPanel(), "光缆地图显示");
 		tabbedPane.add(new JPanel(), "告警统计分析");
 		tabbedPane.add(new JPanel(), "设置告警定制");
 		tabbedPane.add(new JPanel(), "设置告警提示");
-		tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
+//		tabbedPane.setTabPlacement(SwingConstants.BOTTOM);
+		tabbedPane.setTabPlacement(SwingConstants.NORTH);
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		
 		return tabbedPane;
+	}
+	
+	private void layoutGraphicShowPanel (JTabbedPane tabbedPane)
+	{
+		moveAndAmplyPanel = new  MoveAndAmplifyControllerPanel(
+				new GraphControllerPanel(this),
+				new GridLayout(4,1));
+		JPanel panel = new JPanel(new BorderLayout());
+		panel.add(graph, BorderLayout.CENTER);
+		panel.add(moveAndAmplyPanel, BorderLayout.EAST);			
+//		tabbedPane.add(graph, "测试曲线显示");
+		tabbedPane.add(panel, "测试曲线显示");
+	}
+	
+	private JComponent initDataShowPanelWithFileDir()
+	{
+		JComponent dataShowPanel = initDataShowPanel ();
+		FileTree fileTree = new FileTree();
+		FileTreeModel model = new FileTreeModel(
+				new DefaultMutableTreeNode(new FileNode("root", null, null, true)));
+		fileTree.setModel(model);
+		fileTree.setCellRenderer(new FileTreeRenderer());
+		fileTree.addTreeMouseClickAction(new FileTreeMouseAdapter(fileTree));
+		fileTree.addTreeSelectionListener(new TreeSelectionListener()
+		{  
+			@Override  
+			public void valueChanged(TreeSelectionEvent e) 
+			{  
+			       DefaultMutableTreeNode selectedNode=
+					       (DefaultMutableTreeNode) fileTree.getLastSelectedPathComponent();//返回最后选定的节点  
+			       if(selectedNode == null)
+			       {
+				       return;
+			       }
+			       File file =( (FileNode)selectedNode.getUserObject()).file;
+			       if(file.isDirectory())
+			       {
+				       return;
+			       }
+			       List<Double> waveData = FileDataGetter.readFileData(file, Md711MainFrame.this);
+			       showWaveData(waveData);
+			   }  
+			});		
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+		splitPane.setLeftComponent(new JScrollPane(fileTree));
+		splitPane.setRightComponent(dataShowPanel);
+		splitPane.setOneTouchExpandable(true);
+		splitPane.setContinuousLayout(true);
+		splitPane.setDividerLocation(0.20);
+		splitPane.setResizeWeight(0.1);
+		Action.setJSplitPaneAction(splitPane);
+		return splitPane;
 	}
 	
 	private void initMenuBar ()
@@ -177,19 +231,19 @@ public class Md711MainFrame extends JFrame
 	
 	public void showGraph ()
 	{
-		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
+//		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
 		CurveSelectionPanel.selectPortDataLine();
-		controlPanel.setStateWhenRecvedData();
+		getMoveAndAmplyPanel().setStateWhenRecvedData();
 		geCheckMenuBar().setSaveItemState(true);
 		graph.repaint();
 	}
 	
 	public void showFileGraph ()
 	{
-		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
+//		GraphControllerPanel controlPanel = controlJtabbedPanel.getGraphControllerpanel();
 		// controlPanel.getCurSelectionPanel().selectFileDataLine();
 		CurveSelectionPanel.selectFileDataLine();
-		controlPanel.setStateWhenRecvedData();
+		getMoveAndAmplyPanel().setStateWhenRecvedData();
 		geCheckMenuBar().setSaveItemState(true);
 		graph.repaint();
 	}
@@ -232,14 +286,70 @@ public class Md711MainFrame extends JFrame
 		window.setVisible(true);
 	}
 	
+	public  void showWaveData (List<Double> waveData)
+	{
+		if (waveData != null)
+		{
+			// mainFrame.getGraphControllerpanel().getCurSelectionPanel().selectFileDataLine();
+			CurveSelectionPanel.selectFileDataLine();
+			WindowControlEnv.setRepaintForFileInfoCome(true);
+			setStateWhenOpenFile();
+			this.showFileGraph();
+			this.getGraphControllerpanel().getCurSelectionPanel()
+					.setStateEnable(CurveSelectionPanel.FILE_CUR_SELECTION, true);			
+		}
+		else
+		{
+			moveAndAmplyPanel.setStepEnable(false);
+//			this.getGraphControllerpanel().getMoveAndAmplyPanel().setStepEnable(false);
+		}
+	}
+	
+	public void setStateWhenOpenFile ()
+	{
+		moveAndAmplyPanel.setStateWhenOpenFile();	
+		this.getGraphControllerpanel().setStateWhenOpenFile();
+	}
+	
 	public GraphControllerPanel getGraphControllerpanel ()
 	{
-		return controlJtabbedPanel.getGraphControllerpanel();
+//		return controlJtabbedPanel.getGraphControllerpanel();
+		return moveAndAmplyPanel.getGraphicControlPanel();
 	}
 	
 	public ControlAreaJTabbedPanel getEventPanel ()
 	{
 		return controlJtabbedPanel;
 	}
+
+	public MoveAndAmplifyControllerPanel getMoveAndAmplyPanel ()
+	{
+		return moveAndAmplyPanel;
+	}
+
+	public void clearControlParam ()
+	{
+		moveAndAmplyPanel.initWidgetState();
+		getGraphControllerpanel().clearAll();		
+	}
+	
+	public void jbRedSelectAction ()
+	{
+		moveAndAmplyPanel.jbRedSelectAction();
+	}
+	
+	public void jbGreenSelectAction ()
+	{
+		moveAndAmplyPanel.jbGreenSelectAction();
+	}
+	
+	public void setProgress (int howByteReceived)
+	{
+		moveAndAmplyPanel.setProgress(howByteReceived);
 }
 
+	public void setStateWhenRecvedData ()
+	{
+		moveAndAmplyPanel.setStateWhenRecvedData();		
+	}
+}

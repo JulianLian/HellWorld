@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
-import datastruct.EventDataStruct;
 import main.KeyPointPanel;
 
 public class FileDataPersister implements IDataPersister

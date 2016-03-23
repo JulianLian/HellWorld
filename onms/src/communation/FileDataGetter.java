@@ -12,7 +12,6 @@ import javax.swing.JOptionPane;
 import datastruct.SerializableData;
 import env.MDLogger;
 import main.Md711MainFrame;
-import persistant.WindowControlEnv;
 
 public class FileDataGetter implements IDataGetter
 {
@@ -29,22 +28,31 @@ public class FileDataGetter implements IDataGetter
 	{
 		List<Double> waveData = null;
 		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(new WaveDataSuffixFilter());
 		int returnVal = fc.showOpenDialog(mainFrame);
 		if (returnVal == JFileChooser.APPROVE_OPTION)
 		{
 			File file = fc.getSelectedFile();
+			waveData = readFileData(file, mainFrame);
+		}
+		return waveData;
+	}
+
+	public static List<Double> readFileData (File file, Md711MainFrame fatherComponent)
+	{
+		List<Double> waveData = null;
 			if (file != null)
 			{
 				FileInputStream f = null;
 				try
 				{
 					f = new FileInputStream(file);
-					waveData = SerializableData.readFromFile(f, mainFrame);
+				        waveData = SerializableData.readFromFile(f, fatherComponent);
 				}
 				catch (Exception ee)
 				{					
 					MDLogger.INS.error(ee.getMessage());
-					JOptionPane.showMessageDialog(mainFrame, "文件读入时发生错误...", "错误",
+					JOptionPane.showMessageDialog(fatherComponent, "文件读入时发生错误...", "错误",
 							JOptionPane.ERROR_MESSAGE);					
 				}
 				finally
@@ -56,12 +64,11 @@ public class FileDataGetter implements IDataGetter
 					catch (IOException e)
 					{
 						MDLogger.INS.error(e.getMessage());
-						JOptionPane.showMessageDialog(mainFrame, "文件读入时发生错误...", "错误",
+						JOptionPane.showMessageDialog(fatherComponent, "文件读入时发生错误...", "错误",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
-		}
 		return waveData;
 	}
 
@@ -72,4 +79,3 @@ public class FileDataGetter implements IDataGetter
 		return null;
 	}
 }
-
