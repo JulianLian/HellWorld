@@ -4,23 +4,31 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import domain.ListUtils;
 import domain.PointHelper;
 import persistant.IDataPersister;
+import rule.AxisShowvalPair;
 
 public class DrawUtils
 {
-	private static void drawGraphic (Graphics2D d , Color color , List<Double> xDataList , List<Double> yDataList)
+	public static final int RULES_WIDTH = 10;
+	public static final int RULE_LABEL_DELTA = 2;
+	private static void drawGraphic (Graphics2D d , Dimension dimension, Color color , List<Double> xDataList , List<Double> yDataList)
 	{
 		if (xDataList != null && yDataList != null && xDataList.size() > 0
 				&& xDataList.size() == yDataList.size())
 		{
 			GeneralPath path = new GeneralPath();
 			int pointCounts = xDataList.size();
+			double maxAbsVal = 0;
 			for (int i = 0; i < pointCounts; i++)
 			{
+				maxAbsVal = Math.max(maxAbsVal, Math.abs(yDataList.get(i)));
 				if (i == 0)
 					path.moveTo(xDataList.get(i), yDataList.get(i));
 				else
@@ -29,18 +37,21 @@ public class DrawUtils
 			// 用红色来画图形
 			d.setColor(color);
 			d.draw(path);
+			
+//			DrawUtils.showMeasureRuler(d, dimension, maxAbsVal,40);
 		}
 	}
 	
 	// ***************************************************************************************************************
-	public static void drawPersistData (Graphics2D d , IDataPersister dataPersister)
+	public static void drawPersistData (Graphics2D d , Dimension dimension, IDataPersister dataPersister)
 	{
-		drawGraphic(d, dataPersister.getPresentColor(), dataPersister.getCashedXData(),
+		drawGraphic(d, dimension, dataPersister.getPresentColor(), dataPersister.getCashedXData(),
 				dataPersister.getCashedYData());
 	}
 	
-	public static void drawDataAfterAdjustAxis (Graphics2D d , Dimension dimension , IDataPersister dataPersister)
+	public static List<AxisShowvalPair> drawDataAfterAdjustAxis (Graphics2D d , Dimension dimension , IDataPersister dataPersister)
 	{
+		List<AxisShowvalPair> axisShowPairs = null;
 		double screenWidth = dimension.getWidth();
 		double screenHeight = dimension.getHeight();
 		double baseX = -screenWidth / 2;
@@ -52,6 +63,8 @@ public class DrawUtils
 				pointsYPositions.size());
 		if (pointCounts > 0)
 		{
+			axisShowPairs = new ArrayList<AxisShowvalPair>(2);
+			
 			GeneralPath path = new GeneralPath();
 			double xData[] = new double[pointCounts];
 			double yData[] = new double[pointCounts];
@@ -76,7 +89,13 @@ public class DrawUtils
 			// 用红色来画图形
 			d.setColor(dataPersister.getPresentColor());
 			d.draw(path);
+			AxisShowvalPair xPair = new AxisShowvalPair(xData, xData);
+			AxisShowvalPair yPair = new AxisShowvalPair(yData,  ListUtils.toDoubleArray(pointsYPositions));
+			axisShowPairs.add(xPair);
+			axisShowPairs.add(yPair);
+//			DrawUtils.showMeasureRuler(d, dimension, maxAbsVal,40);			
 		}
+		return axisShowPairs;
 	}
 	
 	public static void saveNewAdjustedPosition (double[] xData , double[] yData , IDataPersister dataPersister)
@@ -94,5 +113,36 @@ public class DrawUtils
 				yDataList.add(yData[index]);
 			}
 		}
+	}
+	
+	
+	public static void showMeasureRuler (Graphics2D d , Dimension dimension,  double maxVal,  
+			int totalRulerPoint)
+	{
+		double screenWidth = dimension.getWidth();
+		double screenHeight = dimension.getHeight();	
+		double distance = screenHeight/totalRulerPoint;
+		double interval = Math.abs(maxVal)/totalRulerPoint;
+		
+		d.setColor(Color.GREEN);
+		
+		double x1 = (-1)*screenWidth/2;
+		double y1 = (-1)*screenHeight/2;
+		double x2 = x1 + 100;
+		double y2 = screenHeight/2;
+		int labelTotalDelta = RULES_WIDTH+RULE_LABEL_DELTA;
+		double xend = x1+RULES_WIDTH;
+		double xLabelEnd = x1+labelTotalDelta;
+		d.fill(new Rectangle2D.Double(x1, y1, x2, y2));
+		for(int index = 0; index < totalRulerPoint/2; index ++)
+		{
+			d.draw(new Line2D.Double(x1, -index*distance, xend,-index*distance));	
+			d.drawString((int)(0+index*interval)+"",  (int)xLabelEnd, (int)(-index*distance)+1);
+		}
+		for(int index = 0; index < totalRulerPoint/2; index ++)
+		{
+			d.draw(new Line2D.Double(x1, index*distance, xend, index*distance));	
+			d.drawString((int)(0-index*interval)+"",  (int)xLabelEnd, (int)(index*distance)+1);
+		}			
 	}
 }

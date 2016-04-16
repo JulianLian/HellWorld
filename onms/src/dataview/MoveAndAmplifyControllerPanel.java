@@ -77,7 +77,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		JPanel downFirstPane = controlArea1();		
 		JPanel downSecondPane = controlArea2();
 		layoutMeasureDistancePanel();
-		setAllEnState(false);
+//		setAllEnState(false);
+		setAllEnState(true);
 		this.add(downFirstPane);
 		this.add(downSecondPane);
 		this.add(controlPanel);
@@ -228,8 +229,9 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		downFirstPane.add(new JLabel());
 		downFirstPane.add(restoreButton);	
 		
-		downFirstPane.add(jtfStep);
-		downFirstPane.add(jbStep);
+//设定步长功能不提供了，屏蔽掉
+//		downFirstPane.add(jtfStep);
+//		downFirstPane.add(jbStep);
 		
 		downFirstPane.add(jtfAug);
 		downFirstPane.add(jbAug);
@@ -261,23 +263,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 	{
 		if (e.getSource().equals(jbStep))
 		{
-			if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
-			{
-				WindowControlEnv.setPortStepNotClicked(false);// "用户已经点击步长按钮"
-				WindowControlEnv.setRepaintForPortInfoCome(true);// 重新计算坐标，如同刚接收数据一样
-				WindowControlEnv.setStepValForPortData(this.getStep());// 把步长设置好
-			}
-			else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
-			{
-				WindowControlEnv.setFileStepNotClicked(false);
-				WindowControlEnv.setRepaintForFileInfoCome(true);
-				WindowControlEnv.setStepValForFileData(this.getStep());
-			}
-			setStepEnable(false);
-			jbStep.setBackground(new Color(238, 238, 238));
-
-			setAllEnState(true);
-			mainFrameRepaint();
+			jbStepAction();
 		}
 		// *********************************************点击放大按钮
 		if (e.getSource().equals(jbAug) && this.getAug() != 0)
@@ -430,6 +416,27 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 	}
 
+	private void jbStepAction ()
+	{
+		if (controlPanel.getCurSelectedCurve() == BusinessConst.PORTSELECT)
+		{
+			WindowControlEnv.setPortStepNotClicked(false);// "用户已经点击步长按钮"
+			WindowControlEnv.setRepaintForPortInfoCome(true);// 重新计算坐标，如同刚接收数据一样
+			WindowControlEnv.setStepValForPortData(this.getStep());// 把步长设置好
+		}
+		else if (controlPanel.getCurSelectedCurve() == BusinessConst.FILESELECT)
+		{
+			WindowControlEnv.setFileStepNotClicked(false);
+			WindowControlEnv.setRepaintForFileInfoCome(true);
+			WindowControlEnv.setStepValForFileData(this.getStep());
+		}
+		setStepEnable(false);
+		jbStep.setBackground(new Color(238, 238, 238));
+		
+		setAllEnState(true);
+		mainFrameRepaint();
+	}
+	
 	public void amplyOrShrink (IDataPersister dataPersister , boolean isAmplify)
 	{
 		double amplifyVal = isAmplify ? this.getAug() : 1. / this.getShrink();
@@ -758,7 +765,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 	public void initWidgetState ()
 	{
 		setStepEnable(false);
-		setAllEnState(false);
+//		setAllEnState(false);
+		setAllEnState(true);
 
 		jtfStep.setText("1");
 		jtfAug.setText("2");
@@ -776,7 +784,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 
 	public void setStateWhenOpenFile ()
 	{
-		setAllEnState(false);
+//		setAllEnState(false);
+		setAllEnState(true);
 		setStepEnable(true);
 		jbStep.setBackground(Color.red);
 	}

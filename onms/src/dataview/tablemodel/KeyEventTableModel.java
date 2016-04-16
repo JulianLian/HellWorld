@@ -1,13 +1,14 @@
 package dataview.tablemodel;
 
-import i18n.I18n;
+import java.util.Arrays;
+import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import java.util.Arrays;
-import java.util.Vector;
+
+import i18n.I18n;
 
 public class KeyEventTableModel extends DefaultTableModel
 {

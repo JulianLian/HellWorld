@@ -20,6 +20,8 @@ import menu.MainToolBar;
 import persistant.PoPDialog;
 import persistant.SaveWithoughtConfirmPoPDialog;
 import persistant.WindowControlEnv;
+import rule.OnlyFixedPointRuleVIew;
+import rule.RuleView;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -62,19 +64,6 @@ public class Md711MainFrame extends JFrame
 		initMenuBar();
 		initGraphicControllerPanel();
 		layoutPanel();		
-//		try
-//		{
-//			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-//			// "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-//			//"javax.swing.plaf.metal.MetalLookAndFeel"
-//			//"com.sun.java.swing.plaf.mac.MacLookAndFeel";			
-//			//com.sun.java.swing.plaf.windows.WindowsLookAndFeel
-//			//com.sun.java.swing.plaf.mac.MacLookAndFeel
-//		}
-//		catch (Exception e)
-//		{
-//		}		
-//		setDefaultLookAndFeelDecorated(true);
 	}
 	
 	private void layoutPanel ()
@@ -128,12 +117,31 @@ public class Md711MainFrame extends JFrame
 				new GraphControllerPanel(this),
 				new GridLayout(4,1));
 		JPanel panel = new JPanel(new BorderLayout());
-		panel.add(graph, BorderLayout.CENTER);
+		JComponent ruleGraphPanel = formGraphicPanelWithRule();
+		panel.add(ruleGraphPanel, BorderLayout.CENTER);
+//		panel.add(graph, BorderLayout.CENTER);
 		panel.add(moveAndAmplyPanel, BorderLayout.EAST);			
 //		tabbedPane.add(graph, "测试曲线显示");
 		tabbedPane.add(panel, "测试曲线显示");
 	}
 	
+	private JComponent formGraphicPanelWithRule ()
+	{
+		JScrollPane panel = new JScrollPane();			
+		OnlyFixedPointRuleVIew columnView = new OnlyFixedPointRuleVIew(RuleView.HORIZONTAL);   
+		columnView.setPreferredHeight(30); 		
+		panel.setColumnHeaderView(columnView); 
+		
+		OnlyFixedPointRuleVIew rowView = new OnlyFixedPointRuleVIew(RuleView.VERTICAL);  
+		rowView.setPreferredWidth(40);		
+		panel.setRowHeaderView(rowView);     
+		
+		panel.setViewportView(graph);		
+		graph.setRowView(rowView);
+		graph.setColumnView(columnView);
+		return panel;
+	}
+
 	private JComponent initDataShowPanelWithFileDir()
 	{
 		JComponent dataShowPanel = initDataShowPanel ();

@@ -103,9 +103,9 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 	
 	private void setCommunicateMenu ()
 	{
-		communicateMenu = new JMenu("通信(C)");
+		communicateMenu = new JMenu("检测(C)");
 		communicateMenu.setMnemonic(KeyEvent.VK_C);
-		communicateMenu.getAccessibleContext().setAccessibleDescription("通信");
+		communicateMenu.getAccessibleContext().setAccessibleDescription("检测");
 		add(communicateMenu);
 		
 		beginCommu = new JMenuItem("开始通信");
@@ -126,7 +126,7 @@ public class MainMenuBar extends JMenuBar implements ActionListener
 		commuAddrSetting.addActionListener(this);
 		communicateMenu.add(commuAddrSetting);
 		
-		commuParamSetting = new JMenuItem("查询参数...", Constant.createImageIcon("start.png"));
+		commuParamSetting = new JMenuItem("发起检测...", Constant.createImageIcon("start.png"));
 		commuParamSetting.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionEvent.CTRL_MASK));
 		commuParamSetting.getAccessibleContext().setAccessibleDescription("获取光纤数据");
 		commuParamSetting.addActionListener(this);

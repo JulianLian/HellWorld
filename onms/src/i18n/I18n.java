@@ -9,7 +9,7 @@ import env.MDLogger;
 
 public class I18n
 {
-	public static final String PROPERTY_FILE = "international.properties";
+	public static final String PROPERTY_FILE = "C:\\Users\\Julian\\IdeaProjects\\HellWorld\\onms\\international.properties";
 //	public static final String PROPERTY_FILE = "international.properties";
 	public static final I18n INS = new I18n();
 	private Properties props = new Properties();

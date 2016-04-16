@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -33,10 +32,16 @@ import persistant.IDataPersister;
 import persistant.InventoryData;
 import persistant.PortDataPersister;
 import persistant.WindowControlEnv;
+import rule.AxisShowvalPair;
+import rule.OnlyFixedPointRuleVIew;
 
 public class GraphShowPanel extends JPanel implements MouseMotionListener, MouseListener
 {
 	private Md711MainFrame md;
+//	private RuleView columnView;
+//	private RuleView rowView;
+	private OnlyFixedPointRuleVIew columnView;
+	private OnlyFixedPointRuleVIew rowView;
 	// 跟踪光标位置的直线横坐标
 	private static double firstPositionHorizontalVal; // ******获取测量用的第一条竖线的横坐标
 	private static double secondPositionHorizontalVal; // ********获取测量用的第二条竖线的横坐标
@@ -60,6 +65,15 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		this.setBackground(Color.BLACK);
 	}
 
+	public void setColumnView (OnlyFixedPointRuleVIew columnView)
+	{
+		this.columnView = columnView;
+	}
+
+	public void setRowView (OnlyFixedPointRuleVIew rowView)
+	{
+		this.rowView = rowView;
+	}
 	// ***********************************************鼠标事件，我们只处理移动和点击事件
 	@Override
 	public void mouseMoved (MouseEvent e)
@@ -224,26 +238,29 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			// 如果端口数据还没有做坐标调整，则这次需要调整
 			if (WindowControlEnv.getRepaintForPortInfoCome())
 			{
-				DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
+				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
 						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+				showNewRule(axisShowPairs);
 			}
 			else
 			{
-				DrawUtils.drawPersistData(g2,
+				DrawUtils.drawPersistData(g2,this.getSize(),
 						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			}
 			// ********************************************画文件数据
 			// 文件数据坐标尚未调整
 			if (WindowControlEnv.getRepaintForFileInfoCome())
 			{
-				DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
+				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
 						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+				showNewRule(axisShowPairs);
 			}
 			else
 			{
-				DrawUtils.drawPersistData(g2,
+				DrawUtils.drawPersistData(g2,this.getSize(),
 						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
 			}
+			
 			// resetAmplyParam();
 			// ******************************************************************如果要跟踪鼠标位置
 			if (firstPositionHorizontalVal != Double.MIN_VALUE)
@@ -304,6 +321,22 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		}
 	}
 
+	private void showNewRule (List<AxisShowvalPair> axisShowPairs)
+	{
+		if(axisShowPairs != null && axisShowPairs.size() > 0)
+		{
+			AxisShowvalPair xPair = axisShowPairs.get(0);
+			AxisShowvalPair yPair = axisShowPairs.get(1);
+			
+			rowView.setAxixPositions(yPair.getAxisVals());
+			rowView.setActualVals(yPair.getShowVals());
+
+			columnView.setAxixPositions(xPair.getAxisVals());
+			columnView.setActualVals(xPair.getShowVals());
+			columnView.setMeasureDistance(this.getMeasureDistance());
+		}		
+	}
+	
 	private void amplifySelectArea (IDataPersister dataPersister)
 	{
 		Dimension dimension = this.getSize();

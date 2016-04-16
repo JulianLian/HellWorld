@@ -44,7 +44,7 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 		this.setLayout(new GridLayout(1, 2, 10, 10));
 //		this.add(moveAndAmplyPanel);
 		this.add(faultDistanceAndMediaSelectionPanel);
-		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+//		this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 	}
 	
 	

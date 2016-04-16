@@ -37,7 +37,8 @@ public class PortSinfferMocker implements IDataGetter
 
 	private List<Double> testdata1 ()
 	{
-		return Arrays.asList(1.0, 200.0, 200.0, 1.0, 400.0);
+		return Arrays.asList(1.0, 200.0, 200.0, 1.0, 400.0,300.0,100.0,200.0);
+//		return Arrays.asList(1.0, 200.0, 200.0, 1.0, 400.0);
 //		List<Double> datas = Arrays.asList(1.0, 200.0, 200.0, 1.0, 400.0);
 //		for (Double tempData : datas)
 //		{
