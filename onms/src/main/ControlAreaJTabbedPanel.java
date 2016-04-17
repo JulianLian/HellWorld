@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.swing.JTabbedPane;
 
 import datastruct.EventDataStruct;
-import dataview.GraphControllerPanel;
 
 public class ControlAreaJTabbedPanel extends JTabbedPane
 {

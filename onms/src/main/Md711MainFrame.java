@@ -128,19 +128,24 @@ public class Md711MainFrame extends JFrame
 	private JComponent formGraphicPanelWithRule ()
 	{
 		JScrollPane panel = new JScrollPane();			
-		OnlyFixedPointRuleVIew columnView = new OnlyFixedPointRuleVIew(RuleView.HORIZONTAL);   
-		columnView.setPreferredHeight(30); 		
-		panel.setColumnHeaderView(columnView); 
+		OnlyFixedPointRuleVIew horizontalRuler = new OnlyFixedPointRuleVIew(RuleView.HORIZONTAL);   
+		horizontalRuler.setPreferredHeight(30); 
+		horizontalRuler.setMaxRuleLabelLen(30);
+		panel.setColumnHeaderView(horizontalRuler); 
 		
-		OnlyFixedPointRuleVIew rowView = new OnlyFixedPointRuleVIew(RuleView.VERTICAL);  
-		rowView.setPreferredWidth(40);		
-		panel.setRowHeaderView(rowView);     
+		OnlyFixedPointRuleVIew verticalRuler = new OnlyFixedPointRuleVIew(RuleView.VERTICAL);  
+		verticalRuler.setPreferredWidth(40);		
+		panel.setRowHeaderView(verticalRuler);     
 		
 		panel.setViewportView(graph);		
-		graph.setRowView(rowView);
-		graph.setColumnView(columnView);
+//		JLabel cornerLabel = new JLabel(""); 
+//		cornerLabel.setForeground(OnlyFixedPointRuleVIew.RULE_BG_COLOR);
+//		panel.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLabel); 
+		
+		graph.setVHRulerAndTheirContainer(verticalRuler, horizontalRuler, panel);
 		return panel;
 	}
+
 
 	private JComponent initDataShowPanelWithFileDir()
 	{

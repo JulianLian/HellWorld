@@ -6,12 +6,16 @@ package dataview;
  * 本类意在完成一个图形显示功能，数据
  * 从Data中获取
  */
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
+import domain.BusinessConst;
+import domain.DistanceCalculator;
+import draw.DrawUtils;
+import main.Md711MainFrame;
+import persistant.*;
+import rule.AxisShowvalPair;
+import rule.OnlyFixedPointRuleVIew;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -19,29 +23,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-
-import domain.BusinessConst;
-import domain.DistanceCalculator;
-import draw.DrawUtils;
-import main.Md711MainFrame;
-import persistant.FileDataPersister;
-import persistant.IDataPersister;
-import persistant.InventoryData;
-import persistant.PortDataPersister;
-import persistant.WindowControlEnv;
-import rule.AxisShowvalPair;
-import rule.OnlyFixedPointRuleVIew;
-
 public class GraphShowPanel extends JPanel implements MouseMotionListener, MouseListener
 {
 	private Md711MainFrame md;
-//	private RuleView columnView;
-//	private RuleView rowView;
-	private OnlyFixedPointRuleVIew columnView;
-	private OnlyFixedPointRuleVIew rowView;
+	private OnlyFixedPointRuleVIew horizontalRuler;
+	private OnlyFixedPointRuleVIew verticalRuler;
+	private JScrollPane containerPanel;
 	// 跟踪光标位置的直线横坐标
 	private static double firstPositionHorizontalVal; // ******获取测量用的第一条竖线的横坐标
 	private static double secondPositionHorizontalVal; // ********获取测量用的第二条竖线的横坐标
@@ -53,6 +40,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	private static boolean isDragging = false; // dataview.MoveAndAmplifyControllerPanel.amplyOrShrink(IDataPersister,
 	// double)
 	private static int clickTimes = 0;
+	
 	// ********************************************
 	public GraphShowPanel(Md711MainFrame md)
 	{
@@ -65,15 +53,6 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		this.setBackground(Color.BLACK);
 	}
 
-	public void setColumnView (OnlyFixedPointRuleVIew columnView)
-	{
-		this.columnView = columnView;
-	}
-
-	public void setRowView (OnlyFixedPointRuleVIew rowView)
-	{
-		this.rowView = rowView;
-	}
 	// ***********************************************鼠标事件，我们只处理移动和点击事件
 	@Override
 	public void mouseMoved (MouseEvent e)
@@ -138,7 +117,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		{
 			xpos -= 150;
 		}		
-		int ypos = (int) point.getY();
+		int ypos = (int) point.getY() - 20;
 		popup.show(this, xpos, ypos);
 		// int xpos = (int) point.getX() + 10;
 		// int ypos = (int) point.getY() + 50;
@@ -238,27 +217,35 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			// 如果端口数据还没有做坐标调整，则这次需要调整
 			if (WindowControlEnv.getRepaintForPortInfoCome())
 			{
-				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
-						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawDataAfterAdjustAxis(g2,
+						this.getSize(),
+						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()),
+						this.getMeasureDistance());
 				showNewRule(axisShowPairs);
 			}
 			else
 			{
-				DrawUtils.drawPersistData(g2,this.getSize(),
-						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawPersistData(g2, this.getSize(),
+						PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()), 
+						this.getMeasureDistance());
+				showNewRule(axisShowPairs);
 			}
 			// ********************************************画文件数据
 			// 文件数据坐标尚未调整
 			if (WindowControlEnv.getRepaintForFileInfoCome())
 			{
-				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawDataAfterAdjustAxis(g2, this.getSize(),
-						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawDataAfterAdjustAxis(g2,
+						this.getSize(),
+						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()),
+						this.getMeasureDistance());
 				showNewRule(axisShowPairs);
 			}
 			else
 			{
-				DrawUtils.drawPersistData(g2,this.getSize(),
-						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()));
+				List<AxisShowvalPair> axisShowPairs = DrawUtils.drawPersistData(g2, this.getSize(),
+						FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel()),
+						this.getMeasureDistance());
+				showNewRule(axisShowPairs);
 			}
 			
 			// resetAmplyParam();
@@ -311,6 +298,10 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				calFaultDistanceAndShow();
 			}
 		}
+//		else
+//		{
+//			hiddenRuler(); 
+//		}
 		if (isDragging)
 		{
 			g2.translate(-dimension.getWidth() / 2, -dimension.getHeight() / 2);
@@ -328,13 +319,48 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			AxisShowvalPair xPair = axisShowPairs.get(0);
 			AxisShowvalPair yPair = axisShowPairs.get(1);
 			
-			rowView.setAxixPositions(yPair.getAxisVals());
-			rowView.setActualVals(yPair.getShowVals());
+			if(horizontalRuler != null)
+			{
+//				if(containerPanel.getColumnHeader()==null)
+				containerPanel.setColumnHeaderView(horizontalRuler);
+				horizontalRuler.setAxixPositions(xPair.getAxisVals());			
+				horizontalRuler.setActualVals(xPair.getShowVals());
+				horizontalRuler.repaint();
+			}
+			if(verticalRuler != null)
+			{
+//				if(containerPanel.getRowHeader()==null)
+				containerPanel.setRowHeaderView(verticalRuler);				
+				verticalRuler.setAxixPositions(yPair.getAxisVals());
+				verticalRuler.setActualVals(yPair.getShowVals());				
+				verticalRuler.repaint();
+//				containerPanel.repaint();
+			}
+		}
+		else
+		{
+			hiddenRuler(); 	
+		}
+	}
 
-			columnView.setAxixPositions(xPair.getAxisVals());
-			columnView.setActualVals(xPair.getShowVals());
-			columnView.setMeasureDistance(this.getMeasureDistance());
-		}		
+	private void hiddenRuler ()
+	{
+		if(containerPanel.getRowHeader()!=null)
+			containerPanel.remove(verticalRuler);
+		if(containerPanel.getColumnHeader()!=null)
+			containerPanel.remove(horizontalRuler);
+		
+		
+
+//		if(containerPanel.getRowHeader()!=null)
+//			containerPanel.getRowHeader().setView(null);//.remove(verticalRuler);
+//		if(containerPanel.getColumnHeader()!=null)
+//			containerPanel.getColumnHeader().setView(null);
+		
+//		if(verticalRuler != null)			
+//			containerPanel.remove(verticalRuler);
+//		if(horizontalRuler != null)
+//			containerPanel.remove(horizontalRuler);
 	}
 	
 	private void amplifySelectArea (IDataPersister dataPersister)
@@ -484,5 +510,13 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 			}
 		repaint();
 		}
+	}
+
+	public void setVHRulerAndTheirContainer (OnlyFixedPointRuleVIew verticalRuler2 ,
+			OnlyFixedPointRuleVIew horizontalRuler2 , JScrollPane panel)
+	{
+		this.verticalRuler = verticalRuler2;
+		this.horizontalRuler = horizontalRuler2;
+		this.containerPanel = panel;		
 	}
 }

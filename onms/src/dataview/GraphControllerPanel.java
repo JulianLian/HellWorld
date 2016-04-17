@@ -2,9 +2,7 @@ package dataview;
 
 import java.awt.GridLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.border.EtchedBorder;
 
 import domain.HardWare;
 import main.Md711MainFrame;
@@ -14,7 +12,6 @@ public class GraphControllerPanel extends JPanel // JTabbedPane
 	private Md711MainFrame mainFrame;
 	
 	// ----------------------------------------------------------------------
-//	private MoveAndAmplifyControllerPanel moveAndAmplyPanel;	
 	private CurveSelectionPanel curSelectionPanel;
 	private FaultDistancePanel faultDistancePanel;
 	

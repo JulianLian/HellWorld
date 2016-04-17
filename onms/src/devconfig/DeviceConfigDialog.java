@@ -27,8 +27,8 @@ public class DeviceConfigDialog extends JDialog implements ActionListener
 	public static DeviceConfigDialog INS;
 
 	// 基本参数
-	private JComboBox mode = new JComboBox(new String[] { "平均(手动)", "默认" });
-	private JComboBox optimiseChoice = new JComboBox(new String[] { "标准" });
+	private JComboBox<String> mode = new JComboBox<String>(new String[] { "平均(手动)", "默认" });
+	private JComboBox<String> optimiseChoice = new JComboBox<String>(new String[] { "标准" });
 	private JTextField beginPosTF = new JTextField(8);
 	private JTextField endPosTF = new JTextField(8);
 	private JComboBox waveLengthChoice = new JComboBox(new String[] { "1650nm" });

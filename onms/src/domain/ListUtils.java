@@ -1,8 +1,9 @@
 package domain;
 
-import java.util.List;
-
 import env.MDLogger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ListUtils
 {
@@ -96,5 +97,33 @@ public class ListUtils
 			doubleVal[index] = vals.get(index);
 		}
 		return doubleVal;
+	}
+	
+	public static List getMaxMinNumberAndIndex (double[] v)
+	{
+		List maxminANdIndex = new ArrayList();
+		double max = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
+		int maxIndex = -1;
+		int minIndex = -1;
+		
+		for(int index = 0 , len = v.length; index < len; index ++)
+		{
+			if(v[index] > max)
+			{
+				max = v[index];
+				maxIndex = index;
+			}
+			if(v[index] < min)
+			{
+				min = v[index];
+				minIndex = index;
+			}			
+		}
+		maxminANdIndex.add(max);
+		maxminANdIndex.add(maxIndex);
+		maxminANdIndex.add(min);
+		maxminANdIndex.add(minIndex);		
+		return maxminANdIndex;
 	}
 }

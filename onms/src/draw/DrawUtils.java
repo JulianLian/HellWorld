@@ -18,17 +18,21 @@ public class DrawUtils
 {
 	public static final int RULES_WIDTH = 10;
 	public static final int RULE_LABEL_DELTA = 2;
-	private static void drawGraphic (Graphics2D d , Dimension dimension, Color color , List<Double> xDataList , List<Double> yDataList)
+	private static List<AxisShowvalPair> drawGraphic (Graphics2D d , Dimension dimension, Color color , 
+			List<Double> xDataList , List<Double> yDataList, 
+			List<Double> yActualVals, double actualMeasureDistance)
 	{
+		ArrayList<AxisShowvalPair> axisShowPairs = null;
 		if (xDataList != null && yDataList != null && xDataList.size() > 0
 				&& xDataList.size() == yDataList.size())
 		{
+			axisShowPairs = new ArrayList<AxisShowvalPair>(2);
+			
 			GeneralPath path = new GeneralPath();
 			int pointCounts = xDataList.size();
-			double maxAbsVal = 0;
+			
 			for (int i = 0; i < pointCounts; i++)
 			{
-				maxAbsVal = Math.max(maxAbsVal, Math.abs(yDataList.get(i)));
 				if (i == 0)
 					path.moveTo(xDataList.get(i), yDataList.get(i));
 				else
@@ -38,18 +42,29 @@ public class DrawUtils
 			d.setColor(color);
 			d.draw(path);
 			
+			double[] axisX = ListUtils.toDoubleArray(xDataList);
+			double[] axisY = ListUtils.toDoubleArray(yDataList);
+			
+			AxisShowvalPair xPair = new AxisShowvalPair(axisX, new double[]{actualMeasureDistance});
+			AxisShowvalPair yPair = new AxisShowvalPair(axisY, ListUtils.toDoubleArray( yActualVals));
+						
+			axisShowPairs.add(xPair);
+			axisShowPairs.add(yPair);			
 //			DrawUtils.showMeasureRuler(d, dimension, maxAbsVal,40);
 		}
+		return axisShowPairs;
 	}
 	
 	// ***************************************************************************************************************
-	public static void drawPersistData (Graphics2D d , Dimension dimension, IDataPersister dataPersister)
+	public static List<AxisShowvalPair> drawPersistData (Graphics2D d , Dimension dimension, 
+			IDataPersister dataPersister, double actualMeasureDistance)
 	{
-		drawGraphic(d, dimension, dataPersister.getPresentColor(), dataPersister.getCashedXData(),
-				dataPersister.getCashedYData());
+		return drawGraphic(d, dimension, dataPersister.getPresentColor(), dataPersister.getCashedXData(),
+				dataPersister.getCashedYData(), dataPersister.getYData(), actualMeasureDistance);
 	}
 	
-	public static List<AxisShowvalPair> drawDataAfterAdjustAxis (Graphics2D d , Dimension dimension , IDataPersister dataPersister)
+	public static List<AxisShowvalPair> drawDataAfterAdjustAxis (Graphics2D d , Dimension dimension , 
+			IDataPersister dataPersister, double actualMeasureDistance)
 	{
 		List<AxisShowvalPair> axisShowPairs = null;
 		double screenWidth = dimension.getWidth();
@@ -89,7 +104,7 @@ public class DrawUtils
 			// 用红色来画图形
 			d.setColor(dataPersister.getPresentColor());
 			d.draw(path);
-			AxisShowvalPair xPair = new AxisShowvalPair(xData, xData);
+			AxisShowvalPair xPair = new AxisShowvalPair(xData, new double[]{actualMeasureDistance});
 			AxisShowvalPair yPair = new AxisShowvalPair(yData,  ListUtils.toDoubleArray(pointsYPositions));
 			axisShowPairs.add(xPair);
 			axisShowPairs.add(yPair);
