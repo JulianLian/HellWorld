@@ -14,7 +14,6 @@ import dataview.GraphShowPanel;
 import dataview.MoveAndAmplifyControllerPanel;
 import dir.*;
 import domain.HardWare;
-import i18n.I18n;
 import menu.MainMenuBar;
 import menu.MainToolBar;
 import persistant.PoPDialog;
@@ -285,8 +284,9 @@ public class Md711MainFrame extends JFrame
 	{
 		Md711MainFrame window = new Md711MainFrame();
 		
-		window.setTitle(I18n.INS.getI18Str("frameTitle"));
-		
+//		window.setTitle(I18n.INS.getI18Str("frameTitle"));
+		window.setTitle("xxx光线检测系统");
+
 		// 让屏幕最大化
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = kit.getScreenSize();

@@ -62,6 +62,14 @@ public class DistanceCalculator
 			double ZeroPosition)
 	{
 		int len1 = InventoryData.getCanTransformedDataFromFile().size();
+		if(len1 == 0)
+        {
+            return null;
+        }
+        if(InventoryData.getXDataFromFile().size() == 0)
+        {
+            return null;
+        }
 		double firstEventPos = ((Double) (InventoryData.getXDataFromFile()).get(0)).doubleValue();		
 		double lastEventPos = ((Double) (InventoryData.getXDataFromFile()).get(len1 - 1)).doubleValue();
 		double firstEventPosUpdownPos = firstEventPos+ZeroPosition;
