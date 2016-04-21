@@ -1,9 +1,9 @@
 package domain;
 
-import env.MDLogger;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import env.MDLogger;
 
 public class ListUtils
 {

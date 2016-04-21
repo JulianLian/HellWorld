@@ -85,7 +85,6 @@ public class DrawUtils
 			double yData[] = new double[pointCounts];
 			
 			double maxAbsVal = ListUtils.getMaxAbsNumber(pointsYPositions);
-			
 			double intervalDistance = (pointCounts == 1 ? 0 : (((screenWidth)) / (pointCounts - 1)));
 			double minVal = Double.MAX_VALUE;
 			for (int index = 0; index < pointCounts; index++)

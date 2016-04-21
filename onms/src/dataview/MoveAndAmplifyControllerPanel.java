@@ -80,7 +80,7 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 //		setAllEnState(false);
 		setAllEnState(true);
 		this.add(downFirstPane);
-		this.add(downSecondPane);
+//		this.add(downSecondPane);//不要上下左右移动
 		this.add(controlPanel);
 //		this.add(distancepanel);
 	}
@@ -138,17 +138,22 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 //		downSecondPane.add(new JLabel());
 //		downSecondPane.add(restoreButton);		
 		
-		downSecondPane.add(jtfUpMove);
-		downSecondPane.add(jbUpMove);		
 		
-		downSecondPane.add(jtfDownMove);
-		downSecondPane.add(jbDownMove);
+		
+		
+//		downSecondPane.add(jtfUpMove);
+//		downSecondPane.add(jbUpMove);		
+//		
+//		downSecondPane.add(jtfDownMove);
+//		downSecondPane.add(jbDownMove);
 		
 		downSecondPane.add(jtfLeftMove);
 		downSecondPane.add(jbLeftMove);
 		
 		downSecondPane.add(jtfRightMove);
 		downSecondPane.add(jbRightMove);
+		
+		
 //		downSecondPane.setBorder(BorderFactory.createEmptyBorder(7, 5, 5, 5));
 		return downSecondPane;
 	}
@@ -720,8 +725,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 	{
 		if (WindowControlEnv.getFileStepNotClicked() == false)
 		{
-			setStepEnable(false);
-			setAllEnState(true);
+//			setStepEnable(false);
+//			setAllEnState(true);
 
 			// controlPanel.setMediaSeletionEnState(true);
 			jbStep.setBackground(new Color(238, 238, 238));
@@ -730,8 +735,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 
 		else
 		{
-			setStepEnable(true);
-			setAllEnState(false);
+//			setStepEnable(true);
+//			setAllEnState(false);
 
 			// controlPanel.setMediaSeletionEnState(false);
 
@@ -744,8 +749,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 	{
 		if (WindowControlEnv.getPortStepNotClicked() == false)
 		{
-			setStepEnable(false);
-			setAllEnState(true);
+//			setStepEnable(false);
+//			setAllEnState(true);
 			// controlPanel.setMediaSeletionEnState(true);
 
 			jbStep.setBackground(new Color(238, 238, 238));
@@ -753,8 +758,8 @@ public class MoveAndAmplifyControllerPanel extends JPanel implements ActionListe
 		}
 		else
 		{
-			setStepEnable(true);
-			setAllEnState(false);
+//			setStepEnable(true);
+//			setAllEnState(false);
 			// controlPanel.setMediaSeletionEnState(false);
 
 			jbStep.setBackground(Color.RED);

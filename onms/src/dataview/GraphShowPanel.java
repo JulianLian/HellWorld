@@ -6,22 +6,36 @@ package dataview;
  * 本类意在完成一个图形显示功能，数据
  * 从Data中获取
  */
-import domain.BusinessConst;
-import domain.DistanceCalculator;
-import draw.DrawUtils;
-import main.Md711MainFrame;
-import persistant.*;
-import rule.AxisShowvalPair;
-import rule.OnlyFixedPointRuleVIew;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 import java.util.List;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+
+import domain.BusinessConst;
+import domain.DistanceCalculator;
+import draw.DrawUtils;
+import main.Md711MainFrame;
+import persistant.FileDataPersister;
+import persistant.IDataPersister;
+import persistant.InventoryData;
+import persistant.PortDataPersister;
+import persistant.WindowControlEnv;
+import rule.AxisShowvalPair;
+import rule.OnlyFixedPointRuleVIew;
 
 public class GraphShowPanel extends JPanel implements MouseMotionListener, MouseListener
 {
@@ -72,9 +86,10 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 	private void showCursorPosition (Point point)
 	{
 		Double x = calCussorCorrectPosition(point.getX());
-		if(x != null)
+		Double y = calCursorYCorrectShowData(point.getY());
+		if (x != null && y != null)
 		{
-			showCursorPosition(x, point);
+			showCursorPosition(x,y,  point);
 		}
 	}
 	
@@ -98,14 +113,51 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		return null;
 	}
 
-	private void showCursorPosition(double correctPosition, Point point)
+	private Double calCursorYCorrectShowData (double yPosition)
+	{		
+		if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.PORTSELECT)
+		{
+			PortDataPersister portPersister = PortDataPersister.getInstance(md.getEventPanel().getkeyPointPanel());
+			return formYPosActualVal(yPosition,  portPersister.getYData(), portPersister.getCashedYData());	
+		}
+		else if (md.getGraphControllerpanel().getCurSelectedCurve() == BusinessConst.FILESELECT)
+		{
+			FileDataPersister filePersister = FileDataPersister.getInstance(md.getEventPanel().getkeyPointPanel());
+			return formYPosActualVal(yPosition,  filePersister.getYData(), filePersister.getCashedYData());			
+		}
+		return null;
+	}
+
+	private Double formYPosActualVal (double yPosition , List<Double> actualV, List<Double> cashedAxisV)
+	{
+		if(actualV.size() == 0)
+		{
+			return null;
+		}
+		double amplified = 0;
+		double halfHeight = this.getSize().getHeight()/2;
+		for(int index = 0, len = actualV.size(); index < len ; index ++)
+		{
+			if(actualV.get(index) != 0 &&  cashedAxisV.get(index) != 0)
+			{
+				 amplified = Math.abs(actualV.get(index) / cashedAxisV.get(index));
+				 break;
+			}
+		}
+		double showVal = Math.abs(halfHeight - yPosition) * amplified;
+		return (yPosition < halfHeight) ? showVal : (yPosition > halfHeight ?  (-showVal) : 0);
+	}
+	
+	private void showCursorPosition (double correctDistancePosition, double verticalDataStr , Point point)
 	{
 		JPopupMenu popup = new JPopupMenu();
 		popup.setBorder(null);
 		popup.setOpaque(false);		
 		JPanel infoPanel = new JPanel();
 		infoPanel.setOpaque(false);
-		JLabel label = new JLabel(correctPosition + " km");
+		JLabel label = new JLabel(
+				new DecimalFormat("0.00").format(correctDistancePosition) + " km, " + 
+				new DecimalFormat("0.00").format(verticalDataStr));
 		label.setBorder(null);
 		label.setForeground(Color.red);
 		label.setBackground(null);
@@ -257,12 +309,6 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				g2.draw(new Line2D.Double(firstPositionHorizontalVal + xBase,
 						-dimension.getHeight() / 2, firstPositionHorizontalVal + xBase,
 						dimension.getHeight()  / 2));
-				// g2.draw(new
-				// Line2D.Double(firstPositionHorizontalVal +
-				// xBase,
-				// -dimension.getWidth() / 2 - 10,
-				// firstPositionHorizontalVal + xBase,
-//						dimension.getWidth() / 2));
 			}
 			if (secondPositionHorizontalVal != Double.MIN_VALUE)
 			{
@@ -271,12 +317,6 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				g2.draw(new Line2D.Double(secondPositionHorizontalVal + xBase,
 						-dimension.getHeight() / 2, secondPositionHorizontalVal + xBase,
 						dimension.getHeight() / 2));
-				// g2.draw(new
-				// Line2D.Double(secondPositionHorizontalVal +
-				// xBase,
-				// -dimension.getWidth() / 2 - 10,
-				// secondPositionHorizontalVal + xBase,
-//						dimension.getWidth() / 2));
 			}
 			if (firstEventHorizontalVal != Double.MIN_VALUE)
 			{
@@ -284,11 +324,6 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				g2.setColor(Color.yellow);
 				g2.draw(new Line2D.Double(firstEventHorizontalVal, -dimension.getHeight() / 2,
 						firstEventHorizontalVal, dimension.getHeight() / 2));
-				// g2.draw(new
-				// Line2D.Double(firstEventHorizontalVal,
-				// -dimension.getWidth() / 2,
-				// firstEventHorizontalVal, dimension.getWidth()
-				// / 2));
 			}
 
 			// ***************************处理测量距离
@@ -306,9 +341,15 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 		{
 			g2.translate(-dimension.getWidth() / 2, -dimension.getHeight() / 2);
 			g2.setColor(Color.WHITE);
-			g2.drawRect((int) selectedStartX, (int) selectedStartY,
+			int startX = (int)Math.min(selectedStartX, selectedEndX);
+			int startY = (int)Math.min(selectedStartY, selectedEndY);
+			
+			g2.drawRect(startX,startY,
 					(int) Math.abs(selectedEndX - selectedStartX),
 					(int) Math.abs(selectedEndY - selectedStartY));
+//			g2.drawRect((int) selectedStartX, (int) selectedStartY,
+//					(int) Math.abs(selectedEndX - selectedStartX),
+//					(int) Math.abs(selectedEndY - selectedStartY));
 		}
 	}
 
@@ -325,7 +366,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				containerPanel.setColumnHeaderView(horizontalRuler);
 				horizontalRuler.setAxixPositions(xPair.getAxisVals());			
 				horizontalRuler.setActualVals(xPair.getShowVals());
-				horizontalRuler.repaint();
+//				horizontalRuler.repaint();
 			}
 			if(verticalRuler != null)
 			{
@@ -333,7 +374,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 				containerPanel.setRowHeaderView(verticalRuler);				
 				verticalRuler.setAxixPositions(yPair.getAxisVals());
 				verticalRuler.setActualVals(yPair.getShowVals());				
-				verticalRuler.repaint();
+//				verticalRuler.repaint();
 //				containerPanel.repaint();
 			}
 		}
@@ -345,9 +386,13 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 
 	private void hiddenRuler ()
 	{
-		if(containerPanel.getRowHeader()!=null)
+		if(containerPanel == null)
+		{
+			return;
+		}
+		if(containerPanel.getRowHeader()!=null && verticalRuler != null)
 			containerPanel.remove(verticalRuler);
-		if(containerPanel.getColumnHeader()!=null)
+		if(containerPanel.getColumnHeader()!=null && horizontalRuler != null)
 			containerPanel.remove(horizontalRuler);
 		
 		
@@ -360,7 +405,7 @@ public class GraphShowPanel extends JPanel implements MouseMotionListener, Mouse
 //		if(verticalRuler != null)			
 //			containerPanel.remove(verticalRuler);
 //		if(horizontalRuler != null)
-//			containerPanel.remove(horizontalRuler);
+//			containerPanel.remove(horizontalRuler);.
 	}
 	
 	private void amplifySelectArea (IDataPersister dataPersister)

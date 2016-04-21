@@ -6,14 +6,41 @@ package main;
  * 预期完成时间： 40天
  */
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.io.File;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.SwingConstants;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import action.Action;
 import communation.FileDataGetter;
 import dataview.CurveSelectionPanel;
 import dataview.GraphControllerPanel;
 import dataview.GraphShowPanel;
 import dataview.MoveAndAmplifyControllerPanel;
-import dir.*;
+import dir.FileNode;
+import dir.FileTree;
+import dir.FileTreeModel;
+import dir.FileTreeMouseAdapter;
+import dir.FileTreeRenderer;
 import domain.HardWare;
+import i18n.I18n;
 import menu.MainMenuBar;
 import menu.MainToolBar;
 import persistant.PoPDialog;
@@ -21,14 +48,6 @@ import persistant.SaveWithoughtConfirmPoPDialog;
 import persistant.WindowControlEnv;
 import rule.OnlyFixedPointRuleVIew;
 import rule.RuleView;
-
-import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.*;
-import java.io.File;
-import java.util.List;
 
 /*
  *
@@ -127,21 +146,18 @@ public class Md711MainFrame extends JFrame
 	private JComponent formGraphicPanelWithRule ()
 	{
 		JScrollPane panel = new JScrollPane();			
-		OnlyFixedPointRuleVIew horizontalRuler = new OnlyFixedPointRuleVIew(RuleView.HORIZONTAL);   
-		horizontalRuler.setPreferredHeight(30); 
-		horizontalRuler.setMaxRuleLabelLen(30);
-		panel.setColumnHeaderView(horizontalRuler); 
+//		OnlyFixedPointRuleVIew horizontalRuler = new OnlyFixedPointRuleVIew(RuleView.HORIZONTAL);   
+//		horizontalRuler.setPreferredHeight(30); 
+//		horizontalRuler.setMaxRuleLabelLen(30);
+//		panel.setColumnHeaderView(horizontalRuler); 
 		
-		OnlyFixedPointRuleVIew verticalRuler = new OnlyFixedPointRuleVIew(RuleView.VERTICAL);  
-		verticalRuler.setPreferredWidth(40);		
-		panel.setRowHeaderView(verticalRuler);     
+//		OnlyFixedPointRuleVIew verticalRuler = new OnlyFixedPointRuleVIew(RuleView.VERTICAL);  
+//		verticalRuler.setPreferredWidth(40);		
+//		panel.setRowHeaderView(verticalRuler);     
 		
 		panel.setViewportView(graph);		
-//		JLabel cornerLabel = new JLabel(""); 
-//		cornerLabel.setForeground(OnlyFixedPointRuleVIew.RULE_BG_COLOR);
-//		panel.setCorner(JScrollPane.UPPER_LEFT_CORNER, cornerLabel); 
-		
-		graph.setVHRulerAndTheirContainer(verticalRuler, horizontalRuler, panel);
+		graph.setVHRulerAndTheirContainer(null, null, panel);
+//		graph.setVHRulerAndTheirContainer(verticalRuler, horizontalRuler, panel);
 		return panel;
 	}
 
