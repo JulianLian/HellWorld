@@ -102,7 +102,9 @@ public class OTDRTraceGetter implements IDataGetter {
         String rcvStr = commandHandle.builtInCommandWithoutParam(Cmds.MEAS_STATUS);
         if (!(rcvStr).contains("AVAILABLE")) {
             System.out.println("STATUS: "+rcvStr);
-            System.out.println("Trace not available. Please try later.");
+            JOptionPane.showMessageDialog(null,
+                    "Trace not available. Please try later.",
+                    "OTDR TRACE",JOptionPane.NO_OPTION);
             return null;
         }
 

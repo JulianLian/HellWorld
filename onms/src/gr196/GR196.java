@@ -1,5 +1,8 @@
 package gr196;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 /**
  * Created by Julian on 16/4/23.
  * Issue 1, September 1995
@@ -10,34 +13,34 @@ public class GR196 {
 
     }
 
-    class Map {
+    class MapBlock {
         // Map
-        String Map = "Map";
-        short MapVersion = 0x6400;
-        long MapBytes = 0xA5000000;
+        String MapBlockID = "Map";
+        short MapVersion = 100;
+        int MapBytes = 0;
 
-        short NumberOfBlocks = 0x0B00;
+        short NumberOfBlocks = 7;
 
         // General Parameters
         String GenParams = "GenParams";
         short GenParamsVer = 0x6500;
-        long GenParamsBytes = 0x5A000000;
+        int GenParamsBytes = 0x5A000000;
         // Supplier Parameters
         String SupParams = "SupParams";
         short SupParamsVer = 0x6500;
-        long SupParamsBytes = 0x50000000;
+        int SupParamsBytes = 0x50000000;
         // Fixed Parameters
         String FxdParams = "FxdParams";
         short FxdParamsVer = 0x6500;
-        long FxdParamsBytes = 0x36000000;
+        int FxdParamsBytes = 0x36000000;
         // Data Points
         String DataPts = "DataPts";
         short DataPtsVer = 0x6500;
-        long DataPtsBytes = 0xDA290000;
+        int DataPtsBytes = 0xDA290000;
         // Key Events
         String KeyEvents = "KeyEvents";
         short KeyEventsVer = 0x6500;
-        long KeyEventsBytes = 0xF0000000;
+        int KeyEventsBytes = 0xF0000000;
         // Link Parameters
 //    String LnkParams = "LnkParams";
 //    short LnkParamsVer = 0x6400;
@@ -50,8 +53,71 @@ public class GR196 {
         // Checksum
         String Cksum = "Cksum";
         short CksumVer = 0x6400;
-        long CksumBytes = 0x02000000;
+        int CksumBytes = 0x02000000;
 
+        ByteBuffer writeByteBuffer() {
+            MapVersion = 100;
+            NumberOfBlocks = 7;
+            MapBytes = 2
+                    + 6*NumberOfBlocks
+                    +GenParams.length()+1
+                    +SupParams.length()+1
+                    +FxdParams.length()+1
+                    +DataPts.length()+1
+                    +KeyEvents.length()+1
+                    +Cksum.length()+1;
+            ByteBuffer bbMap = ByteBuffer.allocate(MapBytes);
+            bbMap.order(ByteOrder.LITTLE_ENDIAN);
+
+            bbMap.putShort(MapVersion);
+            bbMap.putInt(MapBytes);
+
+            bbMap.putShort(NumberOfBlocks);
+
+            bbMap.put(GenParams.getBytes());
+            bbMap.put((byte)0);
+            bbMap.putShort(GenParamsVer);
+            bbMap.putInt(GenParamsBytes);
+
+            bbMap.put(SupParams.getBytes());
+            bbMap.put((byte)0);
+            bbMap.putShort(SupParamsVer);
+            bbMap.putInt(SupParamsBytes);
+
+            bbMap.put(FxdParams.getBytes());
+            bbMap.put((byte)0);
+            bbMap.putShort(FxdParamsVer);
+            bbMap.putInt(FxdParamsBytes);
+
+            bbMap.put(DataPts.getBytes());
+            bbMap.put((byte)0);
+            bbMap.putShort(DataPtsVer);
+            bbMap.putInt(DataPtsBytes);
+
+            bbMap.put(KeyEvents.getBytes());
+            bbMap.put((byte)0);
+            bbMap.putShort(KeyEventsVer);
+            bbMap.putInt(KeyEventsBytes);
+
+            bbMap.put(Cksum.getBytes());
+            bbMap.put((byte)0);
+            bbMap.putShort(CksumVer);
+            bbMap.putInt(CksumBytes);
+
+//            bbMap.clear();
+            return bbMap;
+        }
+
+        MapBlock readFromByteBuff(ByteBuffer bbMap) {
+            MapBlock mp = new MapBlock();
+
+            return mp;
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
     }
 
     class GenParams {
