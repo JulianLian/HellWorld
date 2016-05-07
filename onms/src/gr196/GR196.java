@@ -15,30 +15,30 @@ public class GR196 {
 
     class MapBlock {
         // Map
-        String MapBlockID = "Map";
+        final String MapBlockID = "Map";
         short MapVersion = 100;
         int MapBytes = 0;
 
         short NumberOfBlocks = 7;
 
         // General Parameters
-        String GenParams = "GenParams";
+        final String GenParams = "GenParams";
         short GenParamsVer = 0x6500;
         int GenParamsBytes = 0x5A000000;
         // Supplier Parameters
-        String SupParams = "SupParams";
+        final String SupParams = "SupParams";
         short SupParamsVer = 0x6500;
         int SupParamsBytes = 0x50000000;
         // Fixed Parameters
-        String FxdParams = "FxdParams";
+        final String FxdParams = "FxdParams";
         short FxdParamsVer = 0x6500;
         int FxdParamsBytes = 0x36000000;
         // Data Points
-        String DataPts = "DataPts";
+        final String DataPts = "DataPts";
         short DataPtsVer = 0x6500;
         int DataPtsBytes = 0xDA290000;
         // Key Events
-        String KeyEvents = "KeyEvents";
+        final String KeyEvents = "KeyEvents";
         short KeyEventsVer = 0x6500;
         int KeyEventsBytes = 0xF0000000;
         // Link Parameters
@@ -51,9 +51,36 @@ public class GR196 {
 //    short UserNamedPlusVer = 0x6400;
 //    long UserNamedPlusBytes = 0x0;
         // Checksum
-        String Cksum = "Cksum";
-        short CksumVer = 0x6400;
-        int CksumBytes = 0x02000000;
+        final String Cksum = "Cksum";
+        short CksumVer = 100;
+        int CksumBytes = 2;
+
+
+
+        public void setMapBytes(int mapBytes) {
+            MapBytes = mapBytes;
+        }
+
+        public void setGenParamsBytes(int genParamsBytes) {
+            GenParamsBytes = genParamsBytes;
+        }
+
+        public void setSupParamsBytes(int supParamsBytes) {
+            SupParamsBytes = supParamsBytes;
+        }
+
+        public void setFxdParamsBytes(int fxdParamsBytes) {
+            FxdParamsBytes = fxdParamsBytes;
+        }
+
+        public void setDataPtsBytes(int dataPtsBytes) {
+            DataPtsBytes = dataPtsBytes;
+        }
+
+        public void setKeyEventsBytes(int keyEventsBytes) {
+            KeyEventsBytes = keyEventsBytes;
+        }
+
 
         ByteBuffer writeByteBuffer() {
             MapVersion = 100;
@@ -104,12 +131,46 @@ public class GR196 {
             bbMap.putShort(CksumVer);
             bbMap.putInt(CksumBytes);
 
-//            bbMap.clear();
+            bbMap.clear();
             return bbMap;
         }
 
         MapBlock readFromByteBuff(ByteBuffer bbMap) {
             MapBlock mp = new MapBlock();
+
+            mp.MapVersion = bbMap.getShort();
+            mp.MapBytes = bbMap.getInt();
+            mp.NumberOfBlocks = bbMap.getShort();
+
+            bbMap.get(GenParams.getBytes());
+            bbMap.get();
+            mp.GenParamsVer = bbMap.getShort();
+            mp.GenParamsBytes = bbMap.getInt();
+
+            bbMap.get(SupParams.getBytes());
+            bbMap.get();
+            mp.SupParamsVer = bbMap.getShort();
+            mp.SupParamsBytes = bbMap.getInt();
+
+            bbMap.get(FxdParams.getBytes());
+            bbMap.get();
+            FxdParamsVer = bbMap.getShort();
+            FxdParamsBytes = bbMap.getInt();
+
+            bbMap.get(DataPts.getBytes());
+            bbMap.get();
+            DataPtsVer = bbMap.getShort();
+            DataPtsBytes = bbMap.getInt();
+
+            bbMap.get(KeyEvents.getBytes());
+            bbMap.get();
+            KeyEventsVer = bbMap.getShort();
+            KeyEventsBytes = bbMap.getInt();
+
+            bbMap.get(Cksum.getBytes());
+            bbMap.get();
+            CksumVer = bbMap.getShort();
+            CksumBytes = bbMap.getInt();
 
             return mp;
         }

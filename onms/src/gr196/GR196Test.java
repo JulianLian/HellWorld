@@ -9,7 +9,6 @@ import java.nio.ShortBuffer;
 import static junit.framework.TestCase.assertEquals;
 
 
-
 /**
  * Created by Julian on 2016/5/2.
  */
@@ -19,11 +18,29 @@ public class GR196Test {
         GR196 gr196Test = new GR196();
         GR196.MapBlock mapBlock = gr196Test.new MapBlock();
         ByteBuffer bbTest = mapBlock.writeByteBuffer();
-        assertEquals(bbTest.position(),bbTest.capacity());
-        bbTest.position(0);
+//        assertEquals(bbTest.position(), bbTest.capacity());
+//        bbTest.position(0);
         while (bbTest.hasRemaining())
             System.out.print(Integer.toHexString(bbTest.get()) + "\t");
         System.out.println("==End==");
+    }
+
+    @Test
+    public void testReadFromByteBuff() throws Exception {
+        GR196 gr196Test = new GR196();
+        GR196.MapBlock mapBlock = gr196Test.new MapBlock();
+        ByteBuffer bbTest = mapBlock.writeByteBuffer();
+
+        mapBlock = mapBlock.readFromByteBuff(bbTest);
+
+        assertEquals("GenParams", mapBlock.GenParams);
+        assertEquals(7, mapBlock.NumberOfBlocks);
+        assertEquals(100, mapBlock.CksumVer);
+        assertEquals(2, mapBlock.CksumBytes);
+
+        System.out.println(mapBlock.FxdParams);
+        System.out.println(mapBlock.FxdParamsVer);
+        System.out.println(mapBlock.SupParamsBytes);
     }
 
     @Test
