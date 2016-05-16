@@ -1,7 +1,10 @@
 package gr196;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by Julian on 16/4/23.
@@ -9,8 +12,27 @@ import java.nio.ByteOrder;
  */
 public class GR196 {
 
-    void saveToFile() {
+    static boolean isEven(int n) {
+        return (n&1) == 0;
+    }
 
+    void saveToFile() throws IOException {
+        RandomAccessFile aFile     = new RandomAccessFile("data/GR196-test.sor", "rw");
+        FileChannel fileChannel = aFile.getChannel();
+
+        MapBlock mapBlock = new MapBlock();
+        ByteBuffer mapBB = mapBlock.writeToByteBuff();
+        while (mapBB.hasRemaining()) {
+            fileChannel.write(mapBB);
+        }
+
+        GenParams genBlock = new GenParams();
+        ByteBuffer genBB = genBlock.writeToByteBuff();
+        while (genBB.hasRemaining()) {
+            fileChannel.write(genBB);
+        }
+
+        fileChannel.close();
     }
 
     class MapBlock {
@@ -23,24 +45,24 @@ public class GR196 {
 
         // General Parameters
         final String GenParams = "GenParams";
-        short GenParamsVer = 0x6500;
-        int GenParamsBytes = 0x5A000000;
+        short GenParamsVer = 0x65;
+        int GenParamsBytes = 0x5A;
         // Supplier Parameters
         final String SupParams = "SupParams";
-        short SupParamsVer = 0x6500;
-        int SupParamsBytes = 0x50000000;
+        short SupParamsVer = 0x65;
+        int SupParamsBytes = 0x50;
         // Fixed Parameters
         final String FxdParams = "FxdParams";
-        short FxdParamsVer = 0x6500;
-        int FxdParamsBytes = 0x36000000;
+        short FxdParamsVer = 0x65;
+        int FxdParamsBytes = 0x36;
         // Data Points
         final String DataPts = "DataPts";
-        short DataPtsVer = 0x6500;
-        int DataPtsBytes = 0xDA290000;
+        short DataPtsVer = 0x65;
+        int DataPtsBytes = 0xDA29;
         // Key Events
         final String KeyEvents = "KeyEvents";
-        short KeyEventsVer = 0x6500;
-        int KeyEventsBytes = 0xF0000000;
+        short KeyEventsVer = 0x65;
+        int KeyEventsBytes = 0xF0;
         // Link Parameters
 //    String LnkParams = "LnkParams";
 //    short LnkParamsVer = 0x6400;
@@ -82,7 +104,7 @@ public class GR196 {
         }
 
 
-        ByteBuffer writeByteBuffer() {
+        ByteBuffer writeToByteBuff() {
             MapVersion = 100;
             NumberOfBlocks = 7;
             MapBytes = 2
@@ -183,17 +205,83 @@ public class GR196 {
 
     class GenParams {
         // General Parameters
-        char[] LC = {'E', 'N'}; // Language Code (2 bytes)
-        String CID = " ";
-        String FID = " ";
-        short NW = 1650;
-        String OL = " ";
-        String TL = " ";
-        String CCD = " ";
-        byte[] CDF = {'C', 'C'};
-        long UO = 0;
-        String OP = " ";
-        String CMT = " ";
+        final byte[] LanguageCode = {'E', 'N'}; // Language Code (2 bytes)
+        String CableID = " ";
+        String FiberID = " ";
+        short NominalWavelength = 1650;
+        String OriginatingLocation = " ";
+        String TerminatingLocation = " ";
+        String CableCode = " ";
+        final byte[] CurrentDataFlag = {'C', 'C'};
+        int UserOffset = 0;
+        String Operator = " ";
+        String Comment = " ";
+
+        int BlockBytes = 0;
+
+
+        ByteBuffer writeToByteBuff() {
+            BlockBytes = 2 +
+                    CableID.length()+(isEven(CableID.length()) ? 2 : 1) +
+                    FiberID.length()+(isEven(FiberID.length()) ? 2 : 1) +
+                    2 +
+                    OriginatingLocation.length()+(isEven(OriginatingLocation.length()) ? 2 : 1) +
+                    TerminatingLocation.length()+(isEven(TerminatingLocation.length()) ? 2 : 1) +
+                    CableCode.length()+(isEven(CableCode.length()) ? 2 : 1) +
+                    2 +
+                    4 +
+                    Operator.length()+(isEven(Operator.length()) ? 2 : 1) +
+                    Comment.length()+(isEven(Comment.length()) ? 2 : 1);
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(BlockBytes);
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+            byteBuffer.put(LanguageCode);
+
+            byteBuffer.put(CableID.getBytes());
+            if (isEven(CableID.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte) 0);
+
+            byteBuffer.put(FiberID.getBytes());
+            if (isEven(FiberID.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte) 0);
+
+            byteBuffer.putShort(NominalWavelength);
+
+            byteBuffer.put(OriginatingLocation.getBytes());
+            if (isEven(OriginatingLocation.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(TerminatingLocation.getBytes());
+            if (isEven(TerminatingLocation.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(CableCode.getBytes());
+            if (isEven(CableCode.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(CurrentDataFlag);
+
+            byteBuffer.putInt(UserOffset);
+
+            byteBuffer.put(Operator.getBytes());
+            if (isEven(Operator.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(Comment.getBytes());
+            if (isEven(Comment.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.clear();
+            return byteBuffer;
+        }
 
     }
 

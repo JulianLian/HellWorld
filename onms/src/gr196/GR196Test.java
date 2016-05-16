@@ -14,10 +14,16 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class GR196Test {
     @Test
-    public void testWriteByteBuffer() throws Exception {
+    public void testSaveToFile() throws Exception {
+        GR196 gr196Test = new GR196();
+        gr196Test.saveToFile();
+    }
+
+    @Test
+    public void testMapWriteByteBuffer() throws Exception {
         GR196 gr196Test = new GR196();
         GR196.MapBlock mapBlock = gr196Test.new MapBlock();
-        ByteBuffer bbTest = mapBlock.writeByteBuffer();
+        ByteBuffer bbTest = mapBlock.writeToByteBuff();
 //        assertEquals(bbTest.position(), bbTest.capacity());
 //        bbTest.position(0);
         while (bbTest.hasRemaining())
@@ -26,10 +32,10 @@ public class GR196Test {
     }
 
     @Test
-    public void testReadFromByteBuff() throws Exception {
+    public void testMapReadFromByteBuff() throws Exception {
         GR196 gr196Test = new GR196();
         GR196.MapBlock mapBlock = gr196Test.new MapBlock();
-        ByteBuffer bbTest = mapBlock.writeByteBuffer();
+        ByteBuffer bbTest = mapBlock.writeToByteBuff();
 
         mapBlock = mapBlock.readFromByteBuff(bbTest);
 
@@ -41,6 +47,18 @@ public class GR196Test {
         System.out.println(mapBlock.FxdParams);
         System.out.println(mapBlock.FxdParamsVer);
         System.out.println(mapBlock.SupParamsBytes);
+    }
+
+    @Test
+    public void testGenWriteByteBuffer() throws Exception {
+        GR196 gr196Test = new GR196();
+        GR196.GenParams genBlock = gr196Test.new GenParams();
+        ByteBuffer bbTest = genBlock.writeToByteBuff();
+//        assertEquals(bbTest.position(), bbTest.capacity());
+//        bbTest.position(0);
+        while (bbTest.hasRemaining())
+            System.out.print(Integer.toHexString(bbTest.get()) + "\t");
+        System.out.println("==End==");
     }
 
     @Test
