@@ -16,7 +16,7 @@ public class GR196Test {
     @Test
     public void testSaveToFile() throws Exception {
         GR196 gr196Test = new GR196();
-        gr196Test.saveToFile();
+        gr196Test.saveToFile("data/GR196-test.sor");
     }
 
     @Test

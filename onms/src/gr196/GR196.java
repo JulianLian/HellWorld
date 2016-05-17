@@ -16,8 +16,8 @@ public class GR196 {
         return (n&1) == 0;
     }
 
-    void saveToFile() throws IOException {
-        RandomAccessFile aFile     = new RandomAccessFile("data/GR196-test.sor", "rw");
+    void saveToFile(String file) throws IOException {
+        RandomAccessFile aFile     = new RandomAccessFile(file, "rw");
         FileChannel fileChannel = aFile.getChannel();
 
         MapBlock mapBlock = new MapBlock();
@@ -30,6 +30,18 @@ public class GR196 {
         ByteBuffer genBB = genBlock.writeToByteBuff();
         while (genBB.hasRemaining()) {
             fileChannel.write(genBB);
+        }
+
+        SupParams supBlock = new SupParams();
+        ByteBuffer supBB = supBlock.writeToByteBuff();
+        while (supBB.hasRemaining()) {
+            fileChannel.write(supBB);
+        }
+
+        FxdParams fxdBlock = new FxdParams();
+        ByteBuffer fxdBB = fxdBlock.writeToByteBuff();
+        while (fxdBB.hasRemaining()) {
+            fileChannel.write(fxdBB);
         }
 
         fileChannel.close();
@@ -287,7 +299,7 @@ public class GR196 {
 
     class SupParams {
         // Supplier Parameters
-        String SN = " ";
+        String SN = "JDSU ";
         String MFID = " ";
         String OTDR = " ";
         String OMID = " ";
@@ -295,28 +307,113 @@ public class GR196 {
         String SR = " ";
         String OT = " ";
 
+        int BlockBytes = 0;
+
+        ByteBuffer writeToByteBuff() {
+            BlockBytes = SN.length()+(isEven(SN.length()) ? 2 : 1) +
+                    MFID.length()+(isEven(MFID.length()) ? 2 : 1) +
+                    OTDR.length()+(isEven(OTDR.length()) ? 2 : 1) +
+                    OMID.length()+(isEven(OMID.length()) ? 2 : 1) +
+                    OMSN.length()+(isEven(OMSN.length()) ? 2 : 1) +
+                    SR.length()+(isEven(SR.length()) ? 2 : 1) +
+                    OT.length()+(isEven(OT.length()) ? 2 : 1);
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(BlockBytes);
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+            byteBuffer.put(SN.getBytes());
+            if (isEven(SN.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte) 0);
+
+            byteBuffer.put(MFID.getBytes());
+            if (isEven(MFID.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte) 0);
+
+            byteBuffer.put(OTDR.getBytes());
+            if (isEven(OTDR.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(OMID.getBytes());
+            if (isEven(OMID.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(OMSN.getBytes());
+            if (isEven(OMSN.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(SR.getBytes());
+            if (isEven(SR.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.put(OT.getBytes());
+            if (isEven(OT.length()))
+                byteBuffer.put((byte)' ');
+            byteBuffer.put((byte)0);
+
+            byteBuffer.clear();
+            return byteBuffer;
+        }
+
     }
 
     class FxdParams {
-        long DTS = 0;
-        byte[] UD = {'k', 'm'};
-        short AW = 1650;
-        long AO = 0;
-        short TPW = 1;
-        short PWU = 30;
-        long DS = 42;
-        long NPPW = 155520;
-        long GI = 146800;
-        short BC = 800;
-        long NAV = 0;
-        long AR = 0;
-        long FPO = 0;
-        short NF = 0;
-        short NFSF = 1000;
-        short PO = 0;
-        short LT = 200;
-        short RT = (short) 40000;
-        short ET = 3000;
+        int DateTimeStamp = 0;
+        byte[] UnitsofDistance = {'k', 'm'};
+        short ActualWavelength = 1650;
+        int AcquisitionOffset = 0;
+        short TotalPulseWidth = 1;
+        short PulseWidthUsed = 30;
+        int DataSpacing = 42;
+        int NumberPointsPulseWidth = 155520;
+        int GroupIndex = 146800;
+        short BackscatterCoefficient = 800;
+        int NumberAVerage = 0;
+        int AcquisitionRange = 0;
+        int FrontPanelOffset = 0;
+        short NoiseFloorOffset = 0;
+        short NoiseFloorScaleFactor = 1000;
+        short PowerOffset = 0;
+        short LossThreshold = 200;
+        short ReflectanceThreshold = (short) 40000;
+        short EndoffiberThreshold = 3000;
+
+        int BlockBytes = 0;
+
+        ByteBuffer writeToByteBuff() {
+            BlockBytes = 4 + 2 + 2 + 4 + 2 + 2 +4 + 4 + 4 + 2 + 4 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2;
+
+            ByteBuffer byteBuffer = ByteBuffer.allocate(BlockBytes);
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+            byteBuffer.putInt(DateTimeStamp);
+            byteBuffer.put(UnitsofDistance);
+            byteBuffer.putShort(ActualWavelength);
+            byteBuffer.putInt(AcquisitionOffset);
+            byteBuffer.putShort(TotalPulseWidth);
+            byteBuffer.putShort(PulseWidthUsed);
+            byteBuffer.putInt(DataSpacing);
+            byteBuffer.putInt(NumberPointsPulseWidth);
+            byteBuffer.putInt(GroupIndex);
+            byteBuffer.putShort(BackscatterCoefficient);
+            byteBuffer.putInt(NumberAVerage);
+            byteBuffer.putInt(AcquisitionRange);
+            byteBuffer.putInt(FrontPanelOffset);
+            byteBuffer.putShort(NoiseFloorOffset);
+            byteBuffer.putShort(NoiseFloorScaleFactor);
+            byteBuffer.putShort(PowerOffset);
+            byteBuffer.putShort(LossThreshold);
+            byteBuffer.putShort(ReflectanceThreshold);
+            byteBuffer.putShort(EndoffiberThreshold);
+
+            byteBuffer.clear();
+            return byteBuffer;
+        }
 
     }
 
