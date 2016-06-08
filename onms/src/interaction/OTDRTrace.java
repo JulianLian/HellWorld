@@ -123,6 +123,38 @@ public class OTDRTrace {
 
     public List<String> getKeyEvents() { return this.KeyEvents; }
 
+    public short[] getShortDataPoints() {
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(this.DataPoints);
+
+            byte[] fourBytes = new byte[4];
+            int sizeInByte = 0;
+            short y;
+
+            bais.skip(1); // '#'
+            int numOfChar = (byte)(bais.read()) - '0';
+//            bais.skip(this.numOfChar + 1);
+            for (int hi = 0; hi < numOfChar; hi++) {
+                sizeInByte  = sizeInByte * 10 + (bais.read() - '0');
+            }
+
+            short[] dataPoints = new short[sizeInByte>>2];
+            int num = 0;
+            while ((bais.read(fourBytes) != -1) && num < sizeInByte>>2) {
+                y = (short) (Integer.parseInt(new String(fourBytes), 16));
+                double doubleData = y * this.DoubleYscale + this.DoubleYoffset;
+                dataPoints[num] = (short)(doubleData / this.DoubleYscale);
+                num++;
+            }
+
+            bais.close();
+            return dataPoints;
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
     public double[] getDoubleDataPoints() {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(this.DataPoints);
@@ -186,11 +218,16 @@ public class OTDRTrace {
     }
 
     void writeDataPointsToFile() {
+        FileOutputStream cfos = null;
         FileOutputStream dfos = null;
         FileOutputStream efos = null;
         try {
+            cfos = new FileOutputStream("CurveBuff.txt");
             dfos = new FileOutputStream("DataPoints.txt");
             efos = new FileOutputStream("KeyEvent.txt");
+
+            cfos.write(this.DataPoints);
+            cfos.close();
 
             List<Double> dataList = this.getDataPoints();
 
@@ -199,13 +236,13 @@ public class OTDRTrace {
                 dfos.write(' ');
             }
 
+
             List<String> eventList = this.getKeyEvents();
             for (String s : eventList) {
                 efos.write(s.getBytes());
                 efos.write("\n".getBytes());
             }
 
-            dfos.close();
             efos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

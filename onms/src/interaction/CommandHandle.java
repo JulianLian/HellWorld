@@ -145,7 +145,7 @@ public class CommandHandle {
     }
 
     int getFunctionPort(String cmdline) {
-        if (cmdline.contains("CURve") || cmdline.contains("TABle"))
+        if (cmdline.contains("CURve") || cmdline.contains("TABle") || cmdline.contains("FSETup"))
             return ServerInfo.FiberOpticPort;
         return ServerInfo.OTUPort;
     }
@@ -293,6 +293,11 @@ public class CommandHandle {
         newCmd.put(Cmds.CMD, cmd);
         byte[] rcvBuff = sendAndEcho(convertToCmdline(newCmd));
 
+        return (rcvBuff == null) ? null : new String(rcvBuff).replaceAll("\\n|\\r", "");
+    }
+
+    String queryCommandWithoutParam(String cmd) {
+        byte[] rcvBuff = sendAndEcho(cmd);
         return (rcvBuff == null) ? null : new String(rcvBuff).replaceAll("\\n|\\r", "");
     }
 

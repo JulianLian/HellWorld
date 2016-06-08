@@ -51,4 +51,11 @@ public class Cmds {
     public static final String TABLE_LINE = "TABle:LINe?";
     public static final String TABLE_LINE_NUM = "line_num";
 
+    public static final String SYSTEM_COUNTRY_LANGUAGE = "SYSTem:COUNtry:LANGuage?";
+
+    public static final String FSETUP_CABLEID = "FSETup:CABleid? END";
+    public static final String FSETUP_FIBERID = "FSETup:FIBerid? END";
+    public static final String FSETUP_OPERATOR = "FSETup:OPERator?";
+    public static final String FSETUP_COMMENT = "FSETup:COMment?";
+
 }

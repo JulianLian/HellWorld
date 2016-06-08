@@ -2,8 +2,10 @@ package interaction;
 
 import communation.IDataGetter;
 import communation.Protocol;
+import gr196.GR196;
 
 import javax.swing.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +144,24 @@ public class OTDRTraceGetter implements IDataGetter {
 
         trace.writeDataPointsToFile();
 
+        GR196 gr196 = new GR196();
+
+        gr196.setGenBlock(commandHandle.queryCommandWithoutParam(Cmds.FSETUP_CABLEID),
+                commandHandle.queryCommandWithoutParam(Cmds.FSETUP_FIBERID),
+                commandHandle.queryCommandWithoutParam(Cmds.FSETUP_OPERATOR),
+                commandHandle.queryCommandWithoutParam(Cmds.FSETUP_COMMENT));
+        gr196.setSupBlock();
+        gr196.setFxdBlock();
+        gr196.setDataBlock((short)(trace.getDoubleYscale() * 1000000), trace.getShortDataPoints());
+//        gr196.setDataBlock(trace.getDoubleYscale(), trace.getDoubleDataPoints());
+        gr196.setEventBlock();
+
+        try {
+            gr196.saveToFile("data/GR196-test.sor");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return trace;
     }
 
@@ -152,6 +172,7 @@ public class OTDRTraceGetter implements IDataGetter {
             return null;
         }
         printTraceInfo();
+
         return trace.getDataPoints();
     }
 
@@ -167,7 +188,8 @@ public class OTDRTraceGetter implements IDataGetter {
         System.out.println("Index      : "+trace.getNindex());
         System.out.println("Xoffset    : "+trace.getDoubleXoffset());
         System.out.println("Xunit      : "+trace.getXunit());
-        System.out.println("Yoffset    : "+trace.getDoubleYoffset());
+        System.out.println("Yscale     : "+trace.DoubleYscale);
+        System.out.println("Yoffset    : "+trace.DoubleYoffset);
         System.out.println("Yunit      : "+trace.getYunit());
         System.out.println("Data Number: "+trace.DataPoints.length);
         System.out.println("Event Num  : "+trace.getKeyEvents().size());
