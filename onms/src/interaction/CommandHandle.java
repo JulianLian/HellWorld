@@ -145,7 +145,10 @@ public class CommandHandle {
     }
 
     int getFunctionPort(String cmdline) {
-        if (cmdline.contains("CURve") || cmdline.contains("TABle") || cmdline.contains("FSETup"))
+        if (cmdline.contains("CURve") ||
+                cmdline.contains("TABle") ||
+                cmdline.contains("OTDResult") ||
+                cmdline.contains("FSETup"))
             return ServerInfo.FiberOpticPort;
         return ServerInfo.OTUPort;
     }

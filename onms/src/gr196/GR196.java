@@ -5,6 +5,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -36,8 +38,8 @@ public class GR196 {
         this.supBlock = new SupParams();
     }
 
-    public void setFxdBlock() {
-        this.fxdBlock = new FxdParams();
+    public void setFxdBlock(String dateStr) {
+        this.fxdBlock = new FxdParams(dateStr);
     }
 
     public void setDataBlock(short scaleFactor, short[] data) {
@@ -449,6 +451,15 @@ public class GR196 {
         short EndoffiberThreshold = 3000;
 
         int BlockBytes = 0;
+
+        public FxdParams(String dateStr) {
+            SimpleDateFormat format =  new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+            try {
+                DateTimeStamp = (int) format.parse(dateStr).getTime();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
 
         ByteBuffer writeToByteBuff() {
             BlockBytes = 4 + 2 + 2 + 4 + 2 + 2 +4 + 4 + 4 + 2 + 4 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 2;

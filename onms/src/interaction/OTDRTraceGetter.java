@@ -151,7 +151,7 @@ public class OTDRTraceGetter implements IDataGetter {
                 commandHandle.queryCommandWithoutParam(Cmds.FSETUP_OPERATOR),
                 commandHandle.queryCommandWithoutParam(Cmds.FSETUP_COMMENT));
         gr196.setSupBlock();
-        gr196.setFxdBlock();
+        gr196.setFxdBlock(trace.getMeasTime());
         gr196.setDataBlock((short)(trace.getDoubleYscale() * 1000000), trace.getShortDataPoints());
 //        gr196.setDataBlock(trace.getDoubleYscale(), trace.getDoubleDataPoints());
         gr196.setEventBlock();
